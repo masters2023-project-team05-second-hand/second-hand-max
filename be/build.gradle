@@ -5,7 +5,7 @@ plugins {
 	id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
-group = 'team-05-be-a'
+group = 'team05a'
 version = '0.0.1-SNAPSHOT'
 
 java {

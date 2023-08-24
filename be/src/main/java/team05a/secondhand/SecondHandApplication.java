@@ -1,4 +1,4 @@
-package team05bea.secondhand;
+package team05a.secondhand;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
