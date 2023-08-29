@@ -7,20 +7,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import team05a.secondhand.oauth_github.data.dto.LoginResponse;
+import team05a.secondhand.oauth_github.data.dto.OauthAccessCodeRequest;
 import team05a.secondhand.oauth_github.service.OauthService;
 
 @RestController
 public class OauthController {
 
-	private OauthService oauthService;
+	private final OauthService oauthService;
 
 	public OauthController(OauthService oauthService) {
 		this.oauthService = oauthService;
 	}
 
 	@PostMapping("/api/members/sign-in/{provider}")
-	public ResponseEntity<LoginResponse> login(@PathVariable String provider, @RequestBody String accessCode) {
-		LoginResponse loginResponse = oauthService.login(provider, accessCode);
+	public ResponseEntity<LoginResponse> login(@PathVariable String provider,
+		@RequestBody OauthAccessCodeRequest oauthAccessCodeRequest) {
+		LoginResponse loginResponse = oauthService.login(provider, oauthAccessCodeRequest.getAccessCode());
 		return ResponseEntity.ok().body(loginResponse);
 	}
 }

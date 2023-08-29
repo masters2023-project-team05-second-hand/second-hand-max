@@ -74,7 +74,6 @@ public class OauthService {
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 		formData.add("code", code);
 		formData.add("grant_type", "authorization_code");
-		formData.add("redirect_uri", provider.getRedirectUri());
 		return formData;
 	}
 

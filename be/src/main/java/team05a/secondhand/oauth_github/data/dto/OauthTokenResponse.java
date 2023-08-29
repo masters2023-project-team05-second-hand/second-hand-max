@@ -1,24 +1,18 @@
 package team05a.secondhand.oauth_github.data.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import lombok.Getter;
 
 @Getter
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class OauthTokenResponse {
 
-	@JsonProperty("access_token")
 	private String accessToken;
 	private String scope;
-	@JsonProperty("token_type")
 	private String tokenType;
 
 	public OauthTokenResponse() {
-	}
-
-	public OauthTokenResponse(String accessToken, String scope, String tokenType) {
-		this.accessToken = accessToken;
-		this.scope = scope;
-		this.tokenType = tokenType;
 	}
 }

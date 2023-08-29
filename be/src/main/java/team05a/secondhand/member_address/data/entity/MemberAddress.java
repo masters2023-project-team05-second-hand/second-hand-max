@@ -9,6 +9,7 @@ public class MemberAddress {
 
 	@Id
 	@GeneratedValue
+	private Long id;
 	private Long memberId;
 	private Long addressId;
 
