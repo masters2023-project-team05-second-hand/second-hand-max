@@ -12,15 +12,15 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import team05a.secondhand.address.data.dto.AddressResponse;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
-import team05a.secondhand.member_address.data.entity.MemberAddress;
 import team05a.secondhand.member_address.repository.MemberAddressRepository;
 import team05a.secondhand.oauth_github.InMemoryProviderRepository;
 import team05a.secondhand.oauth_github.OauthAttributes;
-import team05a.secondhand.oauth_github.data.dto.AddressResponse;
 import team05a.secondhand.oauth_github.data.dto.LoginResponse;
+import team05a.secondhand.oauth_github.data.dto.MemberLoginResponse;
 import team05a.secondhand.oauth_github.data.dto.MemberOauthRequest;
 import team05a.secondhand.oauth_github.data.dto.OauthTokenResponse;
 import team05a.secondhand.oauth_github.data.dto.TokenResponse;
@@ -46,12 +46,13 @@ public class OauthService {
 		OauthProvider oauthProvider = inMemoryProviderRepository.findByProviderName(providerName);
 		OauthTokenResponse oauthTokenResponse = getToken(code, oauthProvider);
 		MemberOauthRequest memberOauthRequest = getMemberOauthRequest(providerName, oauthTokenResponse, oauthProvider);
-		Member member = save(memberOauthRequest);
-		List<AddressResponse> address = memberAddressRepository.findByMemberId(member.getId());
+		MemberLoginResponse member = MemberLoginResponse.from(save(memberOauthRequest));
+		List<AddressResponse> address = AddressResponse.from(memberAddressRepository.findByMemberId(member.getId()));
+
 		String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(member.getId()));
 		String refreshToken = jwtTokenProvider.createRefreshToken();
 
-		return new LoginResponse(new TokenResponse(accessToken, refreshToken), address);
+		return new LoginResponse(member, new TokenResponse(accessToken, refreshToken), address);
 	}
 
 	private OauthTokenResponse getToken(String code, OauthProvider provider) {
@@ -64,13 +65,13 @@ public class OauthService {
 				header.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 				header.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
 			})
-			.bodyValue(tokenRequest(code, provider))
+			.bodyValue(tokenRequest(code))
 			.retrieve()
 			.bodyToMono(OauthTokenResponse.class)
 			.block();
 	}
 
-	private MultiValueMap<String, String> tokenRequest(String code, OauthProvider provider) {
+	private MultiValueMap<String, String> tokenRequest(String code) {
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 		formData.add("code", code);
 		formData.add("grant_type", "authorization_code");
@@ -80,6 +81,9 @@ public class OauthService {
 	private MemberOauthRequest getMemberOauthRequest(String providerName, OauthTokenResponse tokenResponse,
 		OauthProvider provider) {
 		Map<String, Object> memberAttributes = getMemberAttributes(provider, tokenResponse);
+		if (memberAttributes.get("email") == null) {
+			memberAttributes.put("email", getMemberEmail(tokenResponse).get(0).get("email"));
+		}
 		return OauthAttributes.extract(providerName, memberAttributes);
 	}
 
@@ -94,12 +98,19 @@ public class OauthService {
 			.block();
 	}
 
+	public List<Map<String, Object>> getMemberEmail(OauthTokenResponse tokenResponse) {
+		return WebClient.create()
+			.get()
+			.uri("https://api.github.com/user/emails")
+			.headers(header -> header.setBearerAuth(tokenResponse.getAccessToken()))
+			.retrieve()
+			.bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
+			})
+			.block();
+	}
+
 	private Member save(MemberOauthRequest memberOauthRequest) {
 		return memberRepository.findByEmailAndType(memberOauthRequest.getEmail(), memberOauthRequest.getType())
-			.orElseGet(() -> {
-				Member member = memberRepository.save(Member.from(memberOauthRequest));
-				memberAddressRepository.save(MemberAddress.from(member.getId(), null));
-				return member;
-			});
+			.orElseGet(() -> memberRepository.save(Member.from(memberOauthRequest)));
 	}
 }

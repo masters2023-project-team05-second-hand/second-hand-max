@@ -1,27 +1,33 @@
 package team05a.secondhand.member_address.data.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import team05a.secondhand.address.data.entity.Address;
+import team05a.secondhand.member.entity.Member;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class MemberAddress {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "member_address_id")
 	private Long id;
-	private Long memberId;
-	private Long addressId;
-
-	public MemberAddress() {
-	}
-
-	public MemberAddress(Long memberId, Long addressId) {
-		this.memberId = memberId;
-		this.addressId = addressId;
-	}
-
-	public static MemberAddress from(Long memberId, Long addressId) {
-		return new MemberAddress(memberId, addressId);
-	}
+	@ManyToOne
+	@JoinColumn(name = "member_id")
+	private Member member;
+	@ManyToOne
+	@JoinColumn(name = "address_id")
+	private Address address;
+	private boolean isLastVisited;
 }

@@ -10,8 +10,9 @@ public enum OauthAttributes {
 	GITHUB("github") {
 		@Override
 		public MemberOauthRequest of(String providerName, Map<String, Object> attributes) {
-			return new MemberOauthRequest(String.valueOf(attributes.get("id")), (String)attributes.get("login"),
-				(String)attributes.get("email"), (String)attributes.get("avatar_url"), providerName);
+			return new MemberOauthRequest((String)attributes.get("login"), (String)attributes.get("email"),
+				(String)attributes.get("avatar_url"),
+				providerName);
 		}
 	};
 
