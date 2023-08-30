@@ -13,17 +13,19 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import team05a.secondhand.address.data.dto.AddressResponse;
+import team05a.secondhand.jwt.Jwt;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.member_address.repository.MemberAddressRepository;
+import team05a.secondhand.member_refreshtoken.data.entity.MemberRefreshToken;
+import team05a.secondhand.member_refreshtoken.repository.MemberRefreshTokenRepository;
 import team05a.secondhand.oauth_github.InMemoryProviderRepository;
 import team05a.secondhand.oauth_github.OauthAttributes;
 import team05a.secondhand.oauth_github.data.dto.LoginResponse;
 import team05a.secondhand.oauth_github.data.dto.MemberLoginResponse;
 import team05a.secondhand.oauth_github.data.dto.MemberOauthRequest;
 import team05a.secondhand.oauth_github.data.dto.OauthTokenResponse;
-import team05a.secondhand.oauth_github.data.dto.TokenResponse;
 import team05a.secondhand.oauth_github.provider.OauthProvider;
 
 @Service
@@ -32,13 +34,16 @@ public class OauthService {
 	private final InMemoryProviderRepository inMemoryProviderRepository;
 	private final MemberRepository memberRepository;
 	private final MemberAddressRepository memberAddressRepository;
+	private final MemberRefreshTokenRepository memberRefreshTokenRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 
 	public OauthService(InMemoryProviderRepository inMemoryProviderRepository, MemberRepository memberRepository,
-		MemberAddressRepository memberAddressRepository, JwtTokenProvider jwtTokenProvider) {
+		MemberAddressRepository memberAddressRepository, MemberRefreshTokenRepository memberRefreshTokenRepository,
+		JwtTokenProvider jwtTokenProvider) {
 		this.inMemoryProviderRepository = inMemoryProviderRepository;
 		this.memberRepository = memberRepository;
 		this.memberAddressRepository = memberAddressRepository;
+		this.memberRefreshTokenRepository = memberRefreshTokenRepository;
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
 
@@ -46,13 +51,15 @@ public class OauthService {
 		OauthProvider oauthProvider = inMemoryProviderRepository.findByProviderName(providerName);
 		OauthTokenResponse oauthTokenResponse = getToken(code, oauthProvider);
 		MemberOauthRequest memberOauthRequest = getMemberOauthRequest(providerName, oauthTokenResponse, oauthProvider);
-		MemberLoginResponse member = MemberLoginResponse.from(save(memberOauthRequest));
+		Member member = save(memberOauthRequest);
+
+		MemberLoginResponse memberLoginResponse = MemberLoginResponse.from(member);
 		List<AddressResponse> address = AddressResponse.from(memberAddressRepository.findByMemberId(member.getId()));
 
-		String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(member.getId()));
-		String refreshToken = jwtTokenProvider.createRefreshToken();
+		Jwt jwt = jwtTokenProvider.createJwt(Map.of("memberId", member.getId()));
+		memberRefreshTokenRepository.save(new MemberRefreshToken(member, jwt.getRefreshToken()));
 
-		return new LoginResponse(member, new TokenResponse(accessToken, refreshToken), address);
+		return new LoginResponse(memberLoginResponse, jwt, address);
 	}
 
 	private OauthTokenResponse getToken(String code, OauthProvider provider) {

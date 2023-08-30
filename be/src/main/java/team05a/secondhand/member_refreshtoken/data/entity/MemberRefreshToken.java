@@ -1,4 +1,4 @@
-package team05a.secondhand.member_address.data.entity;
+package team05a.secondhand.member_refreshtoken.data.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,23 +12,25 @@ import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.member.entity.Member;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class MemberAddress {
+public class MemberRefreshToken {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "member_address_id")
+	@Column(name = "member_refresh_token_id")
 	private Long id;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "address_id")
-	private Address address;
-	private boolean isLastVisited;
+	@Column(nullable = false)
+	private String refreshToken;
+
+	public MemberRefreshToken(Member member, String refreshToken) {
+		this.member = member;
+		this.refreshToken = refreshToken;
+	}
 }
