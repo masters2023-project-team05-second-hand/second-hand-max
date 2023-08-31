@@ -1,4 +1,4 @@
-package team05a.secondhand.oauth_github.data.dto;
+package team05a.secondhand.oauth.data.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

@@ -1,9 +1,9 @@
-package team05a.secondhand.oauth_github;
+package team05a.secondhand.oauth;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import team05a.secondhand.oauth_github.provider.OauthProvider;
+import team05a.secondhand.oauth.provider.OauthProvider;
 
 public class InMemoryProviderRepository {
 

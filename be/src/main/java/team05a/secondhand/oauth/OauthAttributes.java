@@ -1,12 +1,12 @@
-package team05a.secondhand.oauth_github;
+package team05a.secondhand.oauth;
 
 import java.util.Arrays;
 import java.util.Map;
 
 import lombok.Getter;
-//import team05a.secondhand.errors.errorcode.OauthErrorCode;
-//import team05a.secondhand.errors.exception.IllegalOauthAttributesException;
-import team05a.secondhand.oauth_github.data.dto.MemberOauthRequest;
+import team05a.secondhand.errors.errorcode.OauthErrorCode;
+import team05a.secondhand.errors.exception.IllegalOauthAttributesException;
+import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
 
 @Getter
 public enum OauthAttributes {
@@ -21,11 +21,11 @@ public enum OauthAttributes {
 	KAKAO("kakao") {
 		@Override
 		public MemberOauthRequest of(String providerName, Map<String, Object> attributes) {
-			Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-			Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+			Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
+			Map<String, Object> profile = (Map<String, Object>)kakaoAccount.get("profile");
 
-			return new MemberOauthRequest((String) profile.get("nickname"), (String) kakaoAccount.get("email"),
-					(String) profile.get("profile_image_url"), providerName);
+			return new MemberOauthRequest((String)profile.get("nickname"), (String)kakaoAccount.get("email"),
+				(String)profile.get("profile_image_url"), providerName);
 		}
 	};
 
@@ -47,8 +47,7 @@ public enum OauthAttributes {
 		try {
 			return OauthAttributes.valueOf(type.toUpperCase());
 		} catch (IllegalArgumentException e) {
-//			throw new IllegalOauthAttributesException(OauthErrorCode.INVALID_OAUTH_ATTRIBUTES);
-			return null;
+			throw new IllegalOauthAttributesException(OauthErrorCode.INVALID_OAUTH_ATTRIBUTES);
 		}
 	}
 

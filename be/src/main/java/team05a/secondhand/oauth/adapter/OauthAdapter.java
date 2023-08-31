@@ -1,10 +1,10 @@
-package team05a.secondhand.oauth_github.adapter;
+package team05a.secondhand.oauth.adapter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import team05a.secondhand.oauth_github.properties.OauthProperties;
-import team05a.secondhand.oauth_github.provider.OauthProvider;
+import team05a.secondhand.oauth.properties.OauthProperties;
+import team05a.secondhand.oauth.provider.OauthProvider;
 
 public class OauthAdapter {
 

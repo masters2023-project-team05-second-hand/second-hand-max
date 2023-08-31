@@ -1,7 +1,7 @@
-package team05a.secondhand.oauth_github.provider;
+package team05a.secondhand.oauth.provider;
 
 import lombok.Getter;
-import team05a.secondhand.oauth_github.properties.OauthProperties;
+import team05a.secondhand.oauth.properties.OauthProperties;
 
 @Getter
 public class OauthProvider {

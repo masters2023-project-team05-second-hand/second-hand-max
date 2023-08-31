@@ -1,4 +1,4 @@
-package team05a.secondhand.oauth_github.service;
+package team05a.secondhand.oauth.service;
 
 import java.util.List;
 import java.util.Map;
@@ -14,9 +14,9 @@ import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.member_address.repository.MemberAddressRepository;
 import team05a.secondhand.member_refreshtoken.data.entity.MemberRefreshToken;
 import team05a.secondhand.member_refreshtoken.repository.MemberRefreshTokenRepository;
-import team05a.secondhand.oauth_github.data.dto.LoginResponse;
-import team05a.secondhand.oauth_github.data.dto.MemberLoginResponse;
-import team05a.secondhand.oauth_github.data.dto.MemberOauthRequest;
+import team05a.secondhand.oauth.data.dto.LoginResponse;
+import team05a.secondhand.oauth.data.dto.MemberLoginResponse;
+import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
 
 @Transactional
 @Service

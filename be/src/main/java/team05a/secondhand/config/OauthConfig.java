@@ -1,4 +1,4 @@
-package team05a.secondhand.oauth_github.config;
+package team05a.secondhand.config;
 
 import java.util.Map;
 
@@ -6,10 +6,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import team05a.secondhand.oauth_github.InMemoryProviderRepository;
-import team05a.secondhand.oauth_github.adapter.OauthAdapter;
-import team05a.secondhand.oauth_github.properties.OauthProperties;
-import team05a.secondhand.oauth_github.provider.OauthProvider;
+import team05a.secondhand.oauth.InMemoryProviderRepository;
+import team05a.secondhand.oauth.adapter.OauthAdapter;
+import team05a.secondhand.oauth.properties.OauthProperties;
+import team05a.secondhand.oauth.provider.OauthProvider;
 
 @Configuration
 @EnableConfigurationProperties(OauthProperties.class)
