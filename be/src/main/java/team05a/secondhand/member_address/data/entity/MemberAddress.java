@@ -13,7 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05a.secondhand.address.data.entity.Address;
-import team05a.secondhand.member.entity.Member;
+import team05a.secondhand.member.data.entity.Member;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

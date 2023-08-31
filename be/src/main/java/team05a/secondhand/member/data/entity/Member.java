@@ -1,10 +1,12 @@
-package team05a.secondhand.member.entity;
+package team05a.secondhand.member.data.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05a.secondhand.member_address.data.entity.MemberAddress;
+import team05a.secondhand.oauth_github.OauthAttributes;
 import team05a.secondhand.oauth_github.data.dto.MemberOauthRequest;
 
 @Getter
@@ -25,8 +28,8 @@ public class Member {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_id")
 	private Long id;
-	@Column(length = 10, nullable = false)
-	private String type;
+	@Enumerated(EnumType.STRING)
+	private OauthAttributes type;
 	@Column(length = 50, nullable = false)
 	private String email;
 	@Column(length = 50, nullable = false)
@@ -36,7 +39,7 @@ public class Member {
 	@OneToMany(mappedBy = "member")
 	private List<MemberAddress> memberAddresses = new ArrayList<>();
 
-	public Member(String type, String email, String nickname, String profileImgUrl) {
+	public Member(OauthAttributes type, String email, String nickname, String profileImgUrl) {
 		this.type = type;
 		this.email = email;
 		this.nickname = nickname;

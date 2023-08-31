@@ -21,4 +21,8 @@ public class LoginResponse {
 		this.tokens = tokens;
 		this.addresses = address;
 	}
+
+	public String createAuthorizationHeader() {
+		return "Bearer " + tokens.getAccessToken();
+	}
 }

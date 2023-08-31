@@ -3,16 +3,19 @@ package team05a.secondhand.oauth_github;
 import java.util.Arrays;
 import java.util.Map;
 
+import lombok.Getter;
+import team05a.secondhand.errors.errorcode.OauthErrorCode;
+import team05a.secondhand.errors.exception.IllegalOauthAttributesException;
 import team05a.secondhand.oauth_github.data.dto.MemberOauthRequest;
 
+@Getter
 public enum OauthAttributes {
 
 	GITHUB("github") {
 		@Override
 		public MemberOauthRequest of(String providerName, Map<String, Object> attributes) {
 			return new MemberOauthRequest((String)attributes.get("login"), (String)attributes.get("email"),
-				(String)attributes.get("avatar_url"),
-				providerName);
+				(String)attributes.get("avatar_url"), providerName);
 		}
 	};
 
@@ -28,6 +31,14 @@ public enum OauthAttributes {
 			.findFirst()
 			.orElseThrow(IllegalArgumentException::new)
 			.of(providerName, attributes);
+	}
+
+	public static OauthAttributes validateOauthAttributes(String type) {
+		try {
+			return OauthAttributes.valueOf(type.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new IllegalOauthAttributesException(OauthErrorCode.INVALID_OAUTH_ATTRIBUTES);
+		}
 	}
 
 	public abstract MemberOauthRequest of(String providerName, Map<String, Object> attributes);
