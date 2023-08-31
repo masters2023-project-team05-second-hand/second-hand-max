@@ -3,14 +3,7 @@ package team05a.secondhand.member.data.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,6 +15,11 @@ import team05a.secondhand.oauth_github.data.dto.MemberOauthRequest;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(uniqueConstraints = {
+		@UniqueConstraint(
+				name = "email_type_unique",
+				columnNames = {"email", "type"}
+		)})
 public class Member {
 
 	@Id

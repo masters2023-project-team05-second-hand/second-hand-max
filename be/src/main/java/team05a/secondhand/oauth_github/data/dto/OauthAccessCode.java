@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OauthAccessCodeRequest {
+public class OauthAccessCode {
 
 	private String accessCode;
 }

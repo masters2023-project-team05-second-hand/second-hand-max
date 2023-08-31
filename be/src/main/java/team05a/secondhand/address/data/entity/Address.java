@@ -19,6 +19,6 @@ public class Address {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "address_id")
 	private Long id;
-	@Column(length = 20, nullable = false)
+	@Column(length = 50, nullable = false)
 	private String name;
 }
