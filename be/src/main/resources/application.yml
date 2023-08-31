@@ -1,7 +1,11 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+<<<<<<< HEAD
     url: jdbc:mysql://localhost:3306/second_hand
+=======
+    url: jdbc:mysql://localhost:3308/second_hand
+>>>>>>> 42edf94 (build: 로컬 mysql 설정 #1)
     username: user
     password: admin
   jpa:
