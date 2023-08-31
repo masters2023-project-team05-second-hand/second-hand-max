@@ -1,4 +1,4 @@
-package team05a.secondhand.oauth_github.properties;
+package team05a.secondhand.oauth.properties;
 
 import java.util.HashMap;
 import java.util.Map;

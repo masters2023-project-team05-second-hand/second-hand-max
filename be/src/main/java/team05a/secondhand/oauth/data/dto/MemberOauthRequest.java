@@ -1,9 +1,9 @@
-package team05a.secondhand.oauth_github.data.dto;
+package team05a.secondhand.oauth.data.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team05a.secondhand.oauth_github.OauthAttributes;
+import team05a.secondhand.oauth.OauthAttributes;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

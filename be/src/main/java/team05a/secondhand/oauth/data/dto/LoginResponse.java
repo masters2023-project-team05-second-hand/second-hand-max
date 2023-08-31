@@ -1,4 +1,4 @@
-package team05a.secondhand.oauth_github.data.dto;
+package team05a.secondhand.oauth.data.dto;
 
 import java.util.List;
 

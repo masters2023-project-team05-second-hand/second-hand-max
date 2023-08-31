@@ -3,23 +3,32 @@ package team05a.secondhand.member.data.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05a.secondhand.member_address.data.entity.MemberAddress;
-import team05a.secondhand.oauth_github.OauthAttributes;
-import team05a.secondhand.oauth_github.data.dto.MemberOauthRequest;
+import team05a.secondhand.oauth.OauthAttributes;
+import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(uniqueConstraints = {
-		@UniqueConstraint(
-				name = "email_type_unique",
-				columnNames = {"email", "type"}
-		)})
+	@UniqueConstraint(
+		name = "email_type_unique",
+		columnNames = {"email", "type"}
+	)})
 public class Member {
 
 	@Id
