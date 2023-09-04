@@ -43,7 +43,6 @@ public class OauthController {
 		LoginResponse loginResponse = oauthService.login(memberOauthRequest);
 		return ResponseEntity.ok()
 			.header(HttpHeaders.AUTHORIZATION, loginResponse.createAuthorizationHeader())
-			.header(HttpHeaders.SET_COOKIE, loginResponse.getTokens().createRefreshToken())
 			.body(loginResponse);
 	}
 
