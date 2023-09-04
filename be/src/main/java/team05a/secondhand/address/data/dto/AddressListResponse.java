@@ -13,15 +13,15 @@ import team05a.secondhand.address.data.entity.Address;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AddressListResponse {
 
-	private List<Address> addresses;
+	private List<ListAddressResponse> addresses;
 	private boolean hasNext;
 
-	public AddressListResponse(List<Address> addresses, boolean hasNext) {
+	public AddressListResponse(List<ListAddressResponse> addresses, boolean hasNext) {
 		this.addresses = addresses;
 		this.hasNext = hasNext;
 	}
 
 	public static AddressListResponse from(Slice<Address> addresses) {
-		return new AddressListResponse(addresses.toList(), addresses.hasNext());
+		return new AddressListResponse(ListAddressResponse.from(addresses.toList()), addresses.hasNext());
 	}
 }
