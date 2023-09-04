@@ -13,7 +13,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 @Component
-public class JwtTokenProvider {
+public class 	JwtTokenProvider {
 
 	@Value("${jwt.token.access-expiration-time}")
 	private long accessTokenExpirationTime;
