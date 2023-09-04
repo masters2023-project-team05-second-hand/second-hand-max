@@ -10,12 +10,11 @@ import org.springframework.data.domain.Pageable;
 
 import team05a.secondhand.IntegrationTestSupport;
 import team05a.secondhand.address.data.dto.AddressListResponse;
-import team05a.secondhand.address.repository.AddressRepository;
 
 class AddressServiceTest extends IntegrationTestSupport {
 
 	@Autowired
-	private AddressRepository addressRepository;
+	private AddressService addressService;
 
 	@DisplayName("동네 목록을 조회한다.")
 	@Test
@@ -24,7 +23,7 @@ class AddressServiceTest extends IntegrationTestSupport {
 		int page = 0;
 		int size = 10;
 		Pageable pageable = PageRequest.of(page, size);
-		AddressListResponse response = AddressListResponse.from(addressRepository.findAll(pageable));
+		AddressListResponse response = addressService.findAll(pageable);
 
 		// then
 		assertThat(response.getAddresses().get(0).getId()).isEqualTo(1);

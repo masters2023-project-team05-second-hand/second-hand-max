@@ -9,9 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import team05a.secondhand.address.controller.AddressController;
 import team05a.secondhand.address.service.AddressService;
+import team05a.secondhand.category.controller.CategoryController;
+import team05a.secondhand.category.service.CategoryService;
 
 @WebMvcTest(controllers = {
-	AddressController.class
+	AddressController.class,
+	CategoryController.class
 })
 public abstract class ControllerTestSupport {
 
@@ -21,4 +24,6 @@ public abstract class ControllerTestSupport {
 	protected ObjectMapper objectMapper;
 	@MockBean
 	protected AddressService addressService;
+	@MockBean
+	protected CategoryService categoryService;
 }

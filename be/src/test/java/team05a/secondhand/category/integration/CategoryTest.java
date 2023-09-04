@@ -1,4 +1,4 @@
-package team05a.secondhand.address.integration;
+package team05a.secondhand.category.integration;
 
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -10,33 +10,26 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import team05a.secondhand.IntegrationTestSupport;
 
-public class AddressTest extends IntegrationTestSupport {
+public class CategoryTest extends IntegrationTestSupport {
 
-	@DisplayName("동네 목록 조회를 한다.")
+	@DisplayName("카테고리 목록 조회를 한다.")
 	@Test
 	void findAllTest() {
-		// given
-		int page = 0;
-		int size = 10;
-
-		// when
-		var response = findAll(page, size);
+		// given & when
+		var response = findAll();
 
 		// then
 		SoftAssertions.assertSoftly(softAssertions -> {
 			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getString("addresses")).isNotEmpty();
-			softAssertions.assertThat(response.jsonPath().getBoolean("hasNext")).isNotNull();
+			softAssertions.assertThat(response.jsonPath().getString("id")).isNotEmpty();
 		});
 	}
 
-	private ExtractableResponse<Response> findAll(int page, int size) {
+	private ExtractableResponse<Response> findAll() {
 		return RestAssured
 			.given().log().all()
-			.queryParam("page", page)
-			.queryParam("size", size)
 			.when()
-			.get("/api/addresses")
+			.get("/api/categories")
 			.then().log().all()
 			.extract();
 	}

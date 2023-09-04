@@ -1,4 +1,4 @@
-package team05a.secondhand.address.data.entity;
+package team05a.secondhand.category.data.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,12 +13,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Address {
+public class Category {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "address_id")
+	@Column(name = "category_id")
 	private Long id;
-	@Column(length = 50, nullable = false)
+	@Column(length = 10, nullable = false)
 	private String name;
+	@Column(length = 50)
+	private String ImgUrl;
 }
