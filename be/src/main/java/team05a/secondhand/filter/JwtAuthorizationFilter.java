@@ -89,7 +89,6 @@ public class JwtAuthorizationFilter implements Filter {
 
 	private void getId(String token) throws JsonProcessingException {
 		Claims claims = jwtProvider.getClaims(token);
-		String id = claims.get("id", String.class);
-		objectMapper.readValue(id, Long.class);
+		Long id = claims.get("memberId", Long.class);
 	}
 }
