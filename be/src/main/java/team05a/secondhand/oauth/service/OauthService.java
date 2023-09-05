@@ -1,5 +1,6 @@
 package team05a.secondhand.oauth.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team05a.secondhand.jwt.Jwt;
@@ -12,20 +13,14 @@ import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
 
 import java.util.Map;
 
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class OauthService {
 
     private final MemberRepository memberRepository;
     private final MemberRefreshTokenRepository memberRefreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
-    public OauthService(MemberRepository memberRepository, MemberRefreshTokenRepository memberRefreshTokenRepository,
-                        JwtTokenProvider jwtTokenProvider) {
-        this.memberRepository = memberRepository;
-        this.memberRefreshTokenRepository = memberRefreshTokenRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
     public Jwt login(MemberOauthRequest memberOauthRequest) {
         Member member = save(memberOauthRequest);
