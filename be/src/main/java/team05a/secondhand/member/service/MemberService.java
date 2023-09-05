@@ -1,12 +1,12 @@
 package team05a.secondhand.member.service;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.json.BasicJsonParser;
-import org.springframework.boot.json.JsonParser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.address.repository.AddressRepository;
+import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.data.dto.MemberAddressResponse;
 import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
 import team05a.secondhand.member.data.dto.MemberResponse;
@@ -15,9 +15,7 @@ import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.member_address.data.entity.MemberAddress;
 import team05a.secondhand.member_address.repository.MemberAddressRepository;
 
-import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,6 +26,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
     private final MemberAddressRepository memberAddressRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public MemberResponse getMember(String accessToken) {
         long memberId = getMemberIdFromAccessToken(accessToken);
@@ -51,12 +50,9 @@ public class MemberService {
     }
 
     private long getMemberIdFromAccessToken(String accessToken) {
-        Base64.Decoder decoder = Base64.getUrlDecoder();
-        String payloadJwt = accessToken.split("\\.")[1];
-        JsonParser jsonParser = new BasicJsonParser();
-        String payload = new String(decoder.decode(payloadJwt));
-        Map<String, Object> payloadJson = jsonParser.parseMap(payload);
+        Claims claims = jwtTokenProvider.getClaims(accessToken);
+        Integer intMemberId = (Integer) claims.get("memberId");
 
-        return (long) payloadJson.get("memberId");
+        return intMemberId.longValue();
     }
 }
