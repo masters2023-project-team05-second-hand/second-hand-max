@@ -9,4 +9,6 @@ import team05a.secondhand.member_address.data.entity.MemberAddress;
 public interface MemberAddressRepository extends JpaRepository<MemberAddress, Long> {
 
 	List<MemberAddress> findByMemberId(Long id);
+
+	void deleteByMemberId(Long memberId);
 }
