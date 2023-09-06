@@ -2,14 +2,14 @@ package team05a.secondhand.errors.errorcode;
 
 import org.springframework.http.HttpStatus;
 
-public enum OauthErrorCode implements ErrorCode {
+public enum CommonErrorCode implements ErrorCode {
 
-	INVALID_OAUTH_ATTRIBUTES(HttpStatus.BAD_REQUEST, "유효하지 않은 provider 입니다.");
+	INVALID_NUMBER(HttpStatus.BAD_REQUEST, "숫자가 아닙니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;
 
-	OauthErrorCode(HttpStatus httpStatus, String message) {
+	CommonErrorCode(HttpStatus httpStatus, String message) {
 		this.httpStatus = httpStatus;
 		this.message = message;
 	}

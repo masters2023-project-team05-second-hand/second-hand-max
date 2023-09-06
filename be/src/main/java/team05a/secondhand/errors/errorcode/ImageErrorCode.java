@@ -2,14 +2,14 @@ package team05a.secondhand.errors.errorcode;
 
 import org.springframework.http.HttpStatus;
 
-public enum OauthErrorCode implements ErrorCode {
+public enum ImageErrorCode implements ErrorCode {
 
-	INVALID_OAUTH_ATTRIBUTES(HttpStatus.BAD_REQUEST, "유효하지 않은 provider 입니다.");
+	FILE_SIZE_EXCEED(HttpStatus.BAD_REQUEST, "업로드할 수 있는 파일의 최대 크기는 20MB 입니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;
 
-	OauthErrorCode(HttpStatus httpStatus, String message) {
+	ImageErrorCode(HttpStatus httpStatus, String message) {
 		this.httpStatus = httpStatus;
 		this.message = message;
 	}
