@@ -10,6 +10,7 @@ import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.category.data.dto.CategoryResponse;
 import team05a.secondhand.category.data.entity.Category;
 import team05a.secondhand.image.data.entity.ProductImage;
+import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.oauth.OauthAttributes;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
@@ -102,5 +103,18 @@ public class FixtureFactory {
 			.product(product)
 			.imageUrl("imageUrl")
 			.build());
+	}
+
+	public static List<Address> createAddresses() {
+		Address address1 = Address.builder()
+			.id(5L)
+			.name("서울특별시 강남구 논현2동")
+			.build();
+		Address address2 = Address.builder()
+			.id(6L)
+			.name("서울특별시 강남구 압구정동")
+			.build();
+
+		return List.of(address1, address2);
 	}
 }
