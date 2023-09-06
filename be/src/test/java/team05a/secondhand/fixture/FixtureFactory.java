@@ -13,6 +13,8 @@ import team05a.secondhand.image.data.entity.ProductImage;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.oauth.OauthAttributes;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
+import team05a.secondhand.product.data.dto.ProductIdResponse;
+import team05a.secondhand.product.data.dto.ProductUpdateRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.status.data.entity.Status;
 
@@ -60,7 +62,12 @@ public class FixtureFactory {
 	}
 
 	public static Member createMember() {
-		return new Member(OauthAttributes.GITHUB, "wis@naver.com", "wisdom", "imageUrl");
+		return Member.builder()
+			.type(OauthAttributes.GITHUB)
+			.email("wis@naver.com")
+			.nickname("wisdom")
+			.profileImgUrl("imageUrl")
+			.build();
 	}
 
 	public static Category createCategory() {
@@ -97,5 +104,29 @@ public class FixtureFactory {
 			.product(product)
 			.imageUrl("imageUrl")
 			.build());
+	}
+
+	public static ProductIdResponse createProductIdResponse() {
+		return ProductIdResponse.builder()
+			.productId(1L)
+			.build();
+	}
+
+	public static Product createProduct(Member member) {
+		return Product.builder()
+			.member(member)
+			.title("제목")
+			.content("내용")
+			.price("")
+			.thumbnailUrl("썸네일")
+			.build();
+	}
+
+	public static ProductUpdateRequest productUpdateRequest() {
+		return ProductUpdateRequest.builder()
+			.title("update")
+			.content("update")
+			.price("")
+			.build();
 	}
 }
