@@ -27,6 +27,14 @@ public class MemberController {
             .body(memberResponse);
     }
 
+    @GetMapping("/addresses")
+    public ResponseEntity<List<MemberAddressResponse>> getAddresses(@MemberId Long memberId) {
+        List<MemberAddressResponse> memberAddressResponses = memberService.getMemberAddress(memberId);
+
+        return ResponseEntity.ok()
+            .body(memberAddressResponses);
+    }
+
     @PutMapping("/addresses")
     public ResponseEntity<List<MemberAddressResponse>> updateAddresses(@MemberId Long memberId,
                                                                        @RequestBody MemberAddressUpdateRequest memberAddressUpdateRequest) {
