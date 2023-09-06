@@ -43,4 +43,10 @@ public class MemberService {
 
         return MemberAddressResponse.from(memberAddresses);
     }
+
+    public List<MemberAddressResponse> getMemberAddress(Long memberId) {
+        List<MemberAddress> memberAddresses = memberAddressRepository.findByMemberId(memberId);
+
+        return MemberAddressResponse.from(memberAddresses);
+    }
 }
