@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import team05a.secondhand.member.data.dto.MemberAddressResponse;
 import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
 import team05a.secondhand.member.data.dto.MemberResponse;
+import team05a.secondhand.member.resolver.MemberId;
 import team05a.secondhand.member.service.MemberService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,29 +20,20 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping
-    public ResponseEntity<MemberResponse> getMember(HttpServletRequest request) {
-        String accessToken = getAccessToken(request);
-        MemberResponse memberResponse = memberService.getMember(accessToken);
+    public ResponseEntity<MemberResponse> getMember(@MemberId Long memberId) {
+        MemberResponse memberResponse = memberService.getMember(memberId);
 
         return ResponseEntity.ok()
-                .body(memberResponse);
+            .body(memberResponse);
     }
 
     @PutMapping("/addresses")
-    public ResponseEntity<List<MemberAddressResponse>> updateAddresses(HttpServletRequest httpServletRequest,
+    public ResponseEntity<List<MemberAddressResponse>> updateAddresses(@MemberId Long memberId,
                                                                        @RequestBody MemberAddressUpdateRequest memberAddressUpdateRequest) {
-        String accessToken = getAccessToken(httpServletRequest);
-        List<MemberAddressResponse> memberAddressResponses = memberService.updateMemberAddresses(accessToken,
-                memberAddressUpdateRequest);
+        List<MemberAddressResponse> memberAddressResponses = memberService.updateMemberAddresses(memberId,
+            memberAddressUpdateRequest);
 
         return ResponseEntity.ok()
-                .body(memberAddressResponses);
+            .body(memberAddressResponses);
     }
-
-    private String getAccessToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-
-        return authorizationHeader.replaceAll("^Bearer( )*", "");
-    }
-
 }
