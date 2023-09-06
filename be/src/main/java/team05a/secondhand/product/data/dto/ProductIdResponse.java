@@ -4,16 +4,16 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ProductCreateResponse {
+public class ProductIdResponse {
 
 	private final Long productId;
 
 	@Builder
-	private ProductCreateResponse(Long productId) {
+	private ProductIdResponse(Long productId) {
 		this.productId = productId;
 	}
 
-	public static ProductCreateResponse from(Long id) {
-		return new ProductCreateResponse(id);
+	public static ProductIdResponse from(Long id) {
+		return new ProductIdResponse(id);
 	}
 }
