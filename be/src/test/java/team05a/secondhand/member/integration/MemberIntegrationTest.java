@@ -10,6 +10,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
+import team05a.secondhand.member.data.entity.Member;
+import team05a.secondhand.member.repository.MemberRepository;
+import team05a.secondhand.oauth.OauthAttributes;
 
 import java.util.List;
 import java.util.Map;
@@ -27,12 +30,21 @@ public class MemberIntegrationTest {
     private MockMvc mockMvc;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Test
     @DisplayName("멤버의 주소를 업데이트한다.")
     void updateMemberAddress() throws Exception {
         //given
-        String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", 1L));
+        Member member = Member.builder()
+                .profileImgUrl("profile")
+                .email("email")
+                .nickname("nickname")
+                .type(OauthAttributes.GITHUB)
+                .build();
+        memberRepository.save(member);
+        String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
         MemberAddressUpdateRequest request = MemberAddressUpdateRequest.builder()
                 .addressIds(List.of(5L, 10L))
                 .build();
