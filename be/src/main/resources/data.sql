@@ -1,3 +1,8 @@
+INSERT INTO status (name)
+VALUES ("판매중"),
+       ("예약중"),
+       ("판매완료");
+
 INSERT INTO category (name, img_url)
 VALUES ("기타 중고물품", "https://i.ibb.co/tCyMPf5/etc.png"),
        ("인기매물", "https://i.ibb.co/LSkHKbL/star.png"),

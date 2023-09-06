@@ -9,10 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import team05a.secondhand.IntegrationTestSupport;
+import team05a.secondhand.AcceptanceTest;
 import team05a.secondhand.address.data.entity.Address;
 
-class AddressRepositoryTest extends IntegrationTestSupport {
+class AddressRepositoryTest extends AcceptanceTest {
 
 	@Autowired
 	private AddressRepository addressRepository;

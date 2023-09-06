@@ -7,11 +7,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.web.servlet.MockMvc;
 
-import team05a.secondhand.ControllerTestSupport;
+import team05a.secondhand.category.service.CategoryService;
 import team05a.secondhand.fixture.FixtureFactory;
+import team05a.secondhand.jwt.JwtTokenProvider;
 
-class CategoryControllerTest extends ControllerTestSupport {
+@WebMvcTest(controllers = {CategoryController.class})
+@Import(value = {JwtTokenProvider.class})
+class CategoryControllerTest {
+
+	@Autowired
+	protected MockMvc mockMvc;
+	@MockBean
+	protected CategoryService categoryService;
 
 	@DisplayName("카테고리 목록을 조회한다.")
 	@Test

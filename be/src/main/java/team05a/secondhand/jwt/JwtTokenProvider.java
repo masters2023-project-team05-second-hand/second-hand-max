@@ -58,4 +58,13 @@ public class 	JwtTokenProvider {
 			.parseClaimsJws(token)
 			.getBody();
 	}
+
+	public Long extractMemberId(String accessToken) {
+		return Jwts.parserBuilder()
+			.setSigningKey(key)
+			.build()
+			.parseClaimsJws(accessToken)
+			.getBody()
+			.get("memberId", Long.class);
+	}
 }

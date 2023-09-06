@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,11 @@ public class Category {
 	private String name;
 	@Column(length = 50)
 	private String ImgUrl;
+
+	@Builder
+	private Category(Long id, String name, String imgUrl) {
+		this.id = id;
+		this.name = name;
+		ImgUrl = imgUrl;
+	}
 }

@@ -8,10 +8,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import team05a.secondhand.IntegrationTestSupport;
+import team05a.secondhand.AcceptanceTest;
 import team05a.secondhand.category.data.dto.CategoryResponse;
 
-class CategoryRepositoryTest extends IntegrationTestSupport {
+class CategoryRepositoryTest extends AcceptanceTest {
 
 	@Autowired
 	private CategoryRepository categoryRepository;

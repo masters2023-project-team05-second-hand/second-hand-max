@@ -7,13 +7,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import team05a.secondhand.ControllerTestSupport;
+import team05a.secondhand.address.service.AddressService;
 import team05a.secondhand.fixture.FixtureFactory;
+import team05a.secondhand.jwt.JwtTokenProvider;
 
-class AddressControllerTest extends ControllerTestSupport {
+@WebMvcTest(controllers = {AddressController.class})
+@Import(value = {JwtTokenProvider.class})
+class AddressControllerTest {
+
+	@Autowired
+	protected MockMvc mockMvc;
+	@MockBean
+	protected AddressService addressService;
 
 	@DisplayName("동네 목록을 조회한다.")
 	@Test

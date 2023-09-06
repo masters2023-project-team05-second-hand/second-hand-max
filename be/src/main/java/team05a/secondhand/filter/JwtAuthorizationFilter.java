@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.PatternMatchUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
@@ -29,11 +28,9 @@ public class JwtAuthorizationFilter implements Filter {
 
 	private final String[] whiteListGetUris = new String[] {"/api/addresses", "/api/categories", "/api/products/*"};
 	private final JwtTokenProvider jwtProvider;
-	private final ObjectMapper objectMapper;
 
 	public JwtAuthorizationFilter(JwtTokenProvider jwtProvider, ObjectMapper objectMapper) {
 		this.jwtProvider = jwtProvider;
-		this.objectMapper = objectMapper;
 	}
 
 	@Override
@@ -87,7 +84,7 @@ public class JwtAuthorizationFilter implements Filter {
 		return authorization.substring(7);
 	}
 
-	private void getId(String token) throws JsonProcessingException {
+	private void getId(String token) {
 		Claims claims = jwtProvider.getClaims(token);
 		Long id = claims.get("memberId", Long.class);
 	}
