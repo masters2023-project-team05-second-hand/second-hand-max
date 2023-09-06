@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.RequiredArgsConstructor;
+import team05a.secondhand.jwt.Jwt;
 import team05a.secondhand.oauth.InMemoryProviderRepository;
 import team05a.secondhand.oauth.OauthAttributes;
-import team05a.secondhand.oauth.data.dto.LoginResponse;
 import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
 import team05a.secondhand.oauth.data.dto.OauthAccessCode;
 import team05a.secondhand.oauth.data.dto.OauthTokenResponse;
@@ -35,16 +35,16 @@ public class OauthController {
 	private final InMemoryProviderRepository inMemoryProviderRepository;
 
 	@PostMapping("/api/members/sign-in/{provider}")
-	public ResponseEntity<LoginResponse> login(@PathVariable String provider,
+	public ResponseEntity<Jwt> login(@PathVariable String provider,
 		@RequestBody OauthAccessCode oauthAccessCode) {
 		OauthProvider oauthProvider = inMemoryProviderRepository.findByProviderName(provider);
 		OauthTokenResponse oauthTokenResponse = getToken(oauthAccessCode.getAccessCode(), oauthProvider);
 		MemberOauthRequest memberOauthRequest = getMemberOauthRequest(provider, oauthTokenResponse, oauthProvider);
-		LoginResponse loginResponse = oauthService.login(memberOauthRequest);
+		Jwt jwt = oauthService.login(memberOauthRequest);
+
 		return ResponseEntity.ok()
-			.header(HttpHeaders.AUTHORIZATION, loginResponse.createAuthorizationHeader())
-			.header(HttpHeaders.SET_COOKIE, loginResponse.getTokens().createRefreshToken())
-			.body(loginResponse);
+			.header(HttpHeaders.AUTHORIZATION, jwt.createAuthorizationHeader())
+			.body(jwt);
 	}
 
 	private OauthTokenResponse getToken(String code, OauthProvider provider) {

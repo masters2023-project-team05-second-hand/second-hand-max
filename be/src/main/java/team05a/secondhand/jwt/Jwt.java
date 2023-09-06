@@ -28,4 +28,8 @@ public class Jwt {
 			+ refreshTokenExpirationTime
 			+ "; HttpOnly";
 	}
+
+	public String createAuthorizationHeader() {
+		return "Bearer " + accessToken;
+	}
 }
