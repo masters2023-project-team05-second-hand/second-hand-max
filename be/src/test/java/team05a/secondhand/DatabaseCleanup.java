@@ -10,12 +10,10 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.google.common.base.CaseFormat;
 
 @Service
-@ActiveProfiles("test")
 public class DatabaseCleanup implements InitializingBean {
 
 	private final List<String> whiteLists = List.of("category", "address", "status");

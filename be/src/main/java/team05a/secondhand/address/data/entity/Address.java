@@ -24,7 +24,7 @@ public class Address {
 	private String name;
 
 	@Builder
-	public Address(Long id, String name) {
+	private Address(Long id, String name) {
 		this.id = id;
 		this.name = name;
 	}
