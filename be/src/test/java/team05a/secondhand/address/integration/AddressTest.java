@@ -8,9 +8,8 @@ import org.springframework.http.HttpStatus;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import team05a.secondhand.IntegrationTestSupport;
 
-public class AddressTest extends IntegrationTestSupport {
+public class AddressTest {
 
 	@DisplayName("동네 목록 조회를 한다.")
 	@Test
