@@ -60,7 +60,12 @@ public class FixtureFactory {
 	}
 
 	public static Member createMember() {
-		return new Member(OauthAttributes.GITHUB, "wis@naver.com", "wisdom", "imageUrl");
+		return Member.builder()
+			.type(OauthAttributes.GITHUB)
+			.email("wis@naver.com")
+			.nickname("wisdom")
+			.profileImgUrl("imageUrl")
+			.build();
 	}
 
 	public static Category createCategory() {

@@ -20,6 +20,7 @@ import team05a.secondhand.fixture.FixtureFactory;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.repository.MemberRepository;
 
+
 public class ProductTest extends AcceptanceTest {
 
 	@Autowired
