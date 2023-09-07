@@ -96,4 +96,8 @@ public class ImageService {
 	public String findThumbnail(Product product) {
 		return imageRepository.findFirstByProduct(product).getImageUrl();
 	}
+
+	public List<ProductImage> findAllByProduct(Product product) {
+		return imageRepository.findAllByProduct(product);
+	}
 }
