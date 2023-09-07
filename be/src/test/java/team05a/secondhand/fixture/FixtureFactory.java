@@ -28,6 +28,7 @@ import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
 import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateRequest;
+import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.status.data.entity.Status;
 
@@ -188,6 +189,12 @@ public class FixtureFactory {
 
 	public static ProductStatusResponse createProductStatusResponse() {
 		return ProductStatusResponse.builder()
+			.statusId(1L)
+			.build();
+	}
+
+	public static ProductUpdateStatusRequest createProductUpdateStatusRequest() {
+		return ProductUpdateStatusRequest.builder()
 			.statusId(1L)
 			.build();
 	}

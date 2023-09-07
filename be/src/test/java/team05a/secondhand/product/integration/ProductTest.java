@@ -235,6 +235,42 @@ public class ProductTest extends AcceptanceTest {
 			.extract();
 	}
 
+	@DisplayName("상품의 상태를 수정한다.")
+	@Test
+	void updateProductStatus_success() throws IOException {
+		// given
+		Member member = singUp();
+		Product product = createProduct(member);
+
+		// when
+		var response = updateStatus(product, member);
+
+		// then
+		SoftAssertions.assertSoftly(softAssertions -> {
+			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+			softAssertions.assertThat(response.jsonPath().getLong("productId")).isNotNull();
+		});
+	}
+
+	private ExtractableResponse<Response> updateStatus(Product product, Member member) throws IOException {
+		return RestAssured
+			.given().log().all()
+			.pathParam("productId", product.getId())
+			.multiPart("newImages", File.createTempFile("update", "jpeg"), MediaType.IMAGE_JPEG_VALUE)
+			.multiPart("title", "title update")
+			.multiPart("content", "content update")
+			.multiPart("categoryId", 1)
+			.multiPart("addressId", 1)
+			.multiPart("price", "1000")
+			.multiPart("deletedImageIds", "")
+			.header(HttpHeaders.AUTHORIZATION,
+				"Bearer " + jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId())))
+			.when()
+			.patch("/api/products/{productId}")
+			.then().log().all()
+			.extract();
+	}
+
 	@DisplayName("상품을 등록 후 삭제한다.")
 	@Test
 	void delete_success() throws IOException {

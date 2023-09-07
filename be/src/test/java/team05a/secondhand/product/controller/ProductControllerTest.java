@@ -13,8 +13,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import team05a.secondhand.errors.handler.GlobalExceptionHandler;
 import team05a.secondhand.fixture.FixtureFactory;
@@ -22,6 +25,7 @@ import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.resolver.LoginArgumentResolver;
 import team05a.secondhand.product.data.dto.ProductStatusResponse;
+import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
 import team05a.secondhand.product.service.ProductService;
 
 @WebMvcTest(controllers = {ProductController.class})
@@ -30,6 +34,8 @@ class ProductControllerTest {
 
 	@Autowired
 	protected MockMvc mockMvc;
+	@Autowired
+	protected ObjectMapper objectMapper;
 	@MockBean
 	protected ProductService productService;
 	@MockBean
@@ -94,15 +100,18 @@ class ProductControllerTest {
 	void updateStatus() throws Exception {
 		// mocking
 		mockingMemberId();
+		ProductUpdateStatusRequest productUpdateStatusRequest = FixtureFactory.createProductUpdateStatusRequest();
 		ProductStatusResponse productStatusResponse = FixtureFactory.createProductStatusResponse();
 
 		// given
 		given(productService.updateStatus(any(), any(), any())).willReturn(productStatusResponse);
 
 		//when & then
-		mockMvc.perform(patch("/api/products/1/status"))
-			// .andExpect(status().isOk())
-			// .andExpect(jsonPath("$.statusId").exists())
+		mockMvc.perform(patch("/api/products/1/status")
+				.content(objectMapper.writeValueAsString(productUpdateStatusRequest))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.statusId").exists())
 			.andDo(print());
 	}
 
