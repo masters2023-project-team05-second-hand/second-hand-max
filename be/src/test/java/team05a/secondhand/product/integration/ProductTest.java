@@ -280,13 +280,9 @@ public class ProductTest extends AcceptanceTest {
 			productCreateRequest.toEntity(member, category, address, status, imageUrls.get(0)));
 		imageService.create(product, imageUrls);
 		return product;
-  }
-  
-	private Member signupAnotherMember() {
-		return memberRepository.save((FixtureFactory.createAnotherMember()));
 	}
 
-	private Product createProduct(Member member) {
-		return productRepository.save(FixtureFactory.createProduct(member));
+	private Member signupAnotherMember() {
+		return memberRepository.save((FixtureFactory.createAnotherMember()));
 	}
 }

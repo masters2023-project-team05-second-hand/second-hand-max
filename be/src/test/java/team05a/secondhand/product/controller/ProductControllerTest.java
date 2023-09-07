@@ -21,6 +21,7 @@ import team05a.secondhand.fixture.FixtureFactory;
 import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.resolver.LoginArgumentResolver;
+import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.service.ProductService;
 
 @WebMvcTest(controllers = {ProductController.class})
@@ -85,6 +86,23 @@ class ProductControllerTest {
 		mockMvc.perform(delete("/api/products/1"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.productId").exists())
+			.andDo(print());
+	}
+
+	@DisplayName("상품의 상태를 수정한다.")
+	@Test
+	void updateStatus() throws Exception {
+		// mocking
+		mockingMemberId();
+		ProductStatusResponse productStatusResponse = FixtureFactory.createProductStatusResponse();
+
+		// given
+		given(productService.updateStatus(any(), any(), any())).willReturn(productStatusResponse);
+
+		//when & then
+		mockMvc.perform(patch("/api/products/1/status"))
+			// .andExpect(status().isOk())
+			// .andExpect(jsonPath("$.statusId").exists())
 			.andDo(print());
 	}
 

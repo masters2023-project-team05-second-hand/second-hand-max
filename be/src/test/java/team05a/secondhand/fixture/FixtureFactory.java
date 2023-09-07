@@ -26,6 +26,7 @@ import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.oauth.OauthAttributes;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
+import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.status.data.entity.Status;
@@ -182,6 +183,12 @@ public class FixtureFactory {
 		return ProductImage.builder()
 			.product(product)
 			.imageUrl("https://50000eggplant-image/test.jpeg")
+			.build();
+	}
+
+	public static ProductStatusResponse createProductStatusResponse() {
+		return ProductStatusResponse.builder()
+			.statusId(1L)
 			.build();
 	}
 }
