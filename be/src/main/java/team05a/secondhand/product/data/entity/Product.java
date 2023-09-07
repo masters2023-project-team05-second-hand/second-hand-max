@@ -99,4 +99,8 @@ public class Product {
 		this.thumbnailUrl = thumbnailUrl;
 		return this;
 	}
+
+	public void modifyStatus(Status status) {
+		this.status = status;
+	}
 }

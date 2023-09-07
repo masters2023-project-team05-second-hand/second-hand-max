@@ -1,12 +1,12 @@
 package team05a.secondhand.image.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import team05a.secondhand.image.data.entity.ProductImage;
-
-import java.util.List;
+import team05a.secondhand.product.data.entity.Product;
 
 public interface ImageRepository extends JpaRepository<ProductImage, Long> {
 

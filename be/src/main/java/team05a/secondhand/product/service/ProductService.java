@@ -23,13 +23,13 @@ import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
 import team05a.secondhand.product.data.dto.ProductResponse;
+import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateRequest;
+import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
 import team05a.secondhand.status.data.entity.Status;
 import team05a.secondhand.status.repository.StatusRepository;
-
-import javax.annotation.PostConstruct;
 
 @Transactional
 @RequiredArgsConstructor
@@ -123,5 +123,15 @@ public class ProductService {
 		validateProductSeller(productId, memberId);
 		productRepository.deleteById(productId);
 		return ProductIdResponse.from(productId);
+	}
+
+	public ProductStatusResponse updateStatus(ProductUpdateStatusRequest productUpdateStatusRequest, Long productId,
+		Long memberId) {
+		validateProductSeller(productId, memberId);
+		Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
+		Status status = statusRepository.findById(productUpdateStatusRequest.getStatusId())
+			.orElseThrow(StatusNotFoundException::new);
+		product.modifyStatus(status);
+		return ProductStatusResponse.from(productUpdateStatusRequest.getStatusId());
 	}
 }
