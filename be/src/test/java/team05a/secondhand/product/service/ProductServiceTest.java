@@ -76,7 +76,7 @@ class ProductServiceTest {
 		ProductUpdateRequest productUpdateRequest = FixtureFactory.productUpdateRequest();
 		Product productResponse = FixtureFactory.createProductResponse();
 		List<String> imageUrls = List.of("imageUrl");
-		given(imageService.count(any())).willReturn(1L);
+		given(imageService.countImagesBy(any())).willReturn(1L);
 		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
 		given(productRepository.existsById(any())).willReturn(true);
 		given(memberRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createMember()));
@@ -141,7 +141,7 @@ class ProductServiceTest {
 		given(productRepository.existsById(any())).willReturn(true);
 		given(memberRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createMember()));
 		given(productRepository.existsByIdAndMember(any(), any())).willReturn(true);
-		given(imageService.count(any())).willReturn(1L);
+		given(imageService.countImagesBy(any())).willReturn(1L);
 		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
 		given(productRepository.findById(any())).willReturn(
 			Optional.ofNullable(FixtureFactory.createProductResponse()));
@@ -161,7 +161,7 @@ class ProductServiceTest {
 		given(productRepository.existsById(any())).willReturn(true);
 		given(memberRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createMember()));
 		given(productRepository.existsByIdAndMember(any(), any())).willReturn(true);
-		given(imageService.count(any())).willReturn(1L);
+		given(imageService.countImagesBy(any())).willReturn(1L);
 		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
 		given(productRepository.findById(any())).willReturn(
 			Optional.ofNullable(FixtureFactory.createProductResponse()));

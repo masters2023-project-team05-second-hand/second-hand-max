@@ -60,7 +60,7 @@ public class ProductService {
 	public ProductIdResponse update(ProductUpdateRequest productUpdateRequest, Long productId, Long memberId) {
 		validateProductSeller(productId, memberId);
 		imageService.deleteAllBy(productUpdateRequest.getDeletedImageIds());
-		Long imageCount = imageService.count(productId);
+		Long imageCount = imageService.countImagesBy(productId);
 		List<String> newImageUrls = imageService.uploadNew(imageCount, productUpdateRequest.getNewImages());
 		String thumbnailUrl = getThumbnailUrl(imageCount, newImageUrls);
 		Product updateProduct = updateProduct(productUpdateRequest, productId, thumbnailUrl);
@@ -86,18 +86,14 @@ public class ProductService {
 	}
 
 	private void validateProductSeller(Long productId, Long memberId) {
-		existProduct(productId);
-		Member member = existMember(memberId);
+		checkProduct(productId);
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 		if (!productRepository.existsByIdAndMember(productId, member)) {
 			throw new UnauthorizedProductModificationException();
 		}
 	}
 
-	private Member existMember(Long memberId) {
-		return memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-	}
-
-	private void existProduct(Long productId) {
+	private void checkProduct(Long productId) {
 		if (!productRepository.existsById(productId)) {
 			throw new ProductNotFoundException();
 		}

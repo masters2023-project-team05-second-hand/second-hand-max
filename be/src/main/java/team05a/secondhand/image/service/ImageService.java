@@ -82,7 +82,7 @@ public class ImageService {
 		}
 	}
 
-	public Long count(Long productId) {
+	public Long countImagesBy(Long productId) {
 		return imageRepository.countByProductId(productId);
 	}
 
