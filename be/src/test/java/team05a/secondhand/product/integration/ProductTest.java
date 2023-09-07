@@ -285,8 +285,4 @@ public class ProductTest extends AcceptanceTest {
 	private Member signupAnotherMember() {
 		return memberRepository.save((FixtureFactory.createAnotherMember()));
 	}
-
-	private Product createProduct(Member member) {
-		return productRepository.save(FixtureFactory.createProduct(member));
-	}
 }
