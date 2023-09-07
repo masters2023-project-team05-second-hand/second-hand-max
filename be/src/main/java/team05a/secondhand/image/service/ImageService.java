@@ -19,6 +19,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import lombok.RequiredArgsConstructor;
 import team05a.secondhand.errors.exception.ImageCountOutOfRangeException;
+import team05a.secondhand.errors.exception.ImageNotFoundException;
 import team05a.secondhand.errors.exception.ImageUploadFailedException;
 import team05a.secondhand.image.data.entity.ProductImage;
 import team05a.secondhand.image.repository.ImageRepository;
@@ -93,7 +94,9 @@ public class ImageService {
 		return upload(newImages);
 	}
 
-	public String findThumbnail(Product product) {
-		return imageRepository.findFirstByProduct(product).getImageUrl();
+	public String findThumbnail(Long productId) {
+		return imageRepository.findFirstByProductId(productId)
+			.orElseThrow(ImageNotFoundException::new)
+			.getImageUrl();
 	}
 }

@@ -3,6 +3,7 @@ package team05a.secondhand.product.controller;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +39,13 @@ public class ProductController {
 	public ResponseEntity<ProductIdResponse> update(@ModelAttribute @Valid ProductUpdateRequest productUpdateRequest,
 		@PathVariable Long productId, @MemberId Long memberId) {
 		ProductIdResponse productIdResponse = productService.update(productUpdateRequest, productId, memberId);
+		return ResponseEntity.ok()
+			.body(productIdResponse);
+	}
+
+	@DeleteMapping("/{productId}")
+	public ResponseEntity<ProductIdResponse> delete(@PathVariable Long productId, @MemberId Long memberId) {
+		ProductIdResponse productIdResponse = productService.delete(productId, memberId);
 		return ResponseEntity.ok()
 			.body(productIdResponse);
 	}
