@@ -1,12 +1,10 @@
 package team05a.secondhand.member.service;
 
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.address.repository.AddressRepository;
-import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.data.dto.MemberAddressResponse;
 import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
 import team05a.secondhand.member.data.dto.MemberResponse;
@@ -26,33 +24,29 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
     private final MemberAddressRepository memberAddressRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public MemberResponse getMember(String accessToken) {
-        long memberId = getMemberIdFromAccessToken(accessToken);
+    public MemberResponse getMember(Long memberId) {
         Optional<Member> member = memberRepository.findById(memberId);
 
         return member.map(MemberResponse::from).orElse(null);
     }
 
     @Transactional
-    public List<MemberAddressResponse> updateMemberAddresses(String accessToken,
+    public List<MemberAddressResponse> updateMemberAddresses(Long memberId,
                                                              MemberAddressUpdateRequest memberAddressUpdateRequest) {
-        long memberId = getMemberIdFromAccessToken(accessToken);
         memberAddressRepository.deleteByMemberId(memberId);
         Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
         List<Address> addresses = memberAddressUpdateRequest.getAddressIds().stream()
-                .map(id -> addressRepository.findById(id).orElseThrow(RuntimeException::new))
-                .collect(Collectors.toList());
+            .map(id -> addressRepository.findById(id).orElseThrow(RuntimeException::new))
+            .collect(Collectors.toList());
         List<MemberAddress> memberAddresses = memberAddressRepository.saveAll(MemberAddress.of(member, addresses));
 
         return MemberAddressResponse.from(memberAddresses);
     }
 
-    private long getMemberIdFromAccessToken(String accessToken) {
-        Claims claims = jwtTokenProvider.getClaims(accessToken);
-        Integer intMemberId = (Integer) claims.get("memberId");
+    public List<MemberAddressResponse> getMemberAddress(Long memberId) {
+        List<MemberAddress> memberAddresses = memberAddressRepository.findByMemberId(memberId);
 
-        return intMemberId.longValue();
+        return MemberAddressResponse.from(memberAddresses);
     }
 }

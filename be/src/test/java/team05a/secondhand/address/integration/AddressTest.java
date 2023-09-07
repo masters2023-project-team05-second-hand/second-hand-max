@@ -12,32 +12,32 @@ import team05a.secondhand.AcceptanceTest;
 
 public class AddressTest extends AcceptanceTest {
 
-	@DisplayName("동네 목록 조회를 한다.")
-	@Test
-	void findAllTest() {
-		// given
-		int page = 0;
-		int size = 10;
+    @DisplayName("동네 목록 조회를 한다.")
+    @Test
+    void findAllTest() {
+        // given
+        int page = 0;
+        int size = 10;
 
-		// when
-		var response = findAll(page, size);
+        // when
+        ExtractableResponse<Response> response = findAll(page, size);
 
-		// then
-		SoftAssertions.assertSoftly(softAssertions -> {
-			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getString("addresses")).isNotEmpty();
-			softAssertions.assertThat(response.jsonPath().getBoolean("hasNext")).isNotNull();
-		});
-	}
+        // then
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+            softAssertions.assertThat(response.jsonPath().getString("addresses")).isNotEmpty();
+            softAssertions.assertThat(response.jsonPath().getBoolean("hasNext")).isNotNull();
+        });
+    }
 
-	private ExtractableResponse<Response> findAll(int page, int size) {
-		return RestAssured
-			.given().log().all()
-			.queryParam("page", page)
-			.queryParam("size", size)
-			.when()
-			.get("/api/addresses")
-			.then().log().all()
-			.extract();
-	}
+    private ExtractableResponse<Response> findAll(int page, int size) {
+        return RestAssured
+            .given().log().all()
+            .queryParam("page", page)
+            .queryParam("size", size)
+            .when()
+            .get("/api/addresses")
+            .then().log().all()
+            .extract();
+    }
 }
