@@ -57,8 +57,7 @@ public class Product {
 	private String title;
 	@Lob
 	private String content;
-	@ColumnDefault("'가격 없음'")
-	private String price;
+	private Integer price;
 	@CreationTimestamp
 	private Timestamp createdTime;
 	@Column(length = 200, nullable = false)
@@ -68,7 +67,7 @@ public class Product {
 
 	@Builder
 	private Product(Long id, Member member, Category category, Address address, Status status, String title,
-		String content, String price, Timestamp createdTime, String thumbnailUrl, List<ProductImage> productImages) {
+		String content, Integer price, Timestamp createdTime, String thumbnailUrl, List<ProductImage> productImages) {
 		this.id = id;
 		this.member = member;
 		this.category = category;
@@ -76,17 +75,10 @@ public class Product {
 		this.status = status;
 		this.title = title;
 		this.content = content;
-		this.price = validPrice(price);
+		this.price = price;
 		this.createdTime = createdTime;
 		this.thumbnailUrl = thumbnailUrl;
 		this.productImages = productImages;
-	}
-
-	private String validPrice(String price) {
-		if (price.equals("null") || price.equals("")) {
-			return null;
-		}
-		return String.valueOf(Integer.parseInt(price));
 	}
 
 	public Product modify(ProductUpdateRequest productUpdateRequest, Category category, Address address,
@@ -95,7 +87,7 @@ public class Product {
 		this.address = address;
 		this.title = productUpdateRequest.getTitle();
 		this.content = productUpdateRequest.getContent();
-		this.price = validPrice(productUpdateRequest.getPrice());
+		this.price = productUpdateRequest.getPrice();
 		this.thumbnailUrl = thumbnailUrl;
 		return this;
 	}

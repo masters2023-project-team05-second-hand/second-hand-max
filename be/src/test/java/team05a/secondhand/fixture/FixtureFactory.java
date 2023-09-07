@@ -45,7 +45,6 @@ public class FixtureFactory {
         return Product.builder()
             .title("제목")
             .content("내용")
-            .price("")
             .thumbnailUrl("http://")
             .member(member)
             .build();
@@ -56,7 +55,6 @@ public class FixtureFactory {
             .id(1L)
             .title("제목")
             .content("내용")
-            .price("")
             .thumbnailUrl("http://")
             .build();
     }
@@ -65,7 +63,6 @@ public class FixtureFactory {
         return ProductCreateRequest.builder()
             .title("제목")
             .content("내용")
-            .price("")
             .images(List.of(getMultipartFile()))
             .categoryId(1L)
             .addressId(1L)
@@ -76,7 +73,6 @@ public class FixtureFactory {
         return ProductCreateRequest.builder()
             .title("제목")
             .content("내용")
-            .price("")
             .categoryId(1L)
             .addressId(1L)
             .build();
@@ -146,7 +142,6 @@ public class FixtureFactory {
         return ProductUpdateRequest.builder()
             .title("update")
             .content("update")
-            .price("")
             .build();
     }
 
