@@ -50,6 +50,86 @@ public class ProductTest extends AcceptanceTest {
 		});
 	}
 
+	@DisplayName("상품 판매자가 등록된 상품을 가져온다.")
+	@Test
+	void SellerReadsProduct() throws IOException {
+		// given
+		long memberId = singUp().getId();
+		long productId = create(memberId).jsonPath().getLong("productId");
+
+		// when
+		ExtractableResponse<Response> response = readWithToken(productId, memberId);
+
+		// then
+		SoftAssertions.assertSoftly(softAssertions -> {
+			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
+			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isTrue();
+
+		});
+	}
+
+	@DisplayName("상품 판매자가 아닌 멤버가 등록된 상품을 가져온다.")
+	@Test
+	void NotSellerMemberReadProduct() throws IOException {
+		// given
+		long sellerId = singUp().getId();
+		long memberId = signupAnotherMember().getId();
+		long productId = create(sellerId).jsonPath().getLong("productId");
+
+		// when
+		ExtractableResponse<Response> response = readWithToken(productId, memberId);
+
+		// then
+		SoftAssertions.assertSoftly(softAssertions -> {
+			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
+			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isFalse();
+
+		});
+	}
+
+	@DisplayName("토큰이 없어도 등록된 상품을 가져온다.")
+	@Test
+	void readProductWithoutToken() throws IOException {
+		// given
+		long memberId = singUp().getId();
+		long productId = create(memberId).jsonPath().getLong("productId");
+
+		// when
+		ExtractableResponse<Response> response = readWithoutToken(productId);
+
+		// then
+		SoftAssertions.assertSoftly(softAssertions -> {
+			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
+			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isFalse();
+
+		});
+	}
+
+	private ExtractableResponse<Response> readWithToken(Long productId, Long memberId) throws IOException {
+		return RestAssured
+			.given().log().all()
+			.pathParam("productId", productId)
+			.header(HttpHeaders.AUTHORIZATION,
+				"Bearer " + jwtTokenProvider.createAccessToken(Map.of("memberId", memberId)))
+			.when()
+			.get("/api/products/{productId}")
+			.then().log().all()
+			.extract();
+	}
+
+	private ExtractableResponse<Response> readWithoutToken(Long productId) throws IOException {
+		return RestAssured
+			.given().log().all()
+			.pathParam("productId", productId)
+			.when()
+			.get("/api/products/{productId}")
+			.then().log().all()
+			.extract();
+	}
+
 	private ExtractableResponse<Response> create(Long memberId) throws IOException {
 		return RestAssured
 			.given().log().all()
@@ -137,6 +217,10 @@ public class ProductTest extends AcceptanceTest {
 
 	private Member singUp() {
 		return memberRepository.save(FixtureFactory.createMember());
+	}
+
+	private Member signupAnotherMember() {
+		return memberRepository.save((FixtureFactory.createAnotherMember()));
 	}
 
 	private Product createProduct(Member member) {
