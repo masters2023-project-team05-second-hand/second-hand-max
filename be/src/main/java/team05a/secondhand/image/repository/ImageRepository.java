@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import team05a.secondhand.image.data.entity.ProductImage;
+import team05a.secondhand.product.data.entity.Product;
 
 import java.util.List;
 
