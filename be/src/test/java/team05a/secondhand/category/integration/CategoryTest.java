@@ -21,7 +21,7 @@ public class CategoryTest extends AcceptanceTest {
 		// then
 		SoftAssertions.assertSoftly(softAssertions -> {
 			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getString("categories.id")).isNotEmpty();
+			softAssertions.assertThat(response.jsonPath().getString("id")).isNotEmpty();
 		});
 	}
 
