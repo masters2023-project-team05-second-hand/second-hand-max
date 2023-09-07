@@ -158,7 +158,7 @@ public class ProductTest extends AcceptanceTest {
 			.multiPart("content", "content")
 			.multiPart("categoryId", 1)
 			.multiPart("addressId", 1)
-			.multiPart("price", "null")
+			.multiPart("price", "")
 			.header(HttpHeaders.AUTHORIZATION,
 				"Bearer " + jwtTokenProvider.createAccessToken(Map.of("memberId", memberId)))
 			.when()

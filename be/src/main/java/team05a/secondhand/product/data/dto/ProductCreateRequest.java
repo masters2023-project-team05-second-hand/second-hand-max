@@ -26,11 +26,11 @@ public class ProductCreateRequest {
 	@NotBlank(message = "내용은 필수입니다.")
 	@Size(min = 1, max = 10000, message = "내용은 1글자 이상, 10000글자 이하여야 합니다.")
 	private final String content;
-	private final String price;
+	private final Integer price;
 	private final List<MultipartFile> images;
 
 	@Builder
-	private ProductCreateRequest(Long categoryId, Long addressId, String title, String content, String price,
+	private ProductCreateRequest(Long categoryId, Long addressId, String title, String content, Integer price,
 		List<MultipartFile> images) {
 		this.categoryId = categoryId;
 		this.addressId = addressId;
