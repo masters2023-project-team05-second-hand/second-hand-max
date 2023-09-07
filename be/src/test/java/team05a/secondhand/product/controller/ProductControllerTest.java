@@ -72,6 +72,22 @@ class ProductControllerTest {
 			.andDo(print());
 	}
 
+	@DisplayName("상품을 삭제한다.")
+	@Test
+	void deleteProduct() throws Exception {
+		// mocking
+		mockingMemberId();
+
+		// given
+		given(productService.delete(any(), any())).willReturn(FixtureFactory.createProductIdResponse());
+
+		//when & then
+		mockMvc.perform(delete("/api/products/1"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.productId").exists())
+			.andDo(print());
+	}
+
 	private void mockingMemberId() {
 		mockMvc = MockMvcBuilders.standaloneSetup(new ProductController(productService, imageService))
 			.setControllerAdvice(new GlobalExceptionHandler())

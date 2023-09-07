@@ -1,8 +1,20 @@
 package team05a.secondhand.fixture;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.io.IOUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import team05a.secondhand.address.data.dto.AddressListResponse;
 import team05a.secondhand.address.data.dto.ListAddressResponse;
@@ -10,7 +22,6 @@ import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.category.data.dto.CategoryResponse;
 import team05a.secondhand.category.data.entity.Category;
 import team05a.secondhand.image.data.entity.ProductImage;
-import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.oauth.OauthAttributes;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
@@ -35,12 +46,13 @@ public class FixtureFactory {
 		return categories;
 	}
 
-	public static Product createProductRequest() {
+	public static Product createProductRequest(Member member) {
 		return Product.builder()
 			.title("제목")
 			.content("내용")
 			.price("")
 			.thumbnailUrl("http://")
+			.member(member)
 			.build();
 	}
 
@@ -54,11 +66,24 @@ public class FixtureFactory {
 			.build();
 	}
 
+	public static ProductCreateRequest productCreateRequestWithMultipartFile() throws IOException {
+		return ProductCreateRequest.builder()
+			.title("제목")
+			.content("내용")
+			.price("")
+			.images(List.of(getMultipartFile()))
+			.categoryId(1L)
+			.addressId(1L)
+			.build();
+	}
+
 	public static ProductCreateRequest productCreateRequest() {
 		return ProductCreateRequest.builder()
 			.title("제목")
 			.content("내용")
 			.price("")
+			.categoryId(1L)
+			.addressId(1L)
 			.build();
 	}
 
@@ -113,24 +138,14 @@ public class FixtureFactory {
 			.build();
 	}
 
-	public static Product createProduct(Member member) {
-		return Product.builder()
-			.member(member)
-			.title("제목")
-			.content("내용")
-			.price("")
-			.thumbnailUrl("썸네일")
-			.build();
-	}
-
 	public static ProductUpdateRequest productUpdateRequest() {
 		return ProductUpdateRequest.builder()
 			.title("update")
 			.content("update")
 			.price("")
 			.build();
-  }
-  
+	}
+
 	public static List<Address> createAddresses() {
 		Address address1 = Address.builder()
 			.id(5L)
@@ -142,5 +157,22 @@ public class FixtureFactory {
 			.build();
 
 		return List.of(address1, address2);
+	}
+
+	private static MultipartFile getMultipartFile() throws IOException {
+		File tempFile = File.createTempFile("create", "jpeg");
+		FileItem fileItem = new DiskFileItem("originFile", Files.probeContentType(tempFile.toPath()), false,
+			tempFile.getName(), (int)tempFile.length(), tempFile.getParentFile());
+		InputStream input = new FileInputStream(tempFile);
+		OutputStream os = fileItem.getOutputStream();
+		IOUtils.copy(input, os);
+		return new CommonsMultipartFile(fileItem);
+	}
+
+	public static ProductImage createProductImage(Product product) {
+		return ProductImage.builder()
+			.product(product)
+			.imageUrl("https://50000eggplant-image/test.jpeg")
+			.build();
 	}
 }

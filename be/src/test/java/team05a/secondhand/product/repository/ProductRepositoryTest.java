@@ -9,18 +9,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import team05a.secondhand.AcceptanceTest;
 import team05a.secondhand.fixture.FixtureFactory;
+import team05a.secondhand.image.repository.ImageRepository;
+import team05a.secondhand.member.data.entity.Member;
+import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.entity.Product;
 
 class ProductRepositoryTest extends AcceptanceTest {
 
 	@Autowired
 	private ProductRepository productRepository;
+	@Autowired
+	private MemberRepository memberRepository;
+	@Autowired
+	private ImageRepository imageRepository;
 
 	@DisplayName("상품을 등록한다.")
 	@Test
 	void save() {
 		//given & when
-		Product product = FixtureFactory.createProductRequest();
+		Member member = memberRepository.save(FixtureFactory.createMember());
+		Product product = FixtureFactory.createProductRequest(member);
 		Product save = productRepository.save(product);
 
 		//then
@@ -31,15 +39,33 @@ class ProductRepositoryTest extends AcceptanceTest {
 		});
 	}
 
-	@DisplayName("상품 아이디와 멤버로 상품이 존재하는지 확인한다.")
+	@DisplayName("상품 아이디와 사용자 아이디로 판매자가 사용자인지 확인한다.")
 	@Test
 	void existsByIdAndMember() {
 		//given & when
-		Product product = FixtureFactory.createProductRequest();
+		Member member = memberRepository.save(FixtureFactory.createMember());
+		Product product = FixtureFactory.createProductRequest(member);
 		Product save = productRepository.save(product);
-		boolean exists = productRepository.existsByIdAndMember(save.getId(), save.getMember());
+		boolean exists = productRepository.existsByIdAndMemberId(save.getId(), save.getMember().getId());
 
 		//then
 		assertThat(exists).isTrue();
+	}
+
+	@DisplayName("상품을 저장 후 삭제한다.")
+	@Test
+	void delete() {
+		//given
+		Member member = memberRepository.save(FixtureFactory.createMember());
+		Product product = FixtureFactory.createProductRequest(member);
+		Product save = productRepository.save(product);
+		imageRepository.save(FixtureFactory.createProductImage(product));
+
+		// when
+		productRepository.deleteById(save.getId());
+
+		//then
+		assertThat(productRepository.findById(save.getId()).isEmpty()).isTrue();
+		assertThat(imageRepository.findFirstByProductId(save.getId()).isEmpty()).isTrue();
 	}
 }

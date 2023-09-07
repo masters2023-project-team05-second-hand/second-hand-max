@@ -10,8 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import team05a.secondhand.AcceptanceTest;
+import team05a.secondhand.errors.exception.ImageNotFoundException;
 import team05a.secondhand.fixture.FixtureFactory;
 import team05a.secondhand.image.data.entity.ProductImage;
+import team05a.secondhand.member.data.entity.Member;
+import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
 
@@ -21,12 +24,15 @@ class ImageRepositoryTest extends AcceptanceTest {
 	private ImageRepository imageRepository;
 	@Autowired
 	private ProductRepository productRepository;
+	@Autowired
+	private MemberRepository memberRepository;
 
 	@DisplayName("상품 이미지를 등록한다.")
 	@Test
 	void save() {
 		//given & when
-		Product product = productRepository.save(FixtureFactory.createProductRequest());
+		Member member = memberRepository.save(FixtureFactory.createMember());
+		Product product = productRepository.save(FixtureFactory.createProductRequest(member));
 		List<ProductImage> productImages = FixtureFactory.createProductImageListRequest(product);
 		List<ProductImage> save = imageRepository.saveAll(productImages);
 
@@ -42,7 +48,8 @@ class ImageRepositoryTest extends AcceptanceTest {
 	@Test
 	void countByProductId() {
 		//given & when
-		Product product = productRepository.save(FixtureFactory.createProductRequest());
+		Member member = memberRepository.save(FixtureFactory.createMember());
+		Product product = productRepository.save(FixtureFactory.createProductRequest(member));
 		List<ProductImage> productImages = FixtureFactory.createProductImageListRequest(product);
 		List<ProductImage> save = imageRepository.saveAll(productImages);
 		Long count = imageRepository.countByProductId(product.getId());
@@ -55,10 +62,12 @@ class ImageRepositoryTest extends AcceptanceTest {
 	@Test
 	void findFirstByProduct() {
 		//given & when
-		Product product = productRepository.save(FixtureFactory.createProductRequest());
+		Member member = memberRepository.save(FixtureFactory.createMember());
+		Product product = productRepository.save(FixtureFactory.createProductRequest(member));
 		List<ProductImage> productImages = FixtureFactory.createProductImageListRequest(product);
 		List<ProductImage> save = imageRepository.saveAll(productImages);
-		ProductImage productImage = imageRepository.findFirstByProduct(product);
+		ProductImage productImage = imageRepository.findFirstByProductId(product.getId())
+			.orElseThrow(ImageNotFoundException::new);
 
 		//then
 		assertThat(productImage.getId()).isEqualTo(save.get(0).getId());
