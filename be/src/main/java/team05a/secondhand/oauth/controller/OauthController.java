@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+import team05a.secondhand.jwt.Jwt;
 import team05a.secondhand.oauth.InMemoryProviderRepository;
 import team05a.secondhand.oauth.OauthAttributes;
-import team05a.secondhand.oauth.data.dto.JwtResponse;
 import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
 import team05a.secondhand.oauth.data.dto.OauthAccessCode;
 import team05a.secondhand.oauth.data.dto.OauthTokenResponse;
@@ -34,16 +34,16 @@ public class OauthController {
     private final InMemoryProviderRepository inMemoryProviderRepository;
 
     @PostMapping("/api/members/sign-in/{provider}")
-    public ResponseEntity<JwtResponse> login(@PathVariable String provider,
-                                             @RequestBody OauthAccessCode oauthAccessCode) {
+    public ResponseEntity<Jwt> login(@PathVariable String provider,
+                                     @RequestBody OauthAccessCode oauthAccessCode) {
         OauthProvider oauthProvider = inMemoryProviderRepository.findByProviderName(provider);
         OauthTokenResponse oauthTokenResponse = getToken(oauthAccessCode.getAccessCode(), oauthProvider);
         MemberOauthRequest memberOauthRequest = getMemberOauthRequest(provider, oauthTokenResponse, oauthProvider);
-        JwtResponse jwtResponse = oauthService.login(memberOauthRequest);
+        Jwt jwt = oauthService.login(memberOauthRequest);
 
         return ResponseEntity.ok()
-            .header(HttpHeaders.AUTHORIZATION, jwtResponse.getTokens().createAuthorizationHeader())
-            .body(jwtResponse);
+            .header(HttpHeaders.AUTHORIZATION, jwt.createAuthorizationHeader())
+            .body(jwt);
     }
 
     private OauthTokenResponse getToken(String code, OauthProvider provider) {
