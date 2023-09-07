@@ -96,6 +96,15 @@ public class FixtureFactory {
 			.build();
 	}
 
+	public static Member createAnotherMember() {
+		return Member.builder()
+			.type(OauthAttributes.KAKAO)
+			.email("nag@google.com")
+			.nickname("nag")
+			.profileImgUrl("imageUrl")
+			.build();
+	}
+
 	public static Category createCategory() {
 		return Category.builder()
 			.id(1L)

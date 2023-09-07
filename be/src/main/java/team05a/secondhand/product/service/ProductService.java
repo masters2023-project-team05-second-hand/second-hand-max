@@ -16,16 +16,20 @@ import team05a.secondhand.errors.exception.MemberNotFoundException;
 import team05a.secondhand.errors.exception.ProductNotFoundException;
 import team05a.secondhand.errors.exception.StatusNotFoundException;
 import team05a.secondhand.errors.exception.UnauthorizedProductModificationException;
+import team05a.secondhand.image.data.entity.ProductImage;
 import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
+import team05a.secondhand.product.data.dto.ProductResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
 import team05a.secondhand.status.data.entity.Status;
 import team05a.secondhand.status.repository.StatusRepository;
+
+import javax.annotation.PostConstruct;
 
 @Transactional
 @RequiredArgsConstructor
@@ -55,6 +59,17 @@ public class ProductService {
 		Status status = statusRepository.findById(1L).orElseThrow(StatusNotFoundException::new);
 		return productRepository.save(
 			productCreateRequest.toEntity(member, category, address, status, imageUrls.get(0)));
+	}
+
+	public ProductResponse read(Long productId, Long memberId) {
+		if (memberId > 0) {
+			memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+		}
+		Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
+		List<ProductImage> productImages = imageService.findAllByProduct(product);
+		List<Status> statuses = statusRepository.findAll();
+
+		return ProductResponse.from(memberId, product, productImages, statuses);
 	}
 
 	public ProductIdResponse update(ProductUpdateRequest productUpdateRequest, Long productId, Long memberId) {

@@ -99,4 +99,8 @@ public class ImageService {
 			.orElseThrow(ImageNotFoundException::new)
 			.getImageUrl();
 	}
+
+	public List<ProductImage> findAllByProduct(Product product) {
+		return imageRepository.findAllByProduct(product);
+	}
 }
