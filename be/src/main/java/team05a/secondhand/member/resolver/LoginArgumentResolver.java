@@ -1,7 +1,5 @@
 package team05a.secondhand.member.resolver;
 
-import java.util.Objects;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -28,8 +26,10 @@ public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
 	@Override
 	public Long resolveArgument(@NonNull MethodParameter parameter, ModelAndViewContainer mavContainer,
 		NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-		String accessToken = Objects.requireNonNull(webRequest.getHeader(HttpHeaders.AUTHORIZATION))
-			.split("Bearer ")[1];
-		return jwtTokenProvider.extractMemberId(accessToken);
+		if (webRequest.getHeader(HttpHeaders.AUTHORIZATION) != null) {
+			String accessToken = webRequest.getHeader(HttpHeaders.AUTHORIZATION).split("Bearer ")[1];
+			return jwtTokenProvider.extractMemberId(accessToken);
+		}
+		return -1L;
 	}
 }
