@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import team05a.secondhand.category.data.dto.CategoriesResponse;
 import team05a.secondhand.category.data.dto.CategoryResponse;
 import team05a.secondhand.category.service.CategoryService;
 
@@ -17,7 +18,7 @@ public class CategoryController {
 	private final CategoryService categoryService;
 
 	@GetMapping("/api/categories")
-	public ResponseEntity<List<CategoryResponse>> retrieveList() {
+	public ResponseEntity<CategoriesResponse> retrieveList() {
 		return ResponseEntity.ok()
 			.body(categoryService.findAll());
 	}

@@ -35,8 +35,8 @@ class CategoryControllerTest {
 		//when & then
 		mockMvc.perform(get("/api/categories"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.[*].id").exists())
-			.andExpect(jsonPath("$.[*].name").exists())
+			.andExpect(jsonPath("$.categories.[*].id").exists())
+			.andExpect(jsonPath("$.categories.[*].name").exists())
 			.andDo(print());
 	}
 }

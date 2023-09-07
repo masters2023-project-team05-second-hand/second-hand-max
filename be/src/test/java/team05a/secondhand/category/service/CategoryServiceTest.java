@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import team05a.secondhand.category.data.dto.CategoriesResponse;
 import team05a.secondhand.category.data.dto.CategoryResponse;
 import team05a.secondhand.category.data.entity.Category;
 import team05a.secondhand.category.repository.CategoryRepository;
@@ -34,11 +35,11 @@ class CategoryServiceTest {
 		given(categoryRepository.findAll()).willReturn(categories);
 
 		// when
-		List<CategoryResponse> response = categoryService.findAll();
+		CategoriesResponse response = categoryService.findAll();
 
 		// then
-		assertThat(response.get(0).getId()).isEqualTo(category.getId());
-		assertThat(response.get(0).getName()).isEqualTo(category.getName());
-		assertThat(response.get(0).getImgUrl()).isEqualTo(category.getImgUrl());
+		assertThat(response.getCategories().get(0).getId()).isEqualTo(category.getId());
+		assertThat(response.getCategories().get(0).getName()).isEqualTo(category.getName());
+		assertThat(response.getCategories().get(0).getImgUrl()).isEqualTo(category.getImgUrl());
 	}
 }

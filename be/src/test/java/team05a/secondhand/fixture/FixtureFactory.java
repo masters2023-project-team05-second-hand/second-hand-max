@@ -19,6 +19,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import team05a.secondhand.address.data.dto.AddressListResponse;
 import team05a.secondhand.address.data.dto.ListAddressResponse;
 import team05a.secondhand.address.data.entity.Address;
+import team05a.secondhand.category.data.dto.CategoriesResponse;
 import team05a.secondhand.category.data.dto.CategoryResponse;
 import team05a.secondhand.category.data.entity.Category;
 import team05a.secondhand.image.data.entity.ProductImage;
@@ -39,11 +40,11 @@ public class FixtureFactory {
 		return new AddressListResponse(addresses, true);
 	}
 
-	public static List<CategoryResponse> createCategoryResponseList() {
+	public static CategoriesResponse createCategoryResponseList() {
 		List<CategoryResponse> categories = new ArrayList<>();
 		categories.add(new CategoryResponse(1L, "기타 중고물품", "https://i.ibb.co/tCyMPf5/etc.png"));
 		categories.add(new CategoryResponse(2L, "인기매물", "https://i.ibb.co/LSkHKbL/star.png"));
-		return categories;
+		return CategoriesResponse.builder().categories(categories).build();
 	}
 
 	public static Product createProductRequest(Member member) {
