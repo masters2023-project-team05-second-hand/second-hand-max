@@ -1,5 +1,7 @@
 package team05a.secondhand.product.repository;
 
+import static org.assertj.core.api.Assertions.*;
+
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,5 +29,17 @@ class ProductRepositoryTest extends AcceptanceTest {
 			softAssertions.assertThat(save.getContent()).isEqualTo(product.getContent());
 			softAssertions.assertThat(save.getThumbnailUrl()).isEqualTo(product.getThumbnailUrl());
 		});
+	}
+
+	@DisplayName("상품 아이디와 멤버로 상품이 존재하는지 확인한다.")
+	@Test
+	void existsByIdAndMember() {
+		//given & when
+		Product product = FixtureFactory.createProductRequest();
+		Product save = productRepository.save(product);
+		boolean exists = productRepository.existsByIdAndMember(save.getId(), save.getMember());
+
+		//then
+		assertThat(exists).isTrue();
 	}
 }

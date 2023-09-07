@@ -27,6 +27,7 @@ import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.category.data.entity.Category;
 import team05a.secondhand.image.data.entity.ProductImage;
 import team05a.secondhand.member.data.entity.Member;
+import team05a.secondhand.product.data.dto.ProductUpdateRequest;
 import team05a.secondhand.status.data.entity.Status;
 
 @Getter
@@ -85,5 +86,16 @@ public class Product {
 			return null;
 		}
 		return String.valueOf(Integer.parseInt(price));
+	}
+
+	public Product modify(ProductUpdateRequest productUpdateRequest, Category category, Address address,
+		String thumbnailUrl) {
+		this.category = category;
+		this.address = address;
+		this.title = productUpdateRequest.getTitle();
+		this.content = productUpdateRequest.getContent();
+		this.price = validPrice(productUpdateRequest.getPrice());
+		this.thumbnailUrl = thumbnailUrl;
+		return this;
 	}
 }

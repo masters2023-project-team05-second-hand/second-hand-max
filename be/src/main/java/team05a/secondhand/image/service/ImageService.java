@@ -3,6 +3,7 @@ package team05a.secondhand.image.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -73,5 +74,26 @@ public class ImageService {
 				.build())
 			.collect(Collectors.toList());
 		return imageRepository.saveAll(productImages);
+	}
+
+	public void deleteAllBy(List<Long> deletedImageIds) {
+		if (!deletedImageIds.isEmpty()) {
+			imageRepository.deleteAllByIdInBatch(deletedImageIds);
+		}
+	}
+
+	public Long countImagesBy(Long productId) {
+		return imageRepository.countByProductId(productId);
+	}
+
+	public List<String> uploadNew(Long imageCount, List<MultipartFile> newImages) {
+		if ((newImages == null && imageCount == 0) || (imageCount + Objects.requireNonNull(newImages).size()) > 10) {
+			throw new ImageCountOutOfRangeException();
+		}
+		return upload(newImages);
+	}
+
+	public String findThumbnail(Product product) {
+		return imageRepository.findFirstByProduct(product).getImageUrl();
 	}
 }

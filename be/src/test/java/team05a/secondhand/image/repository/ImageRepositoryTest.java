@@ -1,5 +1,7 @@
 package team05a.secondhand.image.repository;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.List;
 
 import org.assertj.core.api.SoftAssertions;
@@ -34,5 +36,32 @@ class ImageRepositoryTest extends AcceptanceTest {
 				.isEqualTo(productImages.get(0).getProduct().getTitle());
 			softAssertions.assertThat(save.get(0).getImageUrl()).isEqualTo(productImages.get(0).getImageUrl());
 		});
+	}
+
+	@DisplayName("상품 아이디로 이미지 개수를 가져온다.")
+	@Test
+	void countByProductId() {
+		//given & when
+		Product product = productRepository.save(FixtureFactory.createProductRequest());
+		List<ProductImage> productImages = FixtureFactory.createProductImageListRequest(product);
+		List<ProductImage> save = imageRepository.saveAll(productImages);
+		Long count = imageRepository.countByProductId(product.getId());
+
+		//then
+		assertThat(count).isEqualTo(save.size());
+	}
+
+	@DisplayName("상품으로 첫번째 이미지를 찾는다.")
+	@Test
+	void findFirstByProduct() {
+		//given & when
+		Product product = productRepository.save(FixtureFactory.createProductRequest());
+		List<ProductImage> productImages = FixtureFactory.createProductImageListRequest(product);
+		List<ProductImage> save = imageRepository.saveAll(productImages);
+		ProductImage productImage = imageRepository.findFirstByProduct(product);
+
+		//then
+		assertThat(productImage.getId()).isEqualTo(save.get(0).getId());
+		assertThat(productImage.getImageUrl()).isEqualTo(save.get(0).getImageUrl());
 	}
 }

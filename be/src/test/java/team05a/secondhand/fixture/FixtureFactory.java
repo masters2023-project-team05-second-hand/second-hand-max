@@ -14,6 +14,8 @@ import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.oauth.OauthAttributes;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
+import team05a.secondhand.product.data.dto.ProductIdResponse;
+import team05a.secondhand.product.data.dto.ProductUpdateRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.status.data.entity.Status;
 
@@ -105,6 +107,30 @@ public class FixtureFactory {
 			.build());
 	}
 
+	public static ProductIdResponse createProductIdResponse() {
+		return ProductIdResponse.builder()
+			.productId(1L)
+			.build();
+	}
+
+	public static Product createProduct(Member member) {
+		return Product.builder()
+			.member(member)
+			.title("제목")
+			.content("내용")
+			.price("")
+			.thumbnailUrl("썸네일")
+			.build();
+	}
+
+	public static ProductUpdateRequest productUpdateRequest() {
+		return ProductUpdateRequest.builder()
+			.title("update")
+			.content("update")
+			.price("")
+			.build();
+  }
+  
 	public static List<Address> createAddresses() {
 		Address address1 = Address.builder()
 			.id(5L)
