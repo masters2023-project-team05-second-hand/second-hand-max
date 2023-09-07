@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import team05a.secondhand.errors.ErrorResponse;
 import team05a.secondhand.errors.errorcode.ImageErrorCode;
 import team05a.secondhand.errors.exception.ImageCountOutOfRangeException;
+import team05a.secondhand.errors.exception.ImageNotFoundException;
 import team05a.secondhand.errors.exception.ImageUploadFailedException;
 
 @Slf4j
@@ -37,6 +38,15 @@ public class ImageExceptionHandler {
 	@ExceptionHandler(ImageUploadFailedException.class)
 	public ResponseEntity<ErrorResponse> handleImageUploadFailedException(ImageUploadFailedException e) {
 		log.warn("ImageUploadFailedException handling : {}", e.toString());
+
+		ErrorResponse response = ErrorResponse.from(e.getMessage());
+		return ResponseEntity.status(response.getStatus())
+			.body(response);
+	}
+
+	@ExceptionHandler(ImageNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleImageNotFoundException(ImageNotFoundException e) {
+		log.warn("ImageNotFoundException handling : {}", e.toString());
 
 		ErrorResponse response = ErrorResponse.from(e.getMessage());
 		return ResponseEntity.status(response.getStatus())

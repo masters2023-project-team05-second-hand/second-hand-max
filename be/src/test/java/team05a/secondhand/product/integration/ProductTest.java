@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.assertj.core.api.SoftAssertions;
@@ -18,12 +19,23 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import team05a.secondhand.AcceptanceTest;
+import team05a.secondhand.address.data.entity.Address;
+import team05a.secondhand.address.repository.AddressRepository;
+import team05a.secondhand.category.data.entity.Category;
+import team05a.secondhand.category.repository.CategoryRepository;
+import team05a.secondhand.errors.exception.AddressNotFoundException;
+import team05a.secondhand.errors.exception.CategoryNotFoundException;
+import team05a.secondhand.errors.exception.StatusNotFoundException;
 import team05a.secondhand.fixture.FixtureFactory;
+import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
+import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
+import team05a.secondhand.status.data.entity.Status;
+import team05a.secondhand.status.repository.StatusRepository;
 
 public class ProductTest extends AcceptanceTest {
 
@@ -33,6 +45,14 @@ public class ProductTest extends AcceptanceTest {
 	private MemberRepository memberRepository;
 	@Autowired
 	private ProductRepository productRepository;
+	@Autowired
+	private CategoryRepository categoryRepository;
+	@Autowired
+	private AddressRepository addressRepository;
+	@Autowired
+	private StatusRepository statusRepository;
+	@Autowired
+	private ImageService imageService;
 
 	@DisplayName("상품을 등록한다.")
 	@Test
@@ -215,10 +235,53 @@ public class ProductTest extends AcceptanceTest {
 			.extract();
 	}
 
+	@DisplayName("상품을 등록 후 삭제한다.")
+	@Test
+	void delete_success() throws IOException {
+		// given
+		Member member = singUp();
+		Product product = createProduct(member);
+
+		// when
+		var response = delete(product, member);
+
+		// then
+		SoftAssertions.assertSoftly(softAssertions -> {
+			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+			softAssertions.assertThat(response.jsonPath().getLong("productId")).isNotNull();
+		});
+	}
+
+	private ExtractableResponse<Response> delete(Product product, Member member) {
+		return RestAssured
+			.given().log().all()
+			.pathParam("productId", product.getId())
+			.header(HttpHeaders.AUTHORIZATION,
+				"Bearer " + jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId())))
+			.when()
+			.delete("/api/products/{productId}")
+			.then().log().all()
+			.extract();
+	}
+
 	private Member singUp() {
 		return memberRepository.save(FixtureFactory.createMember());
 	}
 
+	private Product createProduct(Member member) throws IOException {
+		ProductCreateRequest productCreateRequest = FixtureFactory.productCreateRequestWithMultipartFile();
+		List<String> imageUrls = imageService.upload(productCreateRequest.getImages());
+		Category category = categoryRepository.findById(productCreateRequest.getCategoryId())
+			.orElseThrow(CategoryNotFoundException::new);
+		Address address = addressRepository.findById(productCreateRequest.getAddressId())
+			.orElseThrow(AddressNotFoundException::new);
+		Status status = statusRepository.findById(1L).orElseThrow(StatusNotFoundException::new);
+		Product product = productRepository.save(
+			productCreateRequest.toEntity(member, category, address, status, imageUrls.get(0)));
+		imageService.create(product, imageUrls);
+		return product;
+  }
+  
 	private Member signupAnotherMember() {
 		return memberRepository.save((FixtureFactory.createAnotherMember()));
 	}

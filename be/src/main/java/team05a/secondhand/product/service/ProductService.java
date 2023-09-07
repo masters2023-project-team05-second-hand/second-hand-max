@@ -77,17 +77,17 @@ public class ProductService {
 		imageService.deleteAllBy(productUpdateRequest.getDeletedImageIds());
 		Long imageCount = imageService.countImagesBy(productId);
 		List<String> newImageUrls = imageService.uploadNew(imageCount, productUpdateRequest.getNewImages());
-		String thumbnailUrl = getThumbnailUrl(imageCount, newImageUrls);
+		String thumbnailUrl = getThumbnailUrl(imageCount, newImageUrls, productId);
 		Product updateProduct = updateProduct(productUpdateRequest, productId, thumbnailUrl);
 		imageService.create(updateProduct, newImageUrls);
 		return ProductIdResponse.from(updateProduct.getId());
 	}
 
-	private String getThumbnailUrl(Long imageCount, List<String> newImageUrls) {
+	private String getThumbnailUrl(Long imageCount, List<String> newImageUrls, Long productId) {
 		if (imageCount == 0) {
 			return newImageUrls.get(0);
 		}
-		return null;
+		return imageService.findThumbnail(productId);
 	}
 
 	private Product updateProduct(ProductUpdateRequest productUpdateRequest, Long productId, String thumbnailUrl) {
@@ -96,15 +96,20 @@ public class ProductService {
 			.orElseThrow(CategoryNotFoundException::new);
 		Address address = addressRepository.findById(productUpdateRequest.getAddressId())
 			.orElseThrow(AddressNotFoundException::new);
-		thumbnailUrl = (thumbnailUrl == null) ? imageService.findThumbnail(product) : thumbnailUrl;
 		return product.modify(productUpdateRequest, category, address, thumbnailUrl);
 	}
 
 	private void validateProductSeller(Long productId, Long memberId) {
 		checkProduct(productId);
-		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-		if (!productRepository.existsByIdAndMember(productId, member)) {
+		checkMember(memberId);
+		if (!productRepository.existsByIdAndMemberId(productId, memberId)) {
 			throw new UnauthorizedProductModificationException();
+		}
+	}
+
+	private void checkMember(Long memberId) {
+		if (!memberRepository.existsById(memberId)) {
+			throw new MemberNotFoundException();
 		}
 	}
 
@@ -112,5 +117,11 @@ public class ProductService {
 		if (!productRepository.existsById(productId)) {
 			throw new ProductNotFoundException();
 		}
+	}
+
+	public ProductIdResponse delete(Long productId, Long memberId) {
+		validateProductSeller(productId, memberId);
+		productRepository.deleteById(productId);
+		return ProductIdResponse.from(productId);
 	}
 }

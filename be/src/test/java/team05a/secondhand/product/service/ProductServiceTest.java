@@ -79,8 +79,8 @@ class ProductServiceTest {
 		given(imageService.countImagesBy(any())).willReturn(1L);
 		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
 		given(productRepository.existsById(any())).willReturn(true);
-		given(memberRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createMember()));
-		given(productRepository.existsByIdAndMember(any(), any())).willReturn(true);
+		given(memberRepository.existsById(any())).willReturn(true);
+		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
 		given(productRepository.findById(any())).willReturn(
 			Optional.ofNullable(FixtureFactory.createProductResponse()));
 		given(categoryRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createCategory()));
@@ -111,7 +111,7 @@ class ProductServiceTest {
 		// given
 		ProductUpdateRequest productUpdateRequest = FixtureFactory.productUpdateRequest();
 		given(productRepository.existsById(any())).willReturn(true);
-		given(memberRepository.findById(any())).willReturn(Optional.empty());
+		given(memberRepository.existsById(any())).willReturn(false);
 
 		// when & then
 		assertThatThrownBy(() -> productService.update(productUpdateRequest, 1L, 1L)).isInstanceOf(
@@ -124,8 +124,8 @@ class ProductServiceTest {
 		// given
 		ProductUpdateRequest productUpdateRequest = FixtureFactory.productUpdateRequest();
 		given(productRepository.existsById(any())).willReturn(true);
-		given(memberRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createMember()));
-		given(productRepository.existsByIdAndMember(any(), any())).willReturn(false);
+		given(memberRepository.existsById(any())).willReturn(true);
+		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(false);
 
 		// when & then
 		assertThatThrownBy(() -> productService.update(productUpdateRequest, 1L, 1L)).isInstanceOf(
@@ -139,8 +139,8 @@ class ProductServiceTest {
 		ProductUpdateRequest productUpdateRequest = FixtureFactory.productUpdateRequest();
 		List<String> imageUrls = List.of("imageUrl");
 		given(productRepository.existsById(any())).willReturn(true);
-		given(memberRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createMember()));
-		given(productRepository.existsByIdAndMember(any(), any())).willReturn(true);
+		given(memberRepository.existsById(any())).willReturn(true);
+		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
 		given(imageService.countImagesBy(any())).willReturn(1L);
 		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
 		given(productRepository.findById(any())).willReturn(
@@ -159,8 +159,8 @@ class ProductServiceTest {
 		ProductUpdateRequest productUpdateRequest = FixtureFactory.productUpdateRequest();
 		List<String> imageUrls = List.of("imageUrl");
 		given(productRepository.existsById(any())).willReturn(true);
-		given(memberRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createMember()));
-		given(productRepository.existsByIdAndMember(any(), any())).willReturn(true);
+		given(memberRepository.existsById(any())).willReturn(true);
+		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
 		given(imageService.countImagesBy(any())).willReturn(1L);
 		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
 		given(productRepository.findById(any())).willReturn(
@@ -171,5 +171,57 @@ class ProductServiceTest {
 		// when & then
 		assertThatThrownBy(() -> productService.update(productUpdateRequest, 1L, 1L)).isInstanceOf(
 			AddressNotFoundException.class);
+	}
+
+	@DisplayName("상품을 삭제한다.")
+	@Test
+	void delete_success() {
+		// given
+		Product productResponse = FixtureFactory.createProductResponse();
+		given(productRepository.existsById(any())).willReturn(true);
+		given(memberRepository.existsById(any())).willReturn(true);
+		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
+
+		//when
+		ProductIdResponse productIdResponse = productService.delete(productResponse.getId(), 1L);
+
+		//then
+		assertThat(productIdResponse.getProductId()).isEqualTo(productResponse.getId());
+	}
+
+	@DisplayName("상품 삭제 시 상품이 없을 경우 400 에러를 반환한다.")
+	@Test
+	void delete_fail_ProductNotFound() {
+		// given
+		given(productRepository.existsById(any())).willReturn(false);
+
+		//when & then
+		assertThatThrownBy(() -> productService.delete(1L, 1L)).isInstanceOf(
+			ProductNotFoundException.class);
+	}
+
+	@DisplayName("상품을 삭제 시 멤버가 없을 경우 400 에러를 반환한다.")
+	@Test
+	void delete_fail_MemberNotFound() {
+		// given
+		given(productRepository.existsById(any())).willReturn(true);
+		given(memberRepository.existsById(any())).willReturn(false);
+
+		// when & then
+		assertThatThrownBy(() -> productService.delete(1L, 1L)).isInstanceOf(
+			MemberNotFoundException.class);
+	}
+
+	@DisplayName("상품을 삭제 시 멤버가 다를 경우 400 에러를 반환한다.")
+	@Test
+	void delete_fail_UnauthorizedMember() {
+		// given
+		given(productRepository.existsById(any())).willReturn(true);
+		given(memberRepository.existsById(any())).willReturn(true);
+		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(false);
+
+		// when & then
+		assertThatThrownBy(() -> productService.delete(1L, 1L)).isInstanceOf(
+			UnauthorizedProductModificationException.class);
 	}
 }
