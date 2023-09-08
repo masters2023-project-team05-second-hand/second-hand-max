@@ -19,13 +19,13 @@ public class ProductDetailResponse {
     private final ProductAddressResponse productAddressResponse;
     private final String title;
     private final String contents;
-    private final String price;
+    private final Integer price;
     private final Timestamp createdTime;
     @JsonProperty("status")
     private final Long statusId;
 
     @Builder
-    public ProductDetailResponse(String seller, ProductCategoryResponse productCategoryResponse, ProductAddressResponse productAddressResponse, String title, String contents, String price, Timestamp createdTime, Long statusId) {
+    public ProductDetailResponse(String seller, ProductCategoryResponse productCategoryResponse, ProductAddressResponse productAddressResponse, String title, String contents, Integer price, Timestamp createdTime, Long statusId) {
         this.seller = seller;
         this.productCategoryResponse = productCategoryResponse;
         this.productAddressResponse = productAddressResponse;

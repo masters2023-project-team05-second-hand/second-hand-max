@@ -32,6 +32,6 @@ public class OauthService {
 
     private Member save(MemberOauthRequest memberOauthRequest) {
         return memberRepository.findByEmailAndType(memberOauthRequest.getEmail(), memberOauthRequest.getType())
-                .orElseGet(() -> memberRepository.save(Member.from(memberOauthRequest)));
+            .orElseGet(() -> memberRepository.save(Member.from(memberOauthRequest)));
     }
 }
