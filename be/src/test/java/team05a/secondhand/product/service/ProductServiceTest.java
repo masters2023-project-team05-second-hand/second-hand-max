@@ -19,15 +19,19 @@ import team05a.secondhand.errors.exception.AddressNotFoundException;
 import team05a.secondhand.errors.exception.CategoryNotFoundException;
 import team05a.secondhand.errors.exception.MemberNotFoundException;
 import team05a.secondhand.errors.exception.ProductNotFoundException;
+import team05a.secondhand.errors.exception.StatusNotFoundException;
 import team05a.secondhand.errors.exception.UnauthorizedProductModificationException;
 import team05a.secondhand.fixture.FixtureFactory;
 import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
+import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateRequest;
+import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
+import team05a.secondhand.status.data.entity.Status;
 import team05a.secondhand.status.repository.StatusRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -171,6 +175,43 @@ class ProductServiceTest {
 		// when & then
 		assertThatThrownBy(() -> productService.update(productUpdateRequest, 1L, 1L)).isInstanceOf(
 			AddressNotFoundException.class);
+	}
+
+	@DisplayName("상품의 상태를 수정한다.")
+	@Test
+	void updateProductStatus() {
+		// given
+		ProductUpdateStatusRequest productUpdateStatusRequest = FixtureFactory.createProductUpdateStatusRequest();
+		Status status = FixtureFactory.createStatus();
+		given(productRepository.existsById(any())).willReturn(true);
+		given(memberRepository.existsById(any())).willReturn(true);
+		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
+		given(productRepository.findById(any())).willReturn(
+			Optional.ofNullable(FixtureFactory.createProductResponse()));
+		given(statusRepository.findById(any())).willReturn(Optional.ofNullable(status));
+
+		//when
+		ProductStatusResponse productStatusResponse = productService.updateStatus(productUpdateStatusRequest, 1L, 1L);
+
+		//then
+		assertThat(productStatusResponse.getStatusId()).isEqualTo(productUpdateStatusRequest.getStatusId());
+	}
+
+	@DisplayName("상품의 상태 수정 시 응답받은 상태 아이디가 데이터베이스에 없는 경우 400 에러를 반환한다.")
+	@Test
+	void updateProductStatus_StatusNotFound() {
+		// given
+		ProductUpdateStatusRequest productUpdateStatusRequest = FixtureFactory.createProductUpdateStatusRequest();
+		given(productRepository.existsById(any())).willReturn(true);
+		given(memberRepository.existsById(any())).willReturn(true);
+		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
+		given(productRepository.findById(any())).willReturn(
+			Optional.ofNullable(FixtureFactory.createProductResponse()));
+		given(statusRepository.findById(any())).willReturn(Optional.empty());
+
+		//when & then
+		assertThatThrownBy(() -> productService.updateStatus(productUpdateStatusRequest, 1L, 1L)).isInstanceOf(
+			StatusNotFoundException.class);
 	}
 
 	@DisplayName("상품을 삭제한다.")
