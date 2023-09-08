@@ -7,19 +7,19 @@ import team05a.secondhand.address.data.entity.Address;
 @Getter
 public class ProductAddressResponse {
 
-    private Long id;
-    private String name;
+	private Long id;
+	private String name;
 
-    @Builder
-    private ProductAddressResponse(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+	@Builder
+	private ProductAddressResponse(Long id, String name) {
+		this.id = id;
+		this.name = name;
+	}
 
-    public static ProductAddressResponse from(Address address) {
-        return ProductAddressResponse.builder()
-            .id(address.getId())
-            .name(address.getName())
-            .build();
-    }
+	public static ProductAddressResponse from(Address address) {
+		return ProductAddressResponse.builder()
+			.id(address.getId())
+			.name(address.getName())
+			.build();
+	}
 }
