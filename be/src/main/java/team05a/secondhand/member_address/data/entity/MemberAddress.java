@@ -1,5 +1,8 @@
 package team05a.secondhand.member_address.data.entity;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,9 +18,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.member.data.entity.Member;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -46,11 +46,11 @@ public class MemberAddress {
 
 	public static List<MemberAddress> of(Member member, List<Address> addresses) {
 		List<MemberAddress> memberAddresses = addresses.stream()
-				.map(address -> MemberAddress.builder()
-						.member(member)
-						.address(address)
-						.build())
-				.collect(Collectors.toList());
+			.map(address -> MemberAddress.builder()
+				.member(member)
+				.address(address)
+				.build())
+			.collect(Collectors.toList());
 
 		memberAddresses.get(memberAddresses.size() - 1).isLastVisited = true;
 

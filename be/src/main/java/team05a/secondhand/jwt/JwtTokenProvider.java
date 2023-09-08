@@ -13,13 +13,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 @Component
-public class 	JwtTokenProvider {
+public class JwtTokenProvider {
 
+	private final Key key;
 	@Value("${jwt.token.access-expiration-time}")
 	private long accessTokenExpirationTime;
 	@Value("${jwt.token.refresh-expiration-time}")
 	private long refreshTokenExpirationTime;
-	private final Key key;
 
 	public JwtTokenProvider(@Value("${jwt.token.secret}") String secretKey) {
 		this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
