@@ -128,7 +128,7 @@ public class ProductTest extends AcceptanceTest {
 		});
 	}
 
-	private ExtractableResponse<Response> readWithToken(Long productId, Long memberId) throws IOException {
+	private ExtractableResponse<Response> readWithToken(Long productId, Long memberId) {
 		return RestAssured
 			.given().log().all()
 			.pathParam("productId", productId)
@@ -140,7 +140,7 @@ public class ProductTest extends AcceptanceTest {
 			.extract();
 	}
 
-	private ExtractableResponse<Response> readWithoutToken(Long productId) throws IOException {
+	private ExtractableResponse<Response> readWithoutToken(Long productId) {
 		return RestAssured
 			.given().log().all()
 			.pathParam("productId", productId)
