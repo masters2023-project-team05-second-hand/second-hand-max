@@ -34,11 +34,9 @@ jobs:
         cd ./be/src/main/resources
         touch ./application-release.yml
         echo "${{ secrets.APPLICATION_RELEASE }}" >> ./application-release.yaml
-      shell: bash
 
     - name: Build with Gradle
       run: ./be/./gradlew build
-      shell: bash
 
     - name: Make Dockerfile and Push
       run: |
@@ -46,7 +44,6 @@ jobs:
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker build -f dockerfile-api -t ${{ secrets.DOCKER_REPO }}/api .
         docker push ${{ secrets.DOCKER_REPO }}/api
-        shell: bash
 
     - name: Install Node.js and Npm
       uses: actions/setup-node@v2
@@ -58,7 +55,6 @@ jobs:
         cd ./fe
         touch .env
         echo "${{ secrets.ENV }}" >> .env
-      shell: bash
 
     - name: Make Dockerfile and Push
       run: |
