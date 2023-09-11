@@ -32,7 +32,7 @@ jobs:
       run: |
         cd ./be/src/main/resources
         touch ./application-release.yml
-        echo "${{ sercets.APPLICATION_RELEASE }}" | base64 --decode > ./application-release.yml
+        echo "${{ secrets.APPLICATION_RELEASE }}" | base64 --decode > ./application-release.yml
 
     - name: Build with Gradle
       run: |
