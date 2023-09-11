@@ -9,7 +9,7 @@ name: Java, React CI/CD Using Docker
 
 on:
   push:
-    branches: [ "release" ]
+    branches: [ release ]
     
 permissions:
   contents: read
