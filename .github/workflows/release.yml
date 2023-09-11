@@ -35,7 +35,9 @@ jobs:
         echo "${{ secrets.APPLICATION_RELEASE }}" >> ./application-release.yml
 
     - name: Build with Gradle
-      run: ./be/./gradlew build
+      run: |
+        cd ./be
+        ./gradlew build
 
     - name: Make Dockerfile and Push
       run: |
