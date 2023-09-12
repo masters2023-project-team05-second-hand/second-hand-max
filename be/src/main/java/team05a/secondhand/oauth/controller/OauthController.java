@@ -14,27 +14,32 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.RequiredArgsConstructor;
 import team05a.secondhand.jwt.Jwt;
+import team05a.secondhand.jwt.resolver.AccessToken;
+import team05a.secondhand.member.resolver.MemberId;
 import team05a.secondhand.oauth.InMemoryProviderRepository;
 import team05a.secondhand.oauth.OauthAttributes;
 import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
 import team05a.secondhand.oauth.data.dto.OauthAccessCode;
+import team05a.secondhand.oauth.data.dto.OauthRefreshTokenRequest;
 import team05a.secondhand.oauth.data.dto.OauthTokenResponse;
 import team05a.secondhand.oauth.provider.OauthProvider;
 import team05a.secondhand.oauth.service.OauthService;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class OauthController {
 
 	private final OauthService oauthService;
 	private final InMemoryProviderRepository inMemoryProviderRepository;
 
-	@PostMapping("/api/members/sign-in/{provider}")
+	@PostMapping("/members/sign-in/{provider}")
 	public ResponseEntity<Jwt> login(@PathVariable String provider,
 		@RequestBody OauthAccessCode oauthAccessCode) {
 		OauthProvider oauthProvider = inMemoryProviderRepository.findByProviderName(provider);
@@ -45,6 +50,14 @@ public class OauthController {
 		return ResponseEntity.ok()
 			.header(HttpHeaders.AUTHORIZATION, jwt.createAuthorizationHeader())
 			.body(jwt);
+	}
+
+	@PostMapping("/sign-out")
+	public ResponseEntity<Void> logout(@RequestBody OauthRefreshTokenRequest oauthRefreshTokenRequest,
+		@AccessToken String accessToken, @MemberId Long memberId) {
+		oauthService.logout(oauthRefreshTokenRequest, accessToken, memberId);
+
+		return ResponseEntity.ok().build();
 	}
 
 	private OauthTokenResponse getToken(String code, OauthProvider provider) {

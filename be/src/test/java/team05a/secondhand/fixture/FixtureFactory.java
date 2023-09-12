@@ -24,6 +24,8 @@ import team05a.secondhand.category.data.entity.Category;
 import team05a.secondhand.image.data.entity.ProductImage;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.oauth.OauthAttributes;
+import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
+import team05a.secondhand.oauth.data.dto.OauthRefreshTokenRequest;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
 import team05a.secondhand.product.data.dto.ProductStatusResponse;
@@ -191,6 +193,21 @@ public class FixtureFactory {
 	public static ProductUpdateStatusRequest createProductUpdateStatusRequest() {
 		return ProductUpdateStatusRequest.builder()
 			.statusId(1L)
+			.build();
+	}
+
+	public static MemberOauthRequest createMemberRequest() {
+		return MemberOauthRequest.builder()
+			.email("wis@naver.com")
+			.profileImgUrl("imageUrl")
+			.nickname("wisdom")
+			.type(OauthAttributes.GITHUB.name())
+			.build();
+	}
+
+	public static OauthRefreshTokenRequest createMockOauthRefreshTokenRequest() {
+		return OauthRefreshTokenRequest.builder()
+			.refreshToken("refreshToken")
 			.build();
 	}
 }
