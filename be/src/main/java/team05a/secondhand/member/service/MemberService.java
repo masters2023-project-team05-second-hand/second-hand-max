@@ -45,6 +45,7 @@ public class MemberService {
 		return MemberAddressResponse.from(memberAddresses);
 	}
 
+	@Transactional(readOnly = true)
 	public List<MemberAddressResponse> getMemberAddress(Long memberId) {
 		List<MemberAddress> memberAddresses = memberAddressRepository.findByMemberId(memberId);
 
