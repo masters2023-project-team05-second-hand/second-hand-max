@@ -53,7 +53,7 @@ public class OauthController {
 	}
 
 	@PostMapping("/sign-out")
-	public ResponseEntity<Jwt> logout(@RequestBody OauthRefreshTokenRequest oauthRefreshTokenRequest,
+	public ResponseEntity<Void> logout(@RequestBody OauthRefreshTokenRequest oauthRefreshTokenRequest,
 		@AccessToken String accessToken, @MemberId Long memberId) {
 		oauthService.logout(oauthRefreshTokenRequest, accessToken, memberId);
 
