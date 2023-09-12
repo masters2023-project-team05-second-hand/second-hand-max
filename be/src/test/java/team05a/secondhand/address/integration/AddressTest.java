@@ -3,18 +3,15 @@ package team05a.secondhand.address.integration;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import team05a.secondhand.AcceptanceTest;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class AddressTest {
+public class AddressTest extends AcceptanceTest {
 
-	@Transactional
 	@DisplayName("동네 목록 조회를 한다.")
 	@Test
 	void findAllTest() {

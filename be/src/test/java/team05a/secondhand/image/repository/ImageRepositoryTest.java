@@ -8,9 +8,8 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
+import team05a.secondhand.AcceptanceTest;
 import team05a.secondhand.errors.exception.ImageNotFoundException;
 import team05a.secondhand.fixture.FixtureFactory;
 import team05a.secondhand.image.data.entity.ProductImage;
@@ -19,8 +18,7 @@ import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class ImageRepositoryTest {
+class ImageRepositoryTest extends AcceptanceTest {
 
 	@Autowired
 	private ImageRepository imageRepository;
@@ -29,7 +27,6 @@ class ImageRepositoryTest {
 	@Autowired
 	private MemberRepository memberRepository;
 
-	@Transactional
 	@DisplayName("상품 이미지를 등록한다.")
 	@Test
 	void save() {
@@ -47,7 +44,6 @@ class ImageRepositoryTest {
 		});
 	}
 
-	@Transactional
 	@DisplayName("상품 아이디로 이미지 개수를 가져온다.")
 	@Test
 	void countByProductId() {
@@ -62,7 +58,6 @@ class ImageRepositoryTest {
 		assertThat(count).isEqualTo(save.size());
 	}
 
-	@Transactional
 	@DisplayName("상품으로 첫번째 이미지를 찾는다.")
 	@Test
 	void findFirstByProduct() {

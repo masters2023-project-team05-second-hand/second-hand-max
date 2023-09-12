@@ -5,21 +5,18 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
+import team05a.secondhand.AcceptanceTest;
 import team05a.secondhand.address.data.entity.Address;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class AddressRepositoryTest {
+class AddressRepositoryTest extends AcceptanceTest {
 
 	@Autowired
 	private AddressRepository addressRepository;
 
-	@Transactional
 	@DisplayName("동네 목록을 조회한다.")
 	@Test
 	void findAll() {
