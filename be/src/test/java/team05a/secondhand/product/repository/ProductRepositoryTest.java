@@ -6,15 +6,17 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import team05a.secondhand.AcceptanceTest;
 import team05a.secondhand.fixture.FixtureFactory;
 import team05a.secondhand.image.repository.ImageRepository;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.entity.Product;
 
-class ProductRepositoryTest extends AcceptanceTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+class ProductRepositoryTest {
 
 	@Autowired
 	private ProductRepository productRepository;
@@ -23,6 +25,7 @@ class ProductRepositoryTest extends AcceptanceTest {
 	@Autowired
 	private ImageRepository imageRepository;
 
+	@Transactional
 	@DisplayName("상품을 등록한다.")
 	@Test
 	void save() {
@@ -39,6 +42,7 @@ class ProductRepositoryTest extends AcceptanceTest {
 		});
 	}
 
+	@Transactional
 	@DisplayName("상품 아이디와 사용자 아이디로 판매자가 사용자인지 확인한다.")
 	@Test
 	void existsByIdAndMember() {
@@ -52,6 +56,7 @@ class ProductRepositoryTest extends AcceptanceTest {
 		assertThat(exists).isTrue();
 	}
 
+	@Transactional
 	@DisplayName("상품을 저장 후 삭제한다.")
 	@Test
 	void delete() {

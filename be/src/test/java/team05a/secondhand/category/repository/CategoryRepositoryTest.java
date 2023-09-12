@@ -7,15 +7,18 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import team05a.secondhand.AcceptanceTest;
 import team05a.secondhand.category.data.dto.CategoryResponse;
 
-class CategoryRepositoryTest extends AcceptanceTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+class CategoryRepositoryTest {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
 
+	@Transactional
 	@DisplayName("카테고리 목록을 조회한다.")
 	@Test
 	void findAll() {

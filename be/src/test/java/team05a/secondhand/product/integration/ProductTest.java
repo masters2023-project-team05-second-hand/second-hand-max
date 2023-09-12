@@ -11,14 +11,15 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import team05a.secondhand.AcceptanceTest;
 import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.address.repository.AddressRepository;
 import team05a.secondhand.category.data.entity.Category;
@@ -37,7 +38,8 @@ import team05a.secondhand.product.repository.ProductRepository;
 import team05a.secondhand.status.data.entity.Status;
 import team05a.secondhand.status.repository.StatusRepository;
 
-public class ProductTest extends AcceptanceTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+public class ProductTest {
 
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
@@ -54,6 +56,7 @@ public class ProductTest extends AcceptanceTest {
 	@Autowired
 	private ImageService imageService;
 
+	@Transactional
 	@DisplayName("상품을 등록한다.")
 	@Test
 	void createProduct_success() throws IOException {
@@ -70,6 +73,7 @@ public class ProductTest extends AcceptanceTest {
 		});
 	}
 
+	@Transactional
 	@DisplayName("상품 판매자가 등록된 상품을 가져온다.")
 	@Test
 	void SellerReadsProduct() throws IOException {
@@ -89,6 +93,7 @@ public class ProductTest extends AcceptanceTest {
 		});
 	}
 
+	@Transactional
 	@DisplayName("상품 판매자가 아닌 멤버가 등록된 상품을 가져온다.")
 	@Test
 	void NotSellerMemberReadProduct() throws IOException {
@@ -109,6 +114,7 @@ public class ProductTest extends AcceptanceTest {
 		});
 	}
 
+	@Transactional
 	@DisplayName("토큰이 없어도 등록된 상품을 가져온다.")
 	@Test
 	void readProductWithoutToken() throws IOException {
@@ -167,6 +173,7 @@ public class ProductTest extends AcceptanceTest {
 			.extract();
 	}
 
+	@Transactional
 	@DisplayName("상품을 수정한다.")
 	@Test
 	void updateProduct_success() throws IOException {
@@ -203,6 +210,7 @@ public class ProductTest extends AcceptanceTest {
 			.extract();
 	}
 
+	@Transactional
 	@DisplayName("상품 제목이 없을 경우 400 에러를 반환한다.")
 	@Test
 	void updateProduct_fail_NoTitle() throws IOException {
@@ -235,6 +243,7 @@ public class ProductTest extends AcceptanceTest {
 			.extract();
 	}
 
+	@Transactional
 	@DisplayName("상품의 상태를 수정한다.")
 	@Test
 	void updateProductStatus_success() throws IOException {
@@ -271,6 +280,7 @@ public class ProductTest extends AcceptanceTest {
 			.extract();
 	}
 
+	@Transactional
 	@DisplayName("상품을 등록 후 삭제한다.")
 	@Test
 	void delete_success() throws IOException {
