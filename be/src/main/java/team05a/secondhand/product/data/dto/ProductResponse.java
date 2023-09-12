@@ -19,24 +19,19 @@ public class ProductResponse {
 	@JsonProperty("product")
 	private final ProductDetailResponse productDetail;
 	private final List<ProductImageResponse> images;
-	private final List<StatusResponse> statuses;
 
 	@Builder
-	private ProductResponse(boolean isSeller, ProductDetailResponse productDetail, List<ProductImageResponse> images,
-		List<StatusResponse> statuses) {
+	private ProductResponse(boolean isSeller, ProductDetailResponse productDetail, List<ProductImageResponse> images) {
 		this.isSeller = isSeller;
 		this.productDetail = productDetail;
 		this.images = images;
-		this.statuses = statuses;
 	}
 
-	public static ProductResponse from(Long memberId, Product product, List<ProductImage> productImages,
-		List<Status> statuses) {
+	public static ProductResponse from(Long memberId, Product product, List<ProductImage> productImages) {
 		return ProductResponse.builder()
 			.isSeller(memberId.equals(product.getMember().getId()))
 			.productDetail(ProductDetailResponse.from(product))
 			.images(ProductImageResponse.from(productImages))
-			.statuses(StatusResponse.from(statuses))
 			.build();
 	}
 }

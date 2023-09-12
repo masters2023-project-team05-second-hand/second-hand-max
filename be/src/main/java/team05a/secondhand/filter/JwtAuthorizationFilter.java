@@ -31,7 +31,8 @@ import team05a.secondhand.member_refreshtoken.repository.MemberRefreshTokenRepos
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter implements Filter {
 
-	private final String[] whiteListGetUris = new String[] {"/api/addresses", "/api/categories", "/api/products/*"};
+	private final String[] whiteListGetUris = new String[] {"/api/addresses", "/api/categories", "/api/products/*",
+		"/api/statuses"};
 	private final JwtTokenProvider jwtProvider;
 	private final MemberRefreshTokenRepository memberRefreshTokenRepository;
 

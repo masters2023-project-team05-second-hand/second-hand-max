@@ -83,9 +83,7 @@ public class ProductTest extends AcceptanceTest {
 		// then
 		SoftAssertions.assertSoftly(softAssertions -> {
 			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
 			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isTrue();
-
 		});
 	}
 
@@ -103,9 +101,7 @@ public class ProductTest extends AcceptanceTest {
 		// then
 		SoftAssertions.assertSoftly(softAssertions -> {
 			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
 			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isFalse();
-
 		});
 	}
 
@@ -122,9 +118,7 @@ public class ProductTest extends AcceptanceTest {
 		// then
 		SoftAssertions.assertSoftly(softAssertions -> {
 			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
 			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isFalse();
-
 		});
 	}
 

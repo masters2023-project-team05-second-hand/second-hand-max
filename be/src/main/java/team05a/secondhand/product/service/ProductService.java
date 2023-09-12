@@ -67,9 +67,8 @@ public class ProductService {
 		}
 		Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
 		List<ProductImage> productImages = imageService.findAllByProduct(product);
-		List<Status> statuses = statusRepository.findAll();
 
-		return ProductResponse.from(memberId, product, productImages, statuses);
+		return ProductResponse.from(memberId, product, productImages);
 	}
 
 	public ProductIdResponse update(ProductUpdateRequest productUpdateRequest, Long productId, Long memberId) {
