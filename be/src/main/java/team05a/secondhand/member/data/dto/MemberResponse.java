@@ -1,6 +1,7 @@
 package team05a.secondhand.member.data.dto;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05a.secondhand.member.data.entity.Member;
@@ -9,15 +10,22 @@ import team05a.secondhand.member.data.entity.Member;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberResponse {
 
+	private Long id;
 	private String nickname;
 	private String profileImgUrl;
 
-	public MemberResponse(String nickname, String profileImgUrl) {
+	@Builder
+	private MemberResponse(Long id, String nickname, String profileImgUrl) {
+		this.id = id;
 		this.nickname = nickname;
 		this.profileImgUrl = profileImgUrl;
 	}
 
 	public static MemberResponse from(Member member) {
-		return new MemberResponse(member.getNickname(), member.getProfileImgUrl());
+		return MemberResponse.builder()
+			.id(member.getId())
+			.nickname(member.getNickname())
+			.profileImgUrl(member.getProfileImgUrl())
+			.build();
 	}
 }
