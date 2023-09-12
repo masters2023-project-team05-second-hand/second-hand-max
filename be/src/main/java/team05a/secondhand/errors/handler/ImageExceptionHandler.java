@@ -1,5 +1,6 @@
 package team05a.secondhand.errors.handler;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,7 +31,7 @@ public class ImageExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleImageCountOutOfRangeException(ImageCountOutOfRangeException e) {
 		log.warn("ImageCountOutOfRangeException handling : {}", e.toString());
 
-		ErrorResponse response = ErrorResponse.from(e.getMessage());
+		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST, e.getMessage());
 		return ResponseEntity.status(response.getStatus())
 			.body(response);
 	}
@@ -39,7 +40,7 @@ public class ImageExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleImageUploadFailedException(ImageUploadFailedException e) {
 		log.warn("ImageUploadFailedException handling : {}", e.toString());
 
-		ErrorResponse response = ErrorResponse.from(e.getMessage());
+		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST, e.getMessage());
 		return ResponseEntity.status(response.getStatus())
 			.body(response);
 	}
@@ -48,7 +49,7 @@ public class ImageExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleImageNotFoundException(ImageNotFoundException e) {
 		log.warn("ImageNotFoundException handling : {}", e.toString());
 
-		ErrorResponse response = ErrorResponse.from(e.getMessage());
+		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST, e.getMessage());
 		return ResponseEntity.status(response.getStatus())
 			.body(response);
 	}
