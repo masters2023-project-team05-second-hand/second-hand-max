@@ -72,7 +72,6 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           sudo docker rm -f $(docker ps -qa)
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           sudo docker pull ${{ secrets.DOCKER_REPO }}/api
           sudo docker pull ${{ secrets.DOCKER_REPO }}/web
           docker compose up -d
