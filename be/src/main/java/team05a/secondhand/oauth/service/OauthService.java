@@ -46,10 +46,10 @@ public class OauthService {
 
 	@Transactional
 	public void logout(OauthRefreshTokenRequest oauthRefreshTokenRequest, String accessToken, Long memberId) {
-		memberRefreshTokenRepository.set(ACCESS_TOKEN_PREFIX + accessToken, memberId,
-			jwtTokenProvider.getExpiration(accessToken));
 		String refreshToken = REFRESH_TOKEN_PREFIX + oauthRefreshTokenRequest.getRefreshToken();
 		validateRedisMemberId(refreshToken, memberId);
+		memberRefreshTokenRepository.set(ACCESS_TOKEN_PREFIX + accessToken, memberId,
+			jwtTokenProvider.getExpiration(accessToken));
 		memberRefreshTokenRepository.delete(refreshToken);
 	}
 
