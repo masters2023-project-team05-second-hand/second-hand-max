@@ -41,8 +41,8 @@ public class ProductController {
 	}
 
 	@GetMapping("/{productId}")
-	public ResponseEntity<ProductResponse> read(@PathVariable Long productId, @MemberId Long memberId) {
-		ProductResponse productResponse = productService.read(productId, memberId);
+	public ResponseEntity<ProductResponse> read(@PathVariable Long productId) {
+		ProductResponse productResponse = productService.read(productId);
 
 		return ResponseEntity.ok()
 			.body(productResponse);
