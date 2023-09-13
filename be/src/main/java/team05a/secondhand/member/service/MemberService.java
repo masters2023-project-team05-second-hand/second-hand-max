@@ -1,7 +1,6 @@
 package team05a.secondhand.member.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.address.repository.AddressRepository;
+import team05a.secondhand.errors.exception.MemberNotFoundException;
 import team05a.secondhand.member.data.dto.MemberAddressResponse;
 import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
 import team05a.secondhand.member.data.dto.MemberResponse;
@@ -27,9 +27,9 @@ public class MemberService {
 	private final MemberAddressRepository memberAddressRepository;
 
 	public MemberResponse getMember(Long memberId) {
-		Optional<Member> member = memberRepository.findById(memberId);
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 
-		return member.map(MemberResponse::from).orElse(null);
+		return MemberResponse.from(member);
 	}
 
 	@Transactional
@@ -45,6 +45,7 @@ public class MemberService {
 		return MemberAddressResponse.from(memberAddresses);
 	}
 
+	@Transactional(readOnly = true)
 	public List<MemberAddressResponse> getMemberAddress(Long memberId) {
 		List<MemberAddress> memberAddresses = memberAddressRepository.findByMemberId(memberId);
 

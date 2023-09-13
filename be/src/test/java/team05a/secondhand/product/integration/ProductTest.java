@@ -70,9 +70,9 @@ public class ProductTest extends AcceptanceTest {
 		});
 	}
 
-	@DisplayName("상품 판매자가 등록된 상품을 가져온다.")
+	@DisplayName("로그인 한 멤버가 등록된 상품을 가져온다.")
 	@Test
-	void SellerReadsProduct() throws IOException {
+	void readProductWithToken() throws IOException {
 		// given
 		long memberId = singUp().getId();
 		long productId = create(memberId).jsonPath().getLong("productId");
@@ -83,35 +83,14 @@ public class ProductTest extends AcceptanceTest {
 		// then
 		SoftAssertions.assertSoftly(softAssertions -> {
 			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
-			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isTrue();
-
+			softAssertions.assertThat(response.jsonPath().getBoolean("images")).isNotNull();
+			softAssertions.assertThat(response.jsonPath().getBoolean("product")).isNotNull();
 		});
 	}
 
-	@DisplayName("상품 판매자가 아닌 멤버가 등록된 상품을 가져온다.")
+	@DisplayName("로그인을 하지않은 방문자가 등록된 상품을 가져온다.")
 	@Test
-	void NotSellerMemberReadProduct() throws IOException {
-		// given
-		long sellerId = singUp().getId();
-		long memberId = signupAnotherMember().getId();
-		long productId = create(sellerId).jsonPath().getLong("productId");
-
-		// when
-		ExtractableResponse<Response> response = readWithToken(productId, memberId);
-
-		// then
-		SoftAssertions.assertSoftly(softAssertions -> {
-			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
-			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isFalse();
-
-		});
-	}
-
-	@DisplayName("토큰이 없어도 등록된 상품을 가져온다.")
-	@Test
-	void readProductWithoutToken() throws IOException {
+	void readsProductWithoutToken() throws IOException {
 		// given
 		long memberId = singUp().getId();
 		long productId = create(memberId).jsonPath().getLong("productId");
@@ -122,9 +101,8 @@ public class ProductTest extends AcceptanceTest {
 		// then
 		SoftAssertions.assertSoftly(softAssertions -> {
 			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
-			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isFalse();
-
+			softAssertions.assertThat(response.jsonPath().getBoolean("images")).isNotNull();
+			softAssertions.assertThat(response.jsonPath().getBoolean("product")).isNotNull();
 		});
 	}
 

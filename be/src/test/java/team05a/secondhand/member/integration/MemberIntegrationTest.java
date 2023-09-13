@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.fixture.FixtureFactory;
@@ -40,6 +41,7 @@ public class MemberIntegrationTest {
 	private MemberAddressRepository memberAddressRepository;
 
 	@Test
+	@Transactional
 	@DisplayName("멤버의 주소를 업데이트한다.")
 	void updateMemberAddress() throws Exception {
 		//given
@@ -71,6 +73,7 @@ public class MemberIntegrationTest {
 	}
 
 	@Test
+	@Transactional
 	@DisplayName("멤버의 주소를 가져온다.")
 	void getMemberAddress() throws Exception {
 		//given

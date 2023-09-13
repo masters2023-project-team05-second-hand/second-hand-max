@@ -12,13 +12,11 @@ public class MemberAddressResponse {
 
 	private final Long id;
 	private final String name;
-	private final boolean isLastVisited;
 
 	@Builder
-	private MemberAddressResponse(Long id, String name, boolean isLastVisited) {
+	private MemberAddressResponse(Long id, String name) {
 		this.id = id;
 		this.name = name;
-		this.isLastVisited = isLastVisited;
 	}
 
 	public static List<MemberAddressResponse> from(List<MemberAddress> memberAddresses) {
@@ -31,7 +29,6 @@ public class MemberAddressResponse {
 		return MemberAddressResponse.builder()
 			.id(memberAddress.getAddress().getId())
 			.name(memberAddress.getAddress().getName())
-			.isLastVisited(memberAddress.isLastVisited())
 			.build();
 	}
 }

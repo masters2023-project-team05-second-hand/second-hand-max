@@ -61,15 +61,11 @@ public class ProductService {
 			productCreateRequest.toEntity(member, category, address, status, imageUrls.get(0)));
 	}
 
-	public ProductResponse read(Long productId, Long memberId) {
-		if (memberId > 0) {
-			memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-		}
+	public ProductResponse read(Long productId) {
 		Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
 		List<ProductImage> productImages = imageService.findAllByProduct(product);
-		List<Status> statuses = statusRepository.findAll();
 
-		return ProductResponse.from(memberId, product, productImages, statuses);
+		return ProductResponse.from(product, productImages);
 	}
 
 	public ProductIdResponse update(ProductUpdateRequest productUpdateRequest, Long productId, Long memberId) {

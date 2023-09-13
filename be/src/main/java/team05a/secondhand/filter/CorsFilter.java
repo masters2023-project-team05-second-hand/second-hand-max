@@ -12,7 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpHeaders;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class CorsFilter implements Filter {
+
+	private final String allowedOrigin;
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
