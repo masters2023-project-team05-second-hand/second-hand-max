@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import team05a.secondhand.member.data.dto.MemberNicknameUpdateRequest;
 import team05a.secondhand.member_address.data.entity.MemberAddress;
 import team05a.secondhand.oauth.OauthAttributes;
 import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
@@ -53,6 +54,10 @@ public class Member {
 		this.email = email;
 		this.nickname = nickname;
 		this.profileImgUrl = profileImgUrl;
+	}
+
+	public void updateMemberNickname(MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
+		this.nickname = memberNicknameUpdateRequest.getNewNickname();
 	}
 
 	public static Member from(MemberOauthRequest memberOauthRequest) {

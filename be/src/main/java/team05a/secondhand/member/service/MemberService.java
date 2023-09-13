@@ -12,6 +12,7 @@ import team05a.secondhand.address.repository.AddressRepository;
 import team05a.secondhand.errors.exception.MemberNotFoundException;
 import team05a.secondhand.member.data.dto.MemberAddressResponse;
 import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
+import team05a.secondhand.member.data.dto.MemberNicknameUpdateRequest;
 import team05a.secondhand.member.data.dto.MemberResponse;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
@@ -43,6 +44,13 @@ public class MemberService {
 		List<MemberAddress> memberAddresses = memberAddressRepository.saveAll(MemberAddress.of(member, addresses));
 
 		return MemberAddressResponse.from(memberAddresses);
+	}
+
+	@Transactional
+	public void updateMemberNickname(Long memberId, MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+
+		member.updateMemberNickname(memberNicknameUpdateRequest);
 	}
 
 	@Transactional(readOnly = true)
