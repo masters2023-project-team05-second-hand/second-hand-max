@@ -6,19 +6,21 @@ import java.util.stream.Collectors;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import team05a.secondhand.product.data.entity.Product;
 
 @Getter
+@NoArgsConstructor
 public class ProductReadResponse {
 
-	private final Long productId;
-	private final Long sellerId;
-	private final String thumbnailUrl;
-	private final String title;
-	private final String addressName;
-	private final Timestamp createdTime;
-	private final Integer price;
-	private final Long statusId;
+	private Long productId;
+	private Long sellerId;
+	private String thumbnailUrl;
+	private String title;
+	private String addressName;
+	private Timestamp createdTime;
+	private Integer price;
+	private Long statusId;
 
 	@Builder
 	private ProductReadResponse(Long productId, Long sellerId, String thumbnailUrl, String title, String addressName,

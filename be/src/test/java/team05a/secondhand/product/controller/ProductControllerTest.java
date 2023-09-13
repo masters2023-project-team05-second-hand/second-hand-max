@@ -21,9 +21,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import team05a.secondhand.errors.handler.GlobalExceptionHandler;
 import team05a.secondhand.fixture.FixtureFactory;
-import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.resolver.LoginArgumentResolver;
+import team05a.secondhand.product.data.dto.ProductListResponse;
 import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
 import team05a.secondhand.product.service.ProductService;
@@ -38,8 +38,6 @@ class ProductControllerTest {
 	protected ObjectMapper objectMapper;
 	@MockBean
 	protected ProductService productService;
-	@MockBean
-	protected ImageService imageService;
 	@MockBean
 	protected LoginArgumentResolver loginArgumentResolver;
 
@@ -112,6 +110,26 @@ class ProductControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.statusId").exists())
+			.andDo(print());
+	}
+
+	@DisplayName("상품 목록을 조회한다.")
+	@Test
+	void readList() throws Exception {
+		// mocking
+		mockingMemberId();
+		ProductListResponse productListResponse = FixtureFactory.createProductListResponse();
+
+		// given
+		given(productService.readList(any(), any(), any(), any())).willReturn(productListResponse);
+
+		//when & then
+		mockMvc.perform(get("/api/products")
+				.queryParam("addressId", "1")
+				.queryParam("categoryId", "1")
+				.queryParam("cursor", "0")
+				.queryParam("size", "2"))
+			.andExpect(status().isOk())
 			.andDo(print());
 	}
 
