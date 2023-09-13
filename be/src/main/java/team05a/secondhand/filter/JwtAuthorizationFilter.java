@@ -23,7 +23,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import team05a.secondhand.errors.exception.AuthenticationHeaderNotFoundException;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member_refreshtoken.repository.MemberRefreshTokenRepository;
 
