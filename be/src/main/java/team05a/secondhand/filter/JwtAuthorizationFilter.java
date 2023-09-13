@@ -23,7 +23,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import team05a.secondhand.errors.exception.AuthenticationHeaderNotFoundException;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member_refreshtoken.repository.MemberRefreshTokenRepository;
 
@@ -31,7 +30,7 @@ import team05a.secondhand.member_refreshtoken.repository.MemberRefreshTokenRepos
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter implements Filter {
 
-	private final String[] whiteListGetUris = new String[] {"/api/addresses", "/api/categories", "/api/products/*"};
+	private final String[] whiteListGetUris = new String[] {"/api/addresses", "/api/categories", "/api/products*"};
 	private final JwtTokenProvider jwtProvider;
 	private final MemberRefreshTokenRepository memberRefreshTokenRepository;
 
@@ -48,7 +47,8 @@ public class JwtAuthorizationFilter implements Filter {
 		}
 
 		if (!isContainToken(httpServletRequest)) {
-			throw new AuthenticationHeaderNotFoundException();
+			httpServletResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "접근 권한 없음: 로그인이 필요합니다.");
+			return;
 		}
 
 		try {
