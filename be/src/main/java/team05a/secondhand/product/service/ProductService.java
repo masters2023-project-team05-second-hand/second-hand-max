@@ -138,6 +138,6 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public ProductListResponse readList(Long addressId, Long categoryId, Long cursor, Long size) {
-		return productRepository.findAllByAddressIdAndCategoryId(addressId, categoryId, cursor, size);
+		return productRepository.findList(addressId, categoryId, cursor, size);
 	}
 }

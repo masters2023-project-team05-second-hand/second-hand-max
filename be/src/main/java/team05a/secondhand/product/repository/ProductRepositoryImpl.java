@@ -18,8 +18,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public ProductListResponse findAllByAddressIdAndCategoryId(Long addressId, Long categoryId, Long cursor,
-		Long size) {
+	public ProductListResponse findList(Long addressId, Long categoryId, Long cursor, Long size) {
 		List<Product> products = jpaQueryFactory
 			.selectFrom(product)
 			.where(
