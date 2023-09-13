@@ -1,6 +1,7 @@
 package team05a.secondhand.member.integration;
 
 import static groovy.json.JsonOutput.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -70,6 +71,28 @@ public class MemberIntegrationTest {
 				jsonPath("$.length()").value(2),
 				jsonPath("$[0].name").value("서울특별시 강남구 논현2동")
 			);
+	}
+
+	@Test
+	@Transactional
+	@DisplayName("멤버의 닉네임을 변경한다.")
+	void updateMemberNickname() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+		String nicknameUpdateJson = "{\"newNickname\":\"thisIsNewOne\"}";
+
+		//when
+		ResultActions resultActions = mockMvc.perform(patch("/api/members/nickname")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(nicknameUpdateJson)
+			.header("Authorization", "Bearer " + accessToken));
+
+		// then
+		resultActions
+			.andExpect(status().isOk());
+		assertThat(member.getNickname()).isEqualTo("thisIsNewOne");
 	}
 
 	@Test
