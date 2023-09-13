@@ -36,6 +36,23 @@ public class ImageService {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucketName;
 
+	public String uploadProfileImg(MultipartFile newProfileImg) {
+		String imageName = newProfileImg.getOriginalFilename() + UUID.randomUUID();
+		ObjectMetadata objectMetadata = new ObjectMetadata();
+		objectMetadata.setContentType(newProfileImg.getContentType());
+		String newProfileImgUrl;
+		try {
+			amazonS3Client.putObject(
+				new PutObjectRequest(bucketName, imageName, newProfileImg.getInputStream(), objectMetadata)
+					.withCannedAcl(CannedAccessControlList.PublicRead));
+			newProfileImgUrl = amazonS3Client.getUrl(bucketName, imageName).toString();
+		} catch (IOException e) {
+			throw new ImageUploadFailedException();
+		}
+
+		return newProfileImgUrl;
+	}
+
 	public List<String> upload(List<MultipartFile> images) {
 		validateImageCount(images);
 

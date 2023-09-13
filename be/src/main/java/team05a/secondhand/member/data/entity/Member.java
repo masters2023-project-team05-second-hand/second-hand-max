@@ -55,6 +55,12 @@ public class Member {
 		this.profileImgUrl = profileImgUrl;
 	}
 
+	public String updateProfileImgUrl(String newProfileImgUrl) {
+		this.profileImgUrl = newProfileImgUrl;
+
+		return this.profileImgUrl;
+	}
+
 	public static Member from(MemberOauthRequest memberOauthRequest) {
 		return new Member(memberOauthRequest.getType(), memberOauthRequest.getEmail(), memberOauthRequest.getNickname(),
 			memberOauthRequest.getProfileImgUrl());

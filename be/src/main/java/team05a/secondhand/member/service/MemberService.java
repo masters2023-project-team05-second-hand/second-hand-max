@@ -1,15 +1,18 @@
 package team05a.secondhand.member.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.address.repository.AddressRepository;
 import team05a.secondhand.errors.exception.MemberNotFoundException;
+import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.member.data.dto.MemberAddressResponse;
 import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
 import team05a.secondhand.member.data.dto.MemberResponse;
@@ -22,6 +25,7 @@ import team05a.secondhand.member_address.repository.MemberAddressRepository;
 @RequiredArgsConstructor
 public class MemberService {
 
+	private final ImageService imageService;
 	private final MemberRepository memberRepository;
 	private final AddressRepository addressRepository;
 	private final MemberAddressRepository memberAddressRepository;
@@ -50,5 +54,13 @@ public class MemberService {
 		List<MemberAddress> memberAddresses = memberAddressRepository.findByMemberId(memberId);
 
 		return MemberAddressResponse.from(memberAddresses);
+	}
+
+	@Transactional
+	public String updateMemberProfile(Long memberId, MultipartFile newProfileImg) {
+		String newProfileImgUrl = imageService.uploadProfileImg(newProfileImg);
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+
+		return member.updateProfileImgUrl(newProfileImgUrl);
 	}
 }
