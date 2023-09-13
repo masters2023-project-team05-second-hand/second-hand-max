@@ -38,9 +38,12 @@ public class FixtureFactory {
 
 	public static AddressListResponse createAddressListResponse() {
 		List<ListAddressResponse> addresses = new ArrayList<>();
-		addresses.add(new ListAddressResponse(1L, "서울특별시 강남구 역삼1동"));
-		addresses.add(new ListAddressResponse(2L, "서울특별시 강남구 역삼2동"));
-		return new AddressListResponse(addresses, true);
+		addresses.add(ListAddressResponse.builder().id(1L).name("서울특별시 강남구 역삼1동").build());
+		addresses.add(ListAddressResponse.builder().id(2L).name("서울특별시 강남구 역삼2동").build());
+		return AddressListResponse.builder()
+			.addresses(addresses)
+			.hasNext(true)
+			.build();
 	}
 
 	public static List<CategoryResponse> createCategoryResponseList() {

@@ -116,7 +116,7 @@ class ProductControllerTest {
 	}
 
 	private void mockingMemberId() {
-		mockMvc = MockMvcBuilders.standaloneSetup(new ProductController(productService, imageService))
+		mockMvc = MockMvcBuilders.standaloneSetup(new ProductController(productService))
 			.setControllerAdvice(new GlobalExceptionHandler())
 			.setCustomArgumentResolvers(loginArgumentResolver)
 			.build();
