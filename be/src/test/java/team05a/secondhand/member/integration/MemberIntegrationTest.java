@@ -6,7 +6,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -17,12 +16,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.fixture.FixtureFactory;
@@ -33,6 +32,9 @@ import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.member_address.data.entity.MemberAddress;
 import team05a.secondhand.member_address.repository.MemberAddressRepository;
 import team05a.secondhand.oauth.OauthAttributes;
+import team05a.secondhand.product.data.entity.Product;
+import team05a.secondhand.product.repository.ProductRepository;
+import team05a.secondhand.wish.repository.WishRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -46,6 +48,12 @@ public class MemberIntegrationTest {
 	private MemberRepository memberRepository;
 	@Autowired
 	private MemberAddressRepository memberAddressRepository;
+	@Autowired
+	private ProductRepository productRepository;
+	@Autowired
+	private WishRepository wishRepository;
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Test
 	@Transactional
@@ -135,7 +143,6 @@ public class MemberIntegrationTest {
 		String beforeProfileImgUrl = member.getProfileImgUrl();
 		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
 
-
 		//when
 		ResultActions resultActions = mockMvc.perform(
 			MockMvcRequestBuilders
@@ -149,6 +156,69 @@ public class MemberIntegrationTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.updatedImgUrl").isNotEmpty());
 		assertThat(member.getProfileImgUrl()).isNotEqualTo(beforeProfileImgUrl);
+	}
+
+	@Test
+	@Transactional
+	@DisplayName("위시를 만든다")
+	void createWish() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		Product product = FixtureFactory.createProductRequest(member);
+		productRepository.save(product);
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+		String jsonBody = objectMapper.writeValueAsString(Map.of("productId", product.getId(), "isWished", true));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+				MockMvcRequestBuilders
+					.post("/api/members/wishlist")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonBody)
+			)
+			.andDo(print());
+
+		//then
+		resultActions
+			.andExpect(status().isOk());
+		assertThat(wishRepository.existsByMemberIdAndProductId(member.getId(), product.getId())).isTrue();
+	}
+
+	@Test
+	@Transactional
+	@DisplayName("위시를 삭제 한다.")
+	void deleteWish() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		Product product = FixtureFactory.createProductRequest(member);
+		productRepository.save(product);
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+		String createJsonBody = objectMapper.writeValueAsString(Map.of("productId", product.getId(), "isWished", true));
+		String deleteJsonBody = objectMapper.writeValueAsString(Map.of("productId", product.getId(), "isWished", false));
+		mockMvc.perform(
+			MockMvcRequestBuilders
+				.post("/api/members/wishlist")
+				.header("Authorization", "Bearer " + accessToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(createJsonBody)
+		);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			MockMvcRequestBuilders
+				.post("/api/members/wishlist")
+				.header("Authorization", "Bearer " + accessToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(deleteJsonBody)
+		);
+
+		//then
+		resultActions
+			.andExpect(status().isOk());
+		assertThat(wishRepository.existsByMemberIdAndProductId(member.getId(), product.getId())).isFalse();
 	}
 }
 
