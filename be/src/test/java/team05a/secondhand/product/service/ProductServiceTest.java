@@ -84,8 +84,8 @@ class ProductServiceTest {
 		ProductUpdateRequest productUpdateRequest = FixtureFactory.productUpdateRequest();
 		Product productResponse = FixtureFactory.createProductResponse();
 		List<String> imageUrls = List.of("imageUrl");
-		given(imageService.countImagesBy(any())).willReturn(1L);
-		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
+		given(imageService.countImagesBy(any())).willReturn(1);
+		given(imageService.uploadNew(anyInt(), any())).willReturn(imageUrls);
 		given(productRepository.existsById(any())).willReturn(true);
 		given(memberRepository.existsById(any())).willReturn(true);
 		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
@@ -149,8 +149,8 @@ class ProductServiceTest {
 		given(productRepository.existsById(any())).willReturn(true);
 		given(memberRepository.existsById(any())).willReturn(true);
 		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
-		given(imageService.countImagesBy(any())).willReturn(1L);
-		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
+		given(imageService.countImagesBy(any())).willReturn(1);
+		given(imageService.uploadNew(anyInt(), any())).willReturn(imageUrls);
 		given(productRepository.findById(any())).willReturn(
 			Optional.ofNullable(FixtureFactory.createProductResponse()));
 		given(categoryRepository.findById(any())).willReturn(Optional.empty());
@@ -169,8 +169,8 @@ class ProductServiceTest {
 		given(productRepository.existsById(any())).willReturn(true);
 		given(memberRepository.existsById(any())).willReturn(true);
 		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
-		given(imageService.countImagesBy(any())).willReturn(1L);
-		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
+		given(imageService.countImagesBy(any())).willReturn(1);
+		given(imageService.uploadNew(anyInt(), any())).willReturn(imageUrls);
 		given(productRepository.findById(any())).willReturn(
 			Optional.ofNullable(FixtureFactory.createProductResponse()));
 		given(categoryRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createCategory()));

@@ -10,7 +10,7 @@ import team05a.secondhand.product.data.entity.Product;
 
 public interface ImageRepository extends JpaRepository<ProductImage, Long> {
 
-	Long countByProductId(Long productId);
+	int countByProductId(Long productId);
 
 	Optional<ProductImage> findFirstByProductId(Long productId);
 
