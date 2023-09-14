@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +30,8 @@ import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
 import team05a.secondhand.oauth.data.dto.OauthRefreshTokenRequest;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
+import team05a.secondhand.product.data.dto.ProductListResponse;
+import team05a.secondhand.product.data.dto.ProductReadResponse;
 import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateRequest;
 import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
@@ -38,9 +42,12 @@ public class FixtureFactory {
 
 	public static AddressListResponse createAddressListResponse() {
 		List<ListAddressResponse> addresses = new ArrayList<>();
-		addresses.add(new ListAddressResponse(1L, "서울특별시 강남구 역삼1동"));
-		addresses.add(new ListAddressResponse(2L, "서울특별시 강남구 역삼2동"));
-		return new AddressListResponse(addresses, true);
+		addresses.add(ListAddressResponse.builder().id(1L).name("서울특별시 강남구 역삼1동").build());
+		addresses.add(ListAddressResponse.builder().id(2L).name("서울특별시 강남구 역삼2동").build());
+		return AddressListResponse.builder()
+			.addresses(addresses)
+			.hasNext(true)
+			.build();
 	}
 
 	public static List<CategoryResponse> createCategoryResponseList() {
@@ -56,6 +63,8 @@ public class FixtureFactory {
 			.content("내용")
 			.thumbnailUrl("http://")
 			.member(member)
+			.address(createAddress())
+			.category(createCategory())
 			.build();
 	}
 
@@ -208,6 +217,35 @@ public class FixtureFactory {
 	public static OauthRefreshTokenRequest createMockOauthRefreshTokenRequest() {
 		return OauthRefreshTokenRequest.builder()
 			.refreshToken("refreshToken")
+			.build();
+	}
+
+	public static ProductListResponse createProductListResponse() {
+		List<ProductReadResponse> productReadResponseList = new ArrayList<>();
+		productReadResponseList.add(ProductReadResponse.builder()
+			.productId(1L)
+			.sellerId(1L)
+			.statusId(1L)
+			.createdTime(Timestamp.from(Instant.now()))
+			.price(null)
+			.title("제목")
+			.build());
+
+		return ProductListResponse.builder()
+			.products(productReadResponseList)
+			.build();
+	}
+
+	public static Product createProductRequestForRepo(Member member, Address address, Category category,
+		Status status) {
+		return Product.builder()
+			.title("제목")
+			.content("내용")
+			.thumbnailUrl("http://")
+			.member(member)
+			.address(address)
+			.category(category)
+			.status(status)
 			.build();
 	}
 }

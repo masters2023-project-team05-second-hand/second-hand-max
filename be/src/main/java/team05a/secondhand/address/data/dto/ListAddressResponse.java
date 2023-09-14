@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05a.secondhand.address.data.entity.Address;
@@ -15,7 +16,8 @@ public class ListAddressResponse {
 	private Long id;
 	private String name;
 
-	public ListAddressResponse(Long id, String name) {
+	@Builder
+	private ListAddressResponse(Long id, String name) {
 		this.id = id;
 		this.name = name;
 	}

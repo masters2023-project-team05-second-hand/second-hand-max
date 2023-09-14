@@ -22,6 +22,7 @@ import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
+import team05a.secondhand.product.data.dto.ProductListResponse;
 import team05a.secondhand.product.data.dto.ProductResponse;
 import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateRequest;
@@ -31,7 +32,6 @@ import team05a.secondhand.product.repository.ProductRepository;
 import team05a.secondhand.status.data.entity.Status;
 import team05a.secondhand.status.repository.StatusRepository;
 
-@Transactional
 @RequiredArgsConstructor
 @Service
 public class ProductService {
@@ -43,6 +43,7 @@ public class ProductService {
 	private final StatusRepository statusRepository;
 	private final ImageService imageService;
 
+	@Transactional
 	public ProductIdResponse create(ProductCreateRequest productCreateRequest, Long memberId) {
 		List<String> imageUrls = imageService.upload(productCreateRequest.getImages());
 		Product product = createProduct(productCreateRequest, memberId, imageUrls);
@@ -61,6 +62,7 @@ public class ProductService {
 			productCreateRequest.toEntity(member, category, address, status, imageUrls.get(0)));
 	}
 
+	@Transactional(readOnly = true)
 	public ProductResponse read(Long productId) {
 		Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
 		List<ProductImage> productImages = imageService.findAllByProduct(product);
@@ -68,6 +70,7 @@ public class ProductService {
 		return ProductResponse.from(product, productImages);
 	}
 
+	@Transactional
 	public ProductIdResponse update(ProductUpdateRequest productUpdateRequest, Long productId, Long memberId) {
 		validateProductSeller(productId, memberId);
 		imageService.deleteAllBy(productUpdateRequest.getDeletedImageIds());
@@ -115,12 +118,14 @@ public class ProductService {
 		}
 	}
 
+	@Transactional
 	public ProductIdResponse delete(Long productId, Long memberId) {
 		validateProductSeller(productId, memberId);
 		productRepository.deleteById(productId);
 		return ProductIdResponse.from(productId);
 	}
 
+	@Transactional
 	public ProductStatusResponse updateStatus(ProductUpdateStatusRequest productUpdateStatusRequest, Long productId,
 		Long memberId) {
 		validateProductSeller(productId, memberId);
@@ -129,5 +134,10 @@ public class ProductService {
 			.orElseThrow(StatusNotFoundException::new);
 		product.modifyStatus(status);
 		return ProductStatusResponse.from(productUpdateStatusRequest.getStatusId());
+	}
+
+	@Transactional(readOnly = true)
+	public ProductListResponse readList(Long addressId, Long categoryId, Long cursor, Long size) {
+		return productRepository.findList(addressId, categoryId, cursor, size);
 	}
 }
