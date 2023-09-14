@@ -74,8 +74,8 @@ public class ProductController {
 	}
 
 	@GetMapping
-	public ResponseEntity<ProductListResponse> retrieveList(@RequestParam Long addressId, @RequestParam Long categoryId,
-		@RequestParam Long cursor, @RequestParam Long size) {
+	public ResponseEntity<ProductListResponse> retrieveList(@RequestParam Long addressId,
+		@RequestParam(defaultValue = "0") Long categoryId, @RequestParam Long cursor, @RequestParam Long size) {
 		ProductListResponse productListResponse = productService.readList(addressId, categoryId, cursor, size);
 
 		return ResponseEntity.ok()

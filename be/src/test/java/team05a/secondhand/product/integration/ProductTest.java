@@ -309,6 +309,38 @@ public class ProductTest extends AcceptanceTest {
 			.extract();
 	}
 
+	@DisplayName("상품을 등록 후 목록을 조회한다.")
+	@Test
+	void readList_NoCategoryId() throws IOException {
+		// given
+		Member member = singUp();
+		Product product = createProduct(member);
+
+		// when
+		var response = readList_NoCategoryId(product);
+
+		// then
+		SoftAssertions.assertSoftly(softAssertions -> {
+			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+			softAssertions.assertThat(response.jsonPath().getBoolean("hasNext")).isFalse();
+			softAssertions.assertThat(
+					response.jsonPath().getList("products", ProductReadResponse.class).get(0).getProductId())
+				.isEqualTo(product.getId());
+		});
+	}
+
+	private ExtractableResponse<Response> readList_NoCategoryId(Product product) {
+		return RestAssured
+			.given().log().all()
+			.queryParam("addressId", product.getAddress().getId())
+			.queryParam("cursor", 0)
+			.queryParam("size", 1)
+			.when()
+			.get("/api/products")
+			.then().log().all()
+			.extract();
+	}
+
 	private Member singUp() {
 		return memberRepository.save(FixtureFactory.createMember());
 	}
