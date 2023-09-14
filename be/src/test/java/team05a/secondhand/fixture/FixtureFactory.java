@@ -27,7 +27,6 @@ import team05a.secondhand.image.data.entity.ProductImage;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.oauth.OauthAttributes;
 import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
-import team05a.secondhand.oauth.data.dto.OauthRefreshTokenRequest;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
 import team05a.secondhand.product.data.dto.ProductListResponse;
@@ -214,12 +213,6 @@ public class FixtureFactory {
 			.build();
 	}
 
-	public static OauthRefreshTokenRequest createMockOauthRefreshTokenRequest() {
-		return OauthRefreshTokenRequest.builder()
-			.refreshToken("refreshToken")
-			.build();
-	}
-
 	public static ProductListResponse createProductListResponse() {
 		List<ProductReadResponse> productReadResponseList = new ArrayList<>();
 		productReadResponseList.add(ProductReadResponse.builder()
@@ -236,7 +229,7 @@ public class FixtureFactory {
 			.build();
 	}
 
-	public static Product createProductRequestForRepo(Member member, Address address, Category category,
+	public static Product createProductForRepo(Member member, Address address, Category category,
 		Status status) {
 		return Product.builder()
 			.title("제목")

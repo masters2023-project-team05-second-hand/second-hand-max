@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import lombok.extern.slf4j.Slf4j;
 import team05a.secondhand.errors.ErrorResponse;
 import team05a.secondhand.errors.exception.ProductNotFoundException;
+import team05a.secondhand.errors.exception.ProductViewNotFoundException;
 import team05a.secondhand.errors.exception.UnauthorizedProductModificationException;
 
 @Slf4j
@@ -27,6 +28,15 @@ public class ProductExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleUnauthorizedProductModificationException(
 		UnauthorizedProductModificationException e) {
 		log.warn("UnauthorizedProductModificationException handling : {}", e.toString());
+
+		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST, e.getMessage());
+		return ResponseEntity.status(response.getStatus())
+			.body(response);
+	}
+
+	@ExceptionHandler(ProductViewNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleProductViewNotFoundException(ProductViewNotFoundException e) {
+		log.warn("ProductViewNotFoundException handling : {}", e.toString());
 
 		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST, e.getMessage());
 		return ResponseEntity.status(response.getStatus())

@@ -92,7 +92,7 @@ class ProductRepositoryTest extends AcceptanceTest {
 		Address address = addressRepository.findById(1L).orElseThrow();
 		Category category = categoryRepository.findById(1L).orElseThrow();
 		Status status = statusRepository.findById(1L).orElseThrow();
-		Product product = FixtureFactory.createProductRequestForRepo(member, address, category, status);
+		Product product = FixtureFactory.createProductForRepo(member, address, category, status);
 		Product save = productRepository.save(product);
 		Long addressId = save.getAddress().getId();
 		Long categoryId = save.getCategory().getId();

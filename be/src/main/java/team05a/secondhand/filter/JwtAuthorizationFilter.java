@@ -24,7 +24,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import team05a.secondhand.jwt.JwtTokenProvider;
-import team05a.secondhand.member_refreshtoken.repository.MemberRefreshTokenRepository;
+import team05a.secondhand.redis.repository.RedisRepository;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class JwtAuthorizationFilter implements Filter {
 		"/api/statuses"};
 	private final String[] whiteListPostUris = new String[] {"/api/members/sign-in/*", "/api/reissue-access-token"};
 	private final JwtTokenProvider jwtProvider;
-	private final MemberRefreshTokenRepository memberRefreshTokenRepository;
+	private final RedisRepository redisRepository;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws
@@ -56,7 +56,7 @@ public class JwtAuthorizationFilter implements Filter {
 		try {
 			String accessToken = jwtProvider.getToken(httpServletRequest);
 			jwtProvider.extractMemberId(accessToken);
-			if (memberRefreshTokenRepository.get(ACCESS_TOKEN_PREFIX + accessToken).isPresent()) {
+			if (redisRepository.get(ACCESS_TOKEN_PREFIX + accessToken).isPresent()) {
 				log.warn("AccessTokenBlacklistException");
 				httpServletResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "블랙리스트에 등록된 액세스 토큰으로는 접근할 수 없습니다.");
 				return;

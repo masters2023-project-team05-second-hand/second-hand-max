@@ -14,6 +14,7 @@ import team05a.secondhand.errors.exception.AddressNotFoundException;
 import team05a.secondhand.errors.exception.CategoryNotFoundException;
 import team05a.secondhand.errors.exception.MemberNotFoundException;
 import team05a.secondhand.errors.exception.ProductNotFoundException;
+import team05a.secondhand.errors.exception.ProductViewNotFoundException;
 import team05a.secondhand.errors.exception.StatusNotFoundException;
 import team05a.secondhand.errors.exception.UnauthorizedProductModificationException;
 import team05a.secondhand.image.data.entity.ProductImage;
@@ -29,6 +30,7 @@ import team05a.secondhand.product.data.dto.ProductUpdateRequest;
 import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
+import team05a.secondhand.redis.repository.RedisRepository;
 import team05a.secondhand.status.data.entity.Status;
 import team05a.secondhand.status.repository.StatusRepository;
 
@@ -36,18 +38,22 @@ import team05a.secondhand.status.repository.StatusRepository;
 @Service
 public class ProductService {
 
+	public static final String VIEW_PREFIX = "view:";
+
 	private final ProductRepository productRepository;
 	private final MemberRepository memberRepository;
 	private final CategoryRepository categoryRepository;
 	private final AddressRepository addressRepository;
 	private final StatusRepository statusRepository;
 	private final ImageService imageService;
+	private final RedisRepository redisRepository;
 
 	@Transactional
 	public ProductIdResponse create(ProductCreateRequest productCreateRequest, Long memberId) {
 		List<String> imageUrls = imageService.uploadProductImages(productCreateRequest.getImages());
 		Product product = createProduct(productCreateRequest, memberId, imageUrls);
 		imageService.create(product, imageUrls);
+		redisRepository.set(VIEW_PREFIX + product.getId(), 0L);
 		return ProductIdResponse.from(product.getId());
 	}
 
@@ -66,6 +72,9 @@ public class ProductService {
 	public ProductResponse read(Long productId) {
 		Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
 		List<ProductImage> productImages = imageService.findAllByProduct(product);
+		String key = VIEW_PREFIX + productId;
+		Long view = (Long)redisRepository.get(key).orElseThrow(ProductViewNotFoundException::new) + 1;
+		redisRepository.set(key, view);
 
 		return ProductResponse.from(product, productImages);
 	}
