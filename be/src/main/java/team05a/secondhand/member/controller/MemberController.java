@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,8 @@ import team05a.secondhand.member.data.dto.MemberNicknameUpdateRequest;
 import team05a.secondhand.member.data.dto.MemberResponse;
 import team05a.secondhand.member.resolver.MemberId;
 import team05a.secondhand.member.service.MemberService;
+import team05a.secondhand.wish.data.dto.WishRequest;
+import team05a.secondhand.wish.service.WishService;
 
 @RestController
 @RequiredArgsConstructor
