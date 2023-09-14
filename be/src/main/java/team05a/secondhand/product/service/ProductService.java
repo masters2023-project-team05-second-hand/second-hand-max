@@ -45,7 +45,7 @@ public class ProductService {
 
 	@Transactional
 	public ProductIdResponse create(ProductCreateRequest productCreateRequest, Long memberId) {
-		List<String> imageUrls = imageService.upload(productCreateRequest.getImages());
+		List<String> imageUrls = imageService.uploadProductImages(productCreateRequest.getImages());
 		Product product = createProduct(productCreateRequest, memberId, imageUrls);
 		imageService.create(product, imageUrls);
 		return ProductIdResponse.from(product.getId());

@@ -60,7 +60,7 @@ class ProductServiceTest {
 		ProductCreateRequest productCreateRequest = FixtureFactory.productCreateRequest();
 		Product productResponse = FixtureFactory.createProductResponse();
 		List<String> imageUrls = List.of("imageUrl");
-		given(imageService.upload(any())).willReturn(imageUrls);
+		given(imageService.uploadProductImages(any())).willReturn(imageUrls);
 		given(memberRepository.findById(any())).willReturn(Optional.of(FixtureFactory.createMember()));
 		given(categoryRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createCategory()));
 		given(addressRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createAddress()));

@@ -347,7 +347,7 @@ public class ProductTest extends AcceptanceTest {
 
 	private Product createProduct(Member member) throws IOException {
 		ProductCreateRequest productCreateRequest = FixtureFactory.productCreateRequestWithMultipartFile();
-		List<String> imageUrls = imageService.upload(productCreateRequest.getImages());
+		List<String> imageUrls = imageService.uploadProductImages(productCreateRequest.getImages());
 		Category category = categoryRepository.findById(productCreateRequest.getCategoryId())
 			.orElseThrow(CategoryNotFoundException::new);
 		Address address = addressRepository.findById(productCreateRequest.getAddressId())

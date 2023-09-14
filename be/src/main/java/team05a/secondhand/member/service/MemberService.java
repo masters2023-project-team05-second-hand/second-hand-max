@@ -1,7 +1,6 @@
 package team05a.secondhand.member.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -58,7 +57,7 @@ public class MemberService {
 
 	@Transactional
 	public String updateMemberProfile(Long memberId, MultipartFile newProfileImg) {
-		String newProfileImgUrl = imageService.uploadProfileImg(newProfileImg);
+		String newProfileImgUrl = imageService.uploadImage(newProfileImg);
 		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 
 		return member.updateProfileImgUrl(newProfileImgUrl);
