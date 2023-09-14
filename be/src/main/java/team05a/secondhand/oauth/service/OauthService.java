@@ -12,9 +12,9 @@ import team05a.secondhand.jwt.Jwt;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
-import team05a.secondhand.member_refreshtoken.repository.MemberRefreshTokenRepository;
 import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
 import team05a.secondhand.oauth.data.dto.OauthRefreshTokenRequest;
+import team05a.secondhand.redis.repository.RedisRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class OauthService {
 	public static final String ACCESS_TOKEN_PREFIX = "accessToken:";
 
 	private final MemberRepository memberRepository;
-	private final MemberRefreshTokenRepository memberRefreshTokenRepository;
+	private final RedisRepository redisRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 
 	@Transactional
@@ -33,7 +33,7 @@ public class OauthService {
 
 		Jwt jwt = jwtTokenProvider.createJwt(Map.of("memberId", member.getId()));
 		String refreshToken = jwt.getRefreshToken();
-		memberRefreshTokenRepository.set(REFRESH_TOKEN_PREFIX + refreshToken, member.getId(),
+		redisRepository.setTime(REFRESH_TOKEN_PREFIX + refreshToken, member.getId(),
 			jwtTokenProvider.getExpiration(refreshToken));
 
 		return jwt;
@@ -48,14 +48,14 @@ public class OauthService {
 	public void logout(OauthRefreshTokenRequest oauthRefreshTokenRequest, String accessToken, Long memberId) {
 		String refreshToken = REFRESH_TOKEN_PREFIX + oauthRefreshTokenRequest.getRefreshToken();
 		validateRedisMemberId(refreshToken, memberId);
-		memberRefreshTokenRepository.set(ACCESS_TOKEN_PREFIX + accessToken, memberId,
+		redisRepository.setTime(ACCESS_TOKEN_PREFIX + accessToken, memberId,
 			jwtTokenProvider.getExpiration(accessToken));
-		memberRefreshTokenRepository.delete(refreshToken);
+		redisRepository.delete(refreshToken);
 	}
 
 	private void validateRedisMemberId(String refreshToken, Long memberId) {
 		Long redisMemberId = Long.parseLong(String.valueOf(
-			memberRefreshTokenRepository.get(refreshToken).orElseThrow(RefreshTokenNotFoundException::new)));
+			redisRepository.get(refreshToken).orElseThrow(RefreshTokenNotFoundException::new)));
 		if (!redisMemberId.equals(memberId)) {
 			throw new TokenMemberMismatchException();
 		}
