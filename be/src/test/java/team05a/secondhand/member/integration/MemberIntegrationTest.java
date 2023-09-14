@@ -3,8 +3,10 @@ package team05a.secondhand.member.integration;
 import static groovy.json.JsonOutput.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -13,10 +15,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.fixture.FixtureFactory;
@@ -117,6 +123,32 @@ public class MemberIntegrationTest {
 				jsonPath("$.length()").value(2),
 				jsonPath("$[1].name").value("서울특별시 강남구 압구정동")
 			);
+	}
+
+	@Test
+	@Transactional
+	@DisplayName("멤버의 프로필 이미지를 업데이트한다")
+	void updateMemberProfileImg() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		String beforeProfileImgUrl = member.getProfileImgUrl();
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			MockMvcRequestBuilders
+				.multipart(HttpMethod.PATCH, "/api/members/profile-image")
+				.file("newProfileImg", "updateProfile".getBytes())
+				.header("Authorization", "Bearer " + accessToken)
+		);
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.updatedImgUrl").isNotEmpty());
+		assertThat(member.getProfileImgUrl()).isNotEqualTo(beforeProfileImgUrl);
 	}
 }
 

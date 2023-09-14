@@ -26,6 +26,7 @@ import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
+import team05a.secondhand.product.data.dto.ProductListResponse;
 import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateRequest;
 import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
@@ -59,7 +60,7 @@ class ProductServiceTest {
 		ProductCreateRequest productCreateRequest = FixtureFactory.productCreateRequest();
 		Product productResponse = FixtureFactory.createProductResponse();
 		List<String> imageUrls = List.of("imageUrl");
-		given(imageService.upload(any())).willReturn(imageUrls);
+		given(imageService.uploadProductImages(any())).willReturn(imageUrls);
 		given(memberRepository.findById(any())).willReturn(Optional.of(FixtureFactory.createMember()));
 		given(categoryRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createCategory()));
 		given(addressRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createAddress()));
@@ -264,5 +265,21 @@ class ProductServiceTest {
 		// when & then
 		assertThatThrownBy(() -> productService.delete(1L, 1L)).isInstanceOf(
 			UnauthorizedProductModificationException.class);
+	}
+
+	@DisplayName("상품의 목록을 조회한다.")
+	@Test
+	void readList() {
+		// given
+		ProductListResponse productListResponse = FixtureFactory.createProductListResponse();
+		given(productRepository.findList(any(), any(), any(), any())).willReturn(productListResponse);
+
+		//when
+		ProductListResponse response = productService.readList(1L, 1L, 0L, 5L);
+
+		//then
+		assertThat(response.isHasNext()).isEqualTo(productListResponse.isHasNext());
+		assertThat(response.getProducts().get(0).getProductId()).isEqualTo(
+			productListResponse.getProducts().get(0).getProductId());
 	}
 }
