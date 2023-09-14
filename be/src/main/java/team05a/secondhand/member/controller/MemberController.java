@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import team05a.secondhand.member.data.dto.MemberAddressResponse;
 import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
+import team05a.secondhand.member.data.dto.MemberNicknameUpdateRequest;
 import team05a.secondhand.member.data.dto.MemberResponse;
 import team05a.secondhand.member.resolver.MemberId;
 import team05a.secondhand.member.service.MemberService;
@@ -35,6 +38,13 @@ public class MemberController {
 
 		return ResponseEntity.ok()
 			.body(memberResponse);
+	}
+
+	@PatchMapping("nickname")
+	public void updateMemberNickname(@MemberId Long memberId,
+		@RequestBody @Valid MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
+		memberService.updateMemberNickname(memberId, memberNicknameUpdateRequest);
+
 	}
 
 	@GetMapping("/addresses")

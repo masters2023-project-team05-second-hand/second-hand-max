@@ -81,6 +81,28 @@ public class MemberIntegrationTest {
 
 	@Test
 	@Transactional
+	@DisplayName("멤버의 닉네임을 변경한다.")
+	void updateMemberNickname() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+		String nicknameUpdateJson = "{\"newNickname\":\"thisIsNewOne\"}";
+
+		//when
+		ResultActions resultActions = mockMvc.perform(patch("/api/members/nickname")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(nicknameUpdateJson)
+			.header("Authorization", "Bearer " + accessToken));
+
+		// then
+		resultActions
+			.andExpect(status().isOk());
+		assertThat(member.getNickname()).isEqualTo("thisIsNewOne");
+	}
+
+	@Test
+	@Transactional
 	@DisplayName("멤버의 주소를 가져온다.")
 	void getMemberAddress() throws Exception {
 		//given
