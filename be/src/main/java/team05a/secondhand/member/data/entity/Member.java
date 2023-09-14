@@ -43,7 +43,7 @@ public class Member {
 	private String email;
 	@Column(length = 50, nullable = false)
 	private String nickname;
-	@Column(length = 100)
+	@Column
 	private String profileImgUrl;
 	@OneToMany(mappedBy = "member")
 	private List<MemberAddress> memberAddresses = new ArrayList<>();
