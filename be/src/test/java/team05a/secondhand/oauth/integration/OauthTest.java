@@ -53,6 +53,34 @@ public class OauthTest extends AcceptanceTest {
 			.extract();
 	}
 
+	@DisplayName("액세스 토큰 재발급을 받는다.")
+	@Test
+	void reissueAccessToken_success() {
+		// given
+		Jwt jwt = login();
+		OauthRefreshTokenRequest oauthRefreshTokenRequest = OauthRefreshTokenRequest.builder()
+			.refreshToken(jwt.getRefreshToken())
+			.build();
+
+		// when
+		var response = reissueAccessToken(oauthRefreshTokenRequest);
+
+		// then
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+		assertThat(response.jsonPath().getString("accessToken")).isNotNull();
+	}
+
+	private ExtractableResponse<Response> reissueAccessToken(OauthRefreshTokenRequest oauthRefreshTokenRequest) {
+		return RestAssured
+			.given().log().all()
+			.body(oauthRefreshTokenRequest)
+			.contentType(MediaType.APPLICATION_JSON_VALUE)
+			.when()
+			.post("/api/reissue-access-token")
+			.then().log().all()
+			.extract();
+	}
+
 	private Jwt login() {
 		return oauthService.login(FixtureFactory.createMemberRequest());
 	}
