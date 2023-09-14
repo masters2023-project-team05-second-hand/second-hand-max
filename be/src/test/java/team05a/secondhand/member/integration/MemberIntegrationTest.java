@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.transaction.annotation.Transactional;
 
+import team05a.secondhand.DatabaseCleanup;
 import team05a.secondhand.address.data.entity.Address;
+import team05a.secondhand.errors.exception.MemberNotFoundException;
 import team05a.secondhand.fixture.FixtureFactory;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
@@ -42,9 +44,15 @@ public class MemberIntegrationTest {
 	private MemberRepository memberRepository;
 	@Autowired
 	private MemberAddressRepository memberAddressRepository;
+	@Autowired
+	private DatabaseCleanup databaseCleanup;
+
+	@BeforeEach
+	public void setUp() {
+		databaseCleanup.execute();
+	}
 
 	@Test
-	@Transactional
 	@DisplayName("멤버의 주소를 업데이트한다.")
 	void updateMemberAddress() throws Exception {
 		//given
@@ -76,7 +84,6 @@ public class MemberIntegrationTest {
 	}
 
 	@Test
-	@Transactional
 	@DisplayName("멤버의 닉네임을 변경한다.")
 	void updateMemberNickname() throws Exception {
 		//given
@@ -94,11 +101,11 @@ public class MemberIntegrationTest {
 		// then
 		resultActions
 			.andExpect(status().isOk());
-		assertThat(member.getNickname()).isEqualTo("thisIsNewOne");
+		assertThat(memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new)
+			.getNickname()).isEqualTo("thisIsNewOne");
 	}
 
 	@Test
-	@Transactional
 	@DisplayName("멤버의 주소를 가져온다.")
 	void getMemberAddress() throws Exception {
 		//given
@@ -122,7 +129,6 @@ public class MemberIntegrationTest {
 	}
 
 	@Test
-	@Transactional
 	@DisplayName("멤버의 프로필 이미지를 업데이트한다")
 	void updateMemberProfileImg() throws Exception {
 		//given
@@ -143,7 +149,8 @@ public class MemberIntegrationTest {
 		resultActions
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.updatedImgUrl").isNotEmpty());
-		assertThat(member.getProfileImgUrl()).isNotEqualTo(beforeProfileImgUrl);
+		assertThat(memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new)
+			.getProfileImgUrl()).isNotEqualTo(beforeProfileImgUrl);
 	}
 }
 

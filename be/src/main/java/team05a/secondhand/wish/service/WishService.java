@@ -11,6 +11,7 @@ import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
 import team05a.secondhand.wish.data.dto.WishRequest;
+import team05a.secondhand.wish.data.dto.WishResponse;
 import team05a.secondhand.wish.data.entity.Wish;
 import team05a.secondhand.wish.repository.WishRepository;
 
@@ -39,6 +40,13 @@ public class WishService {
 		if (doesNeedToDeleteWish(memberId, wishRequest)) {
 			wishRepository.deleteByMemberIdAndProductId(memberId, wishRequest.getProductId());
 		}
+	}
+
+	@Transactional(readOnly = true)
+	public WishResponse getWish(Long memberId, Long productId) {
+		return WishResponse.builder()
+			.isWished(wishRepository.existsByMemberIdAndProductId(memberId, productId))
+			.build();
 	}
 
 	private boolean doesNeedToCreateWish(Long memberId, WishRequest wishRequest) {
