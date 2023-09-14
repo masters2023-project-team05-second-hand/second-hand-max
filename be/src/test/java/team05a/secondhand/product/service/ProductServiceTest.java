@@ -32,6 +32,7 @@ import team05a.secondhand.product.data.dto.ProductUpdateRequest;
 import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
+import team05a.secondhand.redis.repository.RedisRepository;
 import team05a.secondhand.status.data.entity.Status;
 import team05a.secondhand.status.repository.StatusRepository;
 
@@ -52,6 +53,8 @@ class ProductServiceTest {
 	private ProductRepository productRepository;
 	@Mock
 	private ImageService imageService;
+	@Mock
+	private RedisRepository redisRepository;
 
 	@DisplayName("상품을 등록한다.")
 	@Test
