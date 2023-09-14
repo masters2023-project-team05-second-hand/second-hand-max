@@ -24,6 +24,7 @@ import team05a.secondhand.jwt.resolver.AccessToken;
 import team05a.secondhand.member.resolver.MemberId;
 import team05a.secondhand.oauth.InMemoryProviderRepository;
 import team05a.secondhand.oauth.OauthAttributes;
+import team05a.secondhand.oauth.data.dto.AccessTokenResponse;
 import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
 import team05a.secondhand.oauth.data.dto.OauthAccessCode;
 import team05a.secondhand.oauth.data.dto.OauthRefreshTokenRequest;
@@ -58,6 +59,17 @@ public class OauthController {
 		oauthService.logout(oauthRefreshTokenRequest, accessToken, memberId);
 
 		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/reissue-access-token")
+	public ResponseEntity<AccessTokenResponse> reissueAccessToken(
+		@RequestBody OauthRefreshTokenRequest oauthRefreshTokenRequest) {
+		String accessToken = oauthService.reissueAccessToken(oauthRefreshTokenRequest);
+		String authorization = "Bearer " + accessToken;
+
+		return ResponseEntity.ok()
+			.header(HttpHeaders.AUTHORIZATION, authorization)
+			.body(AccessTokenResponse.from(accessToken));
 	}
 
 	private OauthTokenResponse getToken(String code, OauthProvider provider) {
