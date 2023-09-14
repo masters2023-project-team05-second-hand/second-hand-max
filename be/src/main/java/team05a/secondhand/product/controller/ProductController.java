@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.member.resolver.MemberId;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
+import team05a.secondhand.product.data.dto.ProductListResponse;
 import team05a.secondhand.product.data.dto.ProductResponse;
 import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateRequest;
@@ -30,7 +31,6 @@ import team05a.secondhand.product.service.ProductService;
 public class ProductController {
 
 	private final ProductService productService;
-	private final ImageService imageService;
 
 	@PostMapping
 	public ResponseEntity<ProductIdResponse> create(
@@ -71,5 +71,14 @@ public class ProductController {
 		ProductIdResponse productIdResponse = productService.delete(productId, memberId);
 		return ResponseEntity.ok()
 			.body(productIdResponse);
+	}
+
+	@GetMapping
+	public ResponseEntity<ProductListResponse> retrieveList(@RequestParam Long addressId,
+		@RequestParam(defaultValue = "0") Long categoryId, @RequestParam Long cursor, @RequestParam Long size) {
+		ProductListResponse productListResponse = productService.readList(addressId, categoryId, cursor, size);
+
+		return ResponseEntity.ok()
+			.body(productListResponse);
 	}
 }
