@@ -54,10 +54,20 @@ public class OauthService {
 	}
 
 	private void validateRedisMemberId(String refreshToken, Long memberId) {
-		Long redisMemberId = Long.parseLong(String.valueOf(
-			memberRefreshTokenRepository.get(refreshToken).orElseThrow(RefreshTokenNotFoundException::new)));
+		Long redisMemberId = checkRefreshToken(refreshToken);
 		if (!redisMemberId.equals(memberId)) {
 			throw new TokenMemberMismatchException();
 		}
+	}
+
+	public String reissueAccessToken(OauthRefreshTokenRequest oauthRefreshTokenRequest) {
+		String refreshToken = REFRESH_TOKEN_PREFIX + oauthRefreshTokenRequest.getRefreshToken();
+		Long memberId = checkRefreshToken(refreshToken);
+		return jwtTokenProvider.createAccessToken(Map.of("memberId", memberId));
+	}
+
+	private Long checkRefreshToken(String refreshToken) {
+		return Long.parseLong(String.valueOf(
+			memberRefreshTokenRepository.get(refreshToken).orElseThrow(RefreshTokenNotFoundException::new)));
 	}
 }
