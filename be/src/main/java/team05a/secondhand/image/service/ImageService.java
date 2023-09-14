@@ -36,26 +36,27 @@ public class ImageService {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucketName;
 
-	public List<String> upload(List<MultipartFile> images) {
+	public List<String> uploadProductImages(List<MultipartFile> images) {
 		validateImageCount(images);
 
 		List<String> imageUrls = new ArrayList<>();
 		for (MultipartFile image : images) {
-			uploadImage(imageUrls, image);
+			imageUrls.add(uploadImage(image));
 		}
 
 		return imageUrls;
 	}
 
-	private void uploadImage(List<String> imageUrls, MultipartFile image) {
+	public String uploadImage(MultipartFile image) {
 		String imageName = image.getOriginalFilename() + UUID.randomUUID();
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentType(image.getContentType());
+
 		try {
 			amazonS3Client.putObject(
 				new PutObjectRequest(bucketName, imageName, image.getInputStream(), objectMetadata)
 					.withCannedAcl(CannedAccessControlList.PublicRead));
-			imageUrls.add(amazonS3Client.getUrl(bucketName, imageName).toString());
+			return amazonS3Client.getUrl(bucketName, imageName).toString();
 		} catch (IOException e) {
 			throw new ImageUploadFailedException();
 		}
@@ -91,7 +92,7 @@ public class ImageService {
 		if ((newImages == null && imageCount == 0) || (imageCount + Objects.requireNonNull(newImages).size()) > 10) {
 			throw new ImageCountOutOfRangeException();
 		}
-		return upload(newImages);
+		return uploadProductImages(newImages);
 	}
 
 	public String findThumbnail(Long productId) {
