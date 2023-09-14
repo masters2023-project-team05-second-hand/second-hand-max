@@ -32,6 +32,7 @@ public class JwtAuthorizationFilter implements Filter {
 
 	private final String[] whiteListGetUris = new String[] {"/api/addresses", "/api/categories", "/api/products*",
 		"/api/statuses"};
+	private final String[] whiteListPostUris = new String[] {"/api/members/sign-in/*", "/api/reissue-access-token"};
 	private final JwtTokenProvider jwtProvider;
 	private final RedisRepository redisRepository;
 
@@ -80,8 +81,7 @@ public class JwtAuthorizationFilter implements Filter {
 
 	private boolean whiteListLoginCheck(HttpServletRequest httpServletRequest) {
 		String uri = httpServletRequest.getRequestURI();
-		String whiteListLoginUris = "/api/members/sign-in/*";
-		return httpServletRequest.getMethod().equals("POST") && PatternMatchUtils.simpleMatch(whiteListLoginUris, uri);
+		return httpServletRequest.getMethod().equals("POST") && PatternMatchUtils.simpleMatch(whiteListPostUris, uri);
 	}
 
 	private boolean isContainToken(HttpServletRequest request) {
