@@ -34,7 +34,6 @@ import team05a.secondhand.wish.service.WishService;
 public class MemberController {
 
 	private final MemberService memberService;
-	private final WishService wishService;
 
 	@GetMapping
 	public ResponseEntity<MemberResponse> getMember(@MemberId Long memberId) {
@@ -77,10 +76,5 @@ public class MemberController {
 
 		return ResponseEntity.ok()
 			.body(responseBody);
-	}
-
-	@PostMapping("/wishlist")
-	public void createWish(@MemberId Long memberId, @RequestBody WishRequest wishRequest) {
-		wishService.handleWishRequest(memberId, wishRequest);
 	}
 }
