@@ -20,13 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
 
-    services:
-      redis:
-        image: redis:latest
-        ports:
-          - 6379:6379
-        hostname: redis
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -45,7 +38,7 @@ jobs:
     - name: Build with Gradle
       run: |
         cd ./be
-        ./gradlew build
+        ./gradlew bootjar
 
     - name: Make Dockerfile and Push
       run: |
