@@ -21,10 +21,11 @@ public class ProductReadResponse {
 	private Timestamp createdTime;
 	private Integer price;
 	private Long statusId;
+	private ProductListStatsResponse stats;
 
 	@Builder
 	private ProductReadResponse(Long productId, Long sellerId, String thumbnailUrl, String title, String addressName,
-		Timestamp createdTime, Integer price, Long statusId) {
+		Timestamp createdTime, Integer price, Long statusId, ProductListStatsResponse stats) {
 		this.productId = productId;
 		this.sellerId = sellerId;
 		this.thumbnailUrl = thumbnailUrl;
@@ -33,6 +34,7 @@ public class ProductReadResponse {
 		this.createdTime = createdTime;
 		this.price = price;
 		this.statusId = statusId;
+		this.stats = stats;
 	}
 
 	public static List<ProductReadResponse> from(List<Product> products) {
@@ -46,6 +48,7 @@ public class ProductReadResponse {
 				.createdTime(product.getCreatedTime())
 				.price(product.getPrice())
 				.statusId(product.getStatus().getId())
+				.stats(ProductListStatsResponse.builder().build())
 				.build())
 			.collect(Collectors.toList());
 	}
