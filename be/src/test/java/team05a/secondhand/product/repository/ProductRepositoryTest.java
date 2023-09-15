@@ -2,10 +2,14 @@ package team05a.secondhand.product.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import team05a.secondhand.AcceptanceTest;
@@ -99,6 +103,30 @@ class ProductRepositoryTest extends AcceptanceTest {
 
 		// when
 		ProductListResponse response = productRepository.findList(addressId, categoryId, 0L, 10L);
+
+		//then
+		assertThat(response.getProducts().get(0).getProductId()).isEqualTo(save.getId());
+		assertThat(response.isHasNext()).isFalse();
+	}
+
+	@Transactional
+	@DisplayName("판매 목록 조회를 한다.")
+	@Test
+	void findAllByMemberIdAndStatusId() {
+		//given
+		int page = 0;
+		int size = 10;
+		Pageable pageable = PageRequest.of(page, size);
+		List<Long> statusIds = List.of(1L, 2L, 3L);
+		Member member = memberRepository.save(FixtureFactory.createMember());
+		Address address = addressRepository.findById(1L).orElseThrow();
+		Category category = categoryRepository.findById(1L).orElseThrow();
+		Status status = statusRepository.findById(1L).orElseThrow();
+		Product product = FixtureFactory.createProductForRepo(member, address, category, status);
+		Product save = productRepository.save(product);
+
+		// when
+		ProductListResponse response = productRepository.findSalesList(member.getId(), statusIds, pageable);
 
 		//then
 		assertThat(response.getProducts().get(0).getProductId()).isEqualTo(save.getId());

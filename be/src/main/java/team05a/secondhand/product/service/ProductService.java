@@ -2,6 +2,7 @@ package team05a.secondhand.product.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -148,5 +149,10 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public ProductListResponse readList(Long addressId, Long categoryId, Long cursor, Long size) {
 		return productRepository.findList(addressId, categoryId, cursor, size);
+	}
+
+	@Transactional(readOnly = true)
+	public ProductListResponse readSalesList(Long memberId, List<Long> statusId, Pageable pageable) {
+		return productRepository.findSalesList(memberId, statusId, pageable);
 	}
 }

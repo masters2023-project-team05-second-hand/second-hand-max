@@ -4,6 +4,8 @@ import static team05a.secondhand.product.data.entity.QProduct.*;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -34,6 +36,31 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 			.where(product.id.lt(getLastIndex(products)),
 				product.address.id.eq(addressId),
 				eqCategoryId(categoryId))
+			.fetchOne();
+
+		return ProductListResponse.builder()
+			.products(ProductReadResponse.from(products))
+			.hasNext(hasNext != null)
+			.build();
+	}
+
+	@Override
+	public ProductListResponse findSalesList(Long memberId, List<Long> statusId, Pageable pageable) {
+		List<Product> products = jpaQueryFactory
+			.selectFrom(product)
+			.where(
+				product.member.id.eq(memberId),
+				product.status.id.in(statusId))
+			.orderBy(product.id.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+		Integer hasNext = jpaQueryFactory
+			.selectOne()
+			.from(product)
+			.where(product.id.lt(getLastIndex(products)),
+				product.member.id.eq(memberId),
+				product.status.id.in(statusId))
 			.fetchOne();
 
 		return ProductListResponse.builder()
