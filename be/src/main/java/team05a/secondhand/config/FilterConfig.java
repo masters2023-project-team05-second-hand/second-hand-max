@@ -23,7 +23,7 @@ public class FilterConfig {
 	}
 
 	@Bean
-	public FilterRegistrationBean<CorsFilter> corsFilter(@Value("cors.origin") String allowedOrigin) {
+	public FilterRegistrationBean<CorsFilter> corsFilter(@Value("${cors.origin}") String allowedOrigin) {
 		FilterRegistrationBean<CorsFilter> filterRegistrationBean = new FilterRegistrationBean<>();
 		filterRegistrationBean.setFilter(new CorsFilter(allowedOrigin));
 		filterRegistrationBean.setOrder(1);

@@ -24,7 +24,7 @@ public class CorsFilter implements Filter {
 		throws IOException, ServletException {
 		HttpServletResponse response = (HttpServletResponse)servletResponse;
 
-		response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:5173");
+		response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, allowedOrigin);
 		response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, PATCH, DELETE, OPTIONS");
 		response.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "3600");
 		response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
