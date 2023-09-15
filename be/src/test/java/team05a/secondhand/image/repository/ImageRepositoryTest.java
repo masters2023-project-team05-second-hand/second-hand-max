@@ -52,7 +52,7 @@ class ImageRepositoryTest extends AcceptanceTest {
 		Product product = productRepository.save(FixtureFactory.createProductRequest(member));
 		List<ProductImage> productImages = FixtureFactory.createProductImageListRequest(product);
 		List<ProductImage> save = imageRepository.saveAll(productImages);
-		Long count = imageRepository.countByProductId(product.getId());
+		int count = imageRepository.countByProductId(product.getId());
 
 		//then
 		assertThat(count).isEqualTo(save.size());

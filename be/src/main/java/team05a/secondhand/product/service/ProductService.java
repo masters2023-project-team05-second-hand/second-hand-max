@@ -83,7 +83,7 @@ public class ProductService {
 	public ProductIdResponse update(ProductUpdateRequest productUpdateRequest, Long productId, Long memberId) {
 		validateProductSeller(productId, memberId);
 		imageService.deleteAllBy(productUpdateRequest.getDeletedImageIds());
-		Long imageCount = imageService.countImagesBy(productId);
+		int imageCount = imageService.countImagesBy(productId);
 		List<String> newImageUrls = imageService.uploadNew(imageCount, productUpdateRequest.getNewImages());
 		String thumbnailUrl = getThumbnailUrl(imageCount, newImageUrls, productId);
 		Product updateProduct = updateProduct(productUpdateRequest, productId, thumbnailUrl);
@@ -91,7 +91,7 @@ public class ProductService {
 		return ProductIdResponse.from(updateProduct.getId());
 	}
 
-	private String getThumbnailUrl(Long imageCount, List<String> newImageUrls, Long productId) {
+	private String getThumbnailUrl(int imageCount, List<String> newImageUrls, Long productId) {
 		if (imageCount == 0) {
 			return newImageUrls.get(0);
 		}
