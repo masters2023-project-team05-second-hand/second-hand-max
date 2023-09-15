@@ -12,11 +12,13 @@ import lombok.NoArgsConstructor;
 public class ProductListResponse {
 
 	private List<ProductReadResponse> products;
+	private ProductDetailStatsResponse stats;
 	private boolean hasNext;
 
 	@Builder
 	private ProductListResponse(List<ProductReadResponse> products, boolean hasNext) {
 		this.products = products;
+		this.stats = ProductDetailStatsResponse.makeZeroStats();
 		this.hasNext = hasNext;
 	}
 }
