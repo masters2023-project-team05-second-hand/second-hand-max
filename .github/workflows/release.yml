@@ -10,6 +10,7 @@ name: Java, React CI/CD Using Docker
 on:
   pull_request:
     branches: [ release ]
+  workflow_dispatch:
     
 permissions:
   contents: read
