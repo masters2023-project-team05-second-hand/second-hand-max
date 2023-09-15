@@ -18,17 +18,21 @@ public class ProductResponse {
 	@JsonProperty("product")
 	private final ProductDetailResponse productDetail;
 	private final List<ProductImageResponse> images;
+	private final ProductDetailStatsResponse stats;
 
 	@Builder
-	private ProductResponse(ProductDetailResponse productDetail, List<ProductImageResponse> images) {
+	private ProductResponse(ProductDetailResponse productDetail, List<ProductImageResponse> images,
+		ProductDetailStatsResponse stats) {
 		this.productDetail = productDetail;
 		this.images = images;
+		this.stats = stats;
 	}
 
 	public static ProductResponse from(Product product, List<ProductImage> productImages) {
 		return ProductResponse.builder()
 			.productDetail(ProductDetailResponse.from(product))
 			.images(ProductImageResponse.from(productImages))
+			.stats(ProductDetailStatsResponse.makeZeroStats())
 			.build();
 	}
 }
