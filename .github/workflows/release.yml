@@ -28,13 +28,12 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
-      
-     # echo "${{ secrets.APPLICATION_RELEASE }}" | base64 --decode > ./application.yml    
+       
     - name: Make application-release.yml
       run: |
         cd ./be/src/main/resources
         touch ./application.yml
-        echo "${{ secrets.APPLICATION_RELEASE }}" >> ./application.yml
+        echo "${{ secrets.APPLICATION_RELEASE }}" | base64 --decode > ./application.yml    
 
     - name: Build with Gradle
       run: |
