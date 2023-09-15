@@ -14,8 +14,12 @@ public enum OauthAttributes {
 	GITHUB("github") {
 		@Override
 		public MemberOauthRequest of(String providerName, Map<String, Object> attributes) {
-			return new MemberOauthRequest((String)attributes.get("login"), (String)attributes.get("email"),
-				(String)attributes.get("avatar_url"), providerName);
+			return MemberOauthRequest.builder()
+				.nickname((String)attributes.get("login"))
+				.email((String)attributes.get("email"))
+				.profileImgUrl((String)attributes.get("avatar_url"))
+				.type(providerName)
+				.build();
 		}
 	},
 	KAKAO("kakao") {
@@ -24,8 +28,12 @@ public enum OauthAttributes {
 			Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 			Map<String, Object> profile = (Map<String, Object>)kakaoAccount.get("profile");
 
-			return new MemberOauthRequest((String)profile.get("nickname"), (String)kakaoAccount.get("email"),
-				(String)profile.get("profile_image_url"), providerName);
+			return MemberOauthRequest.builder()
+				.nickname((String)profile.get("nickname"))
+				.email((String)kakaoAccount.get("email"))
+				.profileImgUrl((String)profile.get("profile_image_url"))
+				.type(providerName)
+				.build();
 		}
 	};
 

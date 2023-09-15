@@ -13,7 +13,8 @@ import team05a.secondhand.product.data.entity.Product;
 @Getter
 public class ProductDetailResponse {
 
-	private final String seller;
+	@JsonProperty("seller")
+	private final ProductSellerResponse productSellerResponse;
 	@JsonProperty("category")
 	private final ProductCategoryResponse productCategoryResponse;
 	@JsonProperty("address")
@@ -26,10 +27,10 @@ public class ProductDetailResponse {
 	private final Long statusId;
 
 	@Builder
-	public ProductDetailResponse(String seller, ProductCategoryResponse productCategoryResponse,
-		ProductAddressResponse productAddressResponse, String title, String contents, Integer price,
-		Timestamp createdTime, Long statusId) {
-		this.seller = seller;
+	private ProductDetailResponse(ProductSellerResponse productSellerResponse,
+		ProductCategoryResponse productCategoryResponse, ProductAddressResponse productAddressResponse,
+		String title, String contents, Integer price, Timestamp createdTime, Long statusId) {
+		this.productSellerResponse = productSellerResponse;
 		this.productCategoryResponse = productCategoryResponse;
 		this.productAddressResponse = productAddressResponse;
 		this.title = title;
@@ -41,7 +42,7 @@ public class ProductDetailResponse {
 
 	public static ProductDetailResponse from(Product product) {
 		return ProductDetailResponse.builder()
-			.seller(product.getMember().getNickname())
+			.productSellerResponse(ProductSellerResponse.from(product.getMember()))
 			.productCategoryResponse(ProductCategoryResponse.from(product.getCategory()))
 			.productAddressResponse(ProductAddressResponse.from(product.getAddress()))
 			.title(product.getTitle())

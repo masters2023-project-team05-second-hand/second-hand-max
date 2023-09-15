@@ -1,17 +1,20 @@
 package team05a.secondhand.member.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.address.repository.AddressRepository;
+import team05a.secondhand.errors.exception.MemberNotFoundException;
+import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.member.data.dto.MemberAddressResponse;
 import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
+import team05a.secondhand.member.data.dto.MemberNicknameUpdateRequest;
 import team05a.secondhand.member.data.dto.MemberResponse;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
@@ -22,14 +25,15 @@ import team05a.secondhand.member_address.repository.MemberAddressRepository;
 @RequiredArgsConstructor
 public class MemberService {
 
+	private final ImageService imageService;
 	private final MemberRepository memberRepository;
 	private final AddressRepository addressRepository;
 	private final MemberAddressRepository memberAddressRepository;
 
 	public MemberResponse getMember(Long memberId) {
-		Optional<Member> member = memberRepository.findById(memberId);
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 
-		return member.map(MemberResponse::from).orElse(null);
+		return MemberResponse.from(member);
 	}
 
 	@Transactional
@@ -45,9 +49,25 @@ public class MemberService {
 		return MemberAddressResponse.from(memberAddresses);
 	}
 
+	@Transactional
+	public void updateMemberNickname(Long memberId, MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+
+		member.updateMemberNickname(memberNicknameUpdateRequest);
+	}
+
+	@Transactional(readOnly = true)
 	public List<MemberAddressResponse> getMemberAddress(Long memberId) {
 		List<MemberAddress> memberAddresses = memberAddressRepository.findByMemberId(memberId);
 
 		return MemberAddressResponse.from(memberAddresses);
+	}
+
+	@Transactional
+	public String updateMemberProfile(Long memberId, MultipartFile newProfileImg) {
+		String newProfileImgUrl = imageService.uploadImage(newProfileImg);
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+
+		return member.updateProfileImgUrl(newProfileImgUrl);
 	}
 }

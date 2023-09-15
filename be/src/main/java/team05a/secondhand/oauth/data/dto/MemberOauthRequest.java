@@ -1,6 +1,7 @@
 package team05a.secondhand.oauth.data.dto;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05a.secondhand.oauth.OauthAttributes;
@@ -14,7 +15,8 @@ public class MemberOauthRequest {
 	private String profileImgUrl;
 	private OauthAttributes type;
 
-	public MemberOauthRequest(String nickname, String email, String profileImgUrl, String type) {
+	@Builder
+	private MemberOauthRequest(String nickname, String email, String profileImgUrl, String type) {
 		this.nickname = nickname;
 		this.email = email;
 		this.profileImgUrl = profileImgUrl;

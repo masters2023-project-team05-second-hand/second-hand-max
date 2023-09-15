@@ -1,22 +1,28 @@
 package team05a.secondhand.member.integration;
 
 import static groovy.json.JsonOutput.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import team05a.secondhand.DatabaseCleanup;
 import team05a.secondhand.address.data.entity.Address;
+import team05a.secondhand.errors.exception.MemberNotFoundException;
 import team05a.secondhand.fixture.FixtureFactory;
 import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.data.dto.MemberAddressUpdateRequest;
@@ -38,6 +44,13 @@ public class MemberIntegrationTest {
 	private MemberRepository memberRepository;
 	@Autowired
 	private MemberAddressRepository memberAddressRepository;
+	@Autowired
+	private DatabaseCleanup databaseCleanup;
+
+	@BeforeEach
+	public void setUp() {
+		databaseCleanup.execute();
+	}
 
 	@Test
 	@DisplayName("멤버의 주소를 업데이트한다.")
@@ -71,6 +84,28 @@ public class MemberIntegrationTest {
 	}
 
 	@Test
+	@DisplayName("멤버의 닉네임을 변경한다.")
+	void updateMemberNickname() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+		String nicknameUpdateJson = "{\"newNickname\":\"thisIsNewOne\"}";
+
+		//when
+		ResultActions resultActions = mockMvc.perform(patch("/api/members/nickname")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(nicknameUpdateJson)
+			.header("Authorization", "Bearer " + accessToken));
+
+		// then
+		resultActions
+			.andExpect(status().isOk());
+		assertThat(memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new)
+			.getNickname()).isEqualTo("thisIsNewOne");
+	}
+
+	@Test
 	@DisplayName("멤버의 주소를 가져온다.")
 	void getMemberAddress() throws Exception {
 		//given
@@ -91,6 +126,31 @@ public class MemberIntegrationTest {
 				jsonPath("$.length()").value(2),
 				jsonPath("$[1].name").value("서울특별시 강남구 압구정동")
 			);
+	}
+
+	@Test
+	@DisplayName("멤버의 프로필 이미지를 업데이트한다")
+	void updateMemberProfileImg() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		String beforeProfileImgUrl = member.getProfileImgUrl();
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			MockMvcRequestBuilders
+				.multipart(HttpMethod.PATCH, "/api/members/profile-image")
+				.file("newProfileImg", "updateProfile".getBytes())
+				.header("Authorization", "Bearer " + accessToken)
+		);
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.updatedImgUrl").isNotEmpty());
+		assertThat(memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new)
+			.getProfileImgUrl()).isNotEqualTo(beforeProfileImgUrl);
 	}
 }
 

@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -60,11 +63,16 @@ public class JwtTokenProvider {
 	}
 
 	public Long extractMemberId(String accessToken) {
-		return Jwts.parserBuilder()
-			.setSigningKey(key)
-			.build()
-			.parseClaimsJws(accessToken)
-			.getBody()
-			.get("memberId", Long.class);
+		return getClaims(accessToken).get("memberId", Long.class);
+	}
+
+	public Long getExpiration(String token) {
+		Date expiration = getClaims(token).getExpiration();
+		return expiration.getTime() - new Date().getTime();
+	}
+
+	public String getToken(HttpServletRequest request) {
+		String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+		return authorization.substring(7);
 	}
 }

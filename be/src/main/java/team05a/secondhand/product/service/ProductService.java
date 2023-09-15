@@ -14,6 +14,7 @@ import team05a.secondhand.errors.exception.AddressNotFoundException;
 import team05a.secondhand.errors.exception.CategoryNotFoundException;
 import team05a.secondhand.errors.exception.MemberNotFoundException;
 import team05a.secondhand.errors.exception.ProductNotFoundException;
+import team05a.secondhand.errors.exception.ProductViewNotFoundException;
 import team05a.secondhand.errors.exception.StatusNotFoundException;
 import team05a.secondhand.errors.exception.UnauthorizedProductModificationException;
 import team05a.secondhand.image.data.entity.ProductImage;
@@ -22,19 +23,22 @@ import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
+import team05a.secondhand.product.data.dto.ProductListResponse;
 import team05a.secondhand.product.data.dto.ProductResponse;
 import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateRequest;
 import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
+import team05a.secondhand.redis.repository.RedisRepository;
 import team05a.secondhand.status.data.entity.Status;
 import team05a.secondhand.status.repository.StatusRepository;
 
-@Transactional
 @RequiredArgsConstructor
 @Service
 public class ProductService {
+
+	public static final String VIEW_PREFIX = "view:";
 
 	private final ProductRepository productRepository;
 	private final MemberRepository memberRepository;
@@ -42,11 +46,14 @@ public class ProductService {
 	private final AddressRepository addressRepository;
 	private final StatusRepository statusRepository;
 	private final ImageService imageService;
+	private final RedisRepository redisRepository;
 
+	@Transactional
 	public ProductIdResponse create(ProductCreateRequest productCreateRequest, Long memberId) {
-		List<String> imageUrls = imageService.upload(productCreateRequest.getImages());
+		List<String> imageUrls = imageService.uploadProductImages(productCreateRequest.getImages());
 		Product product = createProduct(productCreateRequest, memberId, imageUrls);
 		imageService.create(product, imageUrls);
+		redisRepository.set(VIEW_PREFIX + product.getId(), 0L);
 		return ProductIdResponse.from(product.getId());
 	}
 
@@ -61,21 +68,22 @@ public class ProductService {
 			productCreateRequest.toEntity(member, category, address, status, imageUrls.get(0)));
 	}
 
-	public ProductResponse read(Long productId, Long memberId) {
-		if (memberId > 0) {
-			memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-		}
+	@Transactional(readOnly = true)
+	public ProductResponse read(Long productId) {
 		Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
 		List<ProductImage> productImages = imageService.findAllByProduct(product);
-		List<Status> statuses = statusRepository.findAll();
+		String key = VIEW_PREFIX + productId;
+		Long view = (Long)redisRepository.get(key).orElseThrow(ProductViewNotFoundException::new) + 1;
+		redisRepository.set(key, view);
 
-		return ProductResponse.from(memberId, product, productImages, statuses);
+		return ProductResponse.from(product, productImages);
 	}
 
+	@Transactional
 	public ProductIdResponse update(ProductUpdateRequest productUpdateRequest, Long productId, Long memberId) {
 		validateProductSeller(productId, memberId);
 		imageService.deleteAllBy(productUpdateRequest.getDeletedImageIds());
-		Long imageCount = imageService.countImagesBy(productId);
+		int imageCount = imageService.countImagesBy(productId);
 		List<String> newImageUrls = imageService.uploadNew(imageCount, productUpdateRequest.getNewImages());
 		String thumbnailUrl = getThumbnailUrl(imageCount, newImageUrls, productId);
 		Product updateProduct = updateProduct(productUpdateRequest, productId, thumbnailUrl);
@@ -83,7 +91,7 @@ public class ProductService {
 		return ProductIdResponse.from(updateProduct.getId());
 	}
 
-	private String getThumbnailUrl(Long imageCount, List<String> newImageUrls, Long productId) {
+	private String getThumbnailUrl(int imageCount, List<String> newImageUrls, Long productId) {
 		if (imageCount == 0) {
 			return newImageUrls.get(0);
 		}
@@ -119,12 +127,14 @@ public class ProductService {
 		}
 	}
 
+	@Transactional
 	public ProductIdResponse delete(Long productId, Long memberId) {
 		validateProductSeller(productId, memberId);
 		productRepository.deleteById(productId);
 		return ProductIdResponse.from(productId);
 	}
 
+	@Transactional
 	public ProductStatusResponse updateStatus(ProductUpdateStatusRequest productUpdateStatusRequest, Long productId,
 		Long memberId) {
 		validateProductSeller(productId, memberId);
@@ -133,5 +143,10 @@ public class ProductService {
 			.orElseThrow(StatusNotFoundException::new);
 		product.modifyStatus(status);
 		return ProductStatusResponse.from(productUpdateStatusRequest.getStatusId());
+	}
+
+	@Transactional(readOnly = true)
+	public ProductListResponse readList(Long addressId, Long categoryId, Long cursor, Long size) {
+		return productRepository.findList(addressId, categoryId, cursor, size);
 	}
 }

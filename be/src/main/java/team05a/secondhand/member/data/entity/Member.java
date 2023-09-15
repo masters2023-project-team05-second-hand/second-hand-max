@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import team05a.secondhand.member.data.dto.MemberNicknameUpdateRequest;
 import team05a.secondhand.member_address.data.entity.MemberAddress;
 import team05a.secondhand.oauth.OauthAttributes;
 import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
@@ -42,7 +43,7 @@ public class Member {
 	private String email;
 	@Column(length = 50, nullable = false)
 	private String nickname;
-	@Column(length = 100)
+	@Column
 	private String profileImgUrl;
 	@OneToMany(mappedBy = "member")
 	private List<MemberAddress> memberAddresses = new ArrayList<>();
@@ -53,6 +54,17 @@ public class Member {
 		this.email = email;
 		this.nickname = nickname;
 		this.profileImgUrl = profileImgUrl;
+	}
+
+
+	public void updateMemberNickname(MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
+		this.nickname = memberNicknameUpdateRequest.getNewNickname();
+  }
+
+	public String updateProfileImgUrl(String newProfileImgUrl) {
+		this.profileImgUrl = newProfileImgUrl;
+
+		return this.profileImgUrl;
 	}
 
 	public static Member from(MemberOauthRequest memberOauthRequest) {

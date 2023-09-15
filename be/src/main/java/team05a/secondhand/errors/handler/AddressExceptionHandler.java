@@ -1,5 +1,6 @@
 package team05a.secondhand.errors.handler;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,7 +17,7 @@ public class AddressExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleAddressNotFoundException(AddressNotFoundException e) {
 		log.warn("AddressNotFoundException handling : {}", e.toString());
 
-		ErrorResponse response = ErrorResponse.from(e.getMessage());
+		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST, e.getMessage());
 		return ResponseEntity.status(response.getStatus())
 			.body(response);
 	}

@@ -26,11 +26,13 @@ import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
+import team05a.secondhand.product.data.dto.ProductListResponse;
 import team05a.secondhand.product.data.dto.ProductStatusResponse;
 import team05a.secondhand.product.data.dto.ProductUpdateRequest;
 import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
+import team05a.secondhand.redis.repository.RedisRepository;
 import team05a.secondhand.status.data.entity.Status;
 import team05a.secondhand.status.repository.StatusRepository;
 
@@ -51,6 +53,8 @@ class ProductServiceTest {
 	private ProductRepository productRepository;
 	@Mock
 	private ImageService imageService;
+	@Mock
+	private RedisRepository redisRepository;
 
 	@DisplayName("상품을 등록한다.")
 	@Test
@@ -59,7 +63,7 @@ class ProductServiceTest {
 		ProductCreateRequest productCreateRequest = FixtureFactory.productCreateRequest();
 		Product productResponse = FixtureFactory.createProductResponse();
 		List<String> imageUrls = List.of("imageUrl");
-		given(imageService.upload(any())).willReturn(imageUrls);
+		given(imageService.uploadProductImages(any())).willReturn(imageUrls);
 		given(memberRepository.findById(any())).willReturn(Optional.of(FixtureFactory.createMember()));
 		given(categoryRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createCategory()));
 		given(addressRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createAddress()));
@@ -80,8 +84,8 @@ class ProductServiceTest {
 		ProductUpdateRequest productUpdateRequest = FixtureFactory.productUpdateRequest();
 		Product productResponse = FixtureFactory.createProductResponse();
 		List<String> imageUrls = List.of("imageUrl");
-		given(imageService.countImagesBy(any())).willReturn(1L);
-		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
+		given(imageService.countImagesBy(any())).willReturn(1);
+		given(imageService.uploadNew(anyInt(), any())).willReturn(imageUrls);
 		given(productRepository.existsById(any())).willReturn(true);
 		given(memberRepository.existsById(any())).willReturn(true);
 		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
@@ -145,8 +149,8 @@ class ProductServiceTest {
 		given(productRepository.existsById(any())).willReturn(true);
 		given(memberRepository.existsById(any())).willReturn(true);
 		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
-		given(imageService.countImagesBy(any())).willReturn(1L);
-		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
+		given(imageService.countImagesBy(any())).willReturn(1);
+		given(imageService.uploadNew(anyInt(), any())).willReturn(imageUrls);
 		given(productRepository.findById(any())).willReturn(
 			Optional.ofNullable(FixtureFactory.createProductResponse()));
 		given(categoryRepository.findById(any())).willReturn(Optional.empty());
@@ -165,8 +169,8 @@ class ProductServiceTest {
 		given(productRepository.existsById(any())).willReturn(true);
 		given(memberRepository.existsById(any())).willReturn(true);
 		given(productRepository.existsByIdAndMemberId(any(), any())).willReturn(true);
-		given(imageService.countImagesBy(any())).willReturn(1L);
-		given(imageService.uploadNew(any(), any())).willReturn(imageUrls);
+		given(imageService.countImagesBy(any())).willReturn(1);
+		given(imageService.uploadNew(anyInt(), any())).willReturn(imageUrls);
 		given(productRepository.findById(any())).willReturn(
 			Optional.ofNullable(FixtureFactory.createProductResponse()));
 		given(categoryRepository.findById(any())).willReturn(Optional.ofNullable(FixtureFactory.createCategory()));
@@ -264,5 +268,21 @@ class ProductServiceTest {
 		// when & then
 		assertThatThrownBy(() -> productService.delete(1L, 1L)).isInstanceOf(
 			UnauthorizedProductModificationException.class);
+	}
+
+	@DisplayName("상품의 목록을 조회한다.")
+	@Test
+	void readList() {
+		// given
+		ProductListResponse productListResponse = FixtureFactory.createProductListResponse();
+		given(productRepository.findList(any(), any(), any(), any())).willReturn(productListResponse);
+
+		//when
+		ProductListResponse response = productService.readList(1L, 1L, 0L, 5L);
+
+		//then
+		assertThat(response.isHasNext()).isEqualTo(productListResponse.isHasNext());
+		assertThat(response.getProducts().get(0).getProductId()).isEqualTo(
+			productListResponse.getProducts().get(0).getProductId());
 	}
 }

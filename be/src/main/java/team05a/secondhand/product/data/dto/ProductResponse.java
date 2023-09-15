@@ -15,28 +15,24 @@ import team05a.secondhand.status.data.entity.Status;
 @Getter
 public class ProductResponse {
 
-	private final Boolean isSeller;
 	@JsonProperty("product")
 	private final ProductDetailResponse productDetail;
 	private final List<ProductImageResponse> images;
-	private final List<StatusResponse> statuses;
+	private final ProductDetailStatsResponse stats;
 
 	@Builder
-	private ProductResponse(boolean isSeller, ProductDetailResponse productDetail, List<ProductImageResponse> images,
-		List<StatusResponse> statuses) {
-		this.isSeller = isSeller;
+	private ProductResponse(ProductDetailResponse productDetail, List<ProductImageResponse> images,
+		ProductDetailStatsResponse stats) {
 		this.productDetail = productDetail;
 		this.images = images;
-		this.statuses = statuses;
+		this.stats = stats;
 	}
 
-	public static ProductResponse from(Long memberId, Product product, List<ProductImage> productImages,
-		List<Status> statuses) {
+	public static ProductResponse from(Product product, List<ProductImage> productImages) {
 		return ProductResponse.builder()
-			.isSeller(memberId.equals(product.getMember().getId()))
 			.productDetail(ProductDetailResponse.from(product))
 			.images(ProductImageResponse.from(productImages))
-			.statuses(StatusResponse.from(statuses))
+			.stats(ProductDetailStatsResponse.makeZeroStats())
 			.build();
 	}
 }

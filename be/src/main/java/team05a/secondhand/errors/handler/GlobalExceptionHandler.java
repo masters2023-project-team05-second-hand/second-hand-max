@@ -2,6 +2,7 @@ package team05a.secondhand.errors.handler;
 
 import java.util.Objects;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,7 +20,7 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ErrorResponse> handleBindException(BindException e) {
 		log.warn("BindException: {}", e.getMessage());
 
-		ErrorResponse response = ErrorResponse.from(
+		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST,
 			Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
 		return ResponseEntity.status(response.getStatus())
 			.body(response);

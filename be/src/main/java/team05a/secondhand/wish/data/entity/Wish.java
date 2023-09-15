@@ -1,4 +1,4 @@
-package team05a.secondhand.member_refreshtoken.data.entity;
+package team05a.secondhand.wish.data.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,27 +10,32 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05a.secondhand.member.data.entity.Member;
+import team05a.secondhand.product.data.entity.Product;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class MemberRefreshToken {
+public class Wish {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "member_refresh_token_id")
+	@Column(name = "member_product_id")
 	private Long id;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
-	@Column(nullable = false)
-	private String refreshToken;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_id")
+	private Product product;
 
-	public MemberRefreshToken(Member member, String refreshToken) {
+	@Builder
+	private Wish(Long id, Member member, Product product) {
+		this.id = id;
 		this.member = member;
-		this.refreshToken = refreshToken;
+		this.product = product;
 	}
 }

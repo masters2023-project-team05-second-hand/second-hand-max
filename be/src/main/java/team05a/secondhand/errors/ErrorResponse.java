@@ -22,7 +22,7 @@ public class ErrorResponse {
 		return new ErrorResponse(errorCode.getHttpStatus().value(), errorCode.getHttpStatus(), errorCode.getMessage());
 	}
 
-	public static ErrorResponse from(String message) {
-		return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, message);
+	public static ErrorResponse from(HttpStatus httpStatus, String message) {
+		return new ErrorResponse(httpStatus.value(), httpStatus, message);
 	}
 }

@@ -34,26 +34,20 @@ public class MemberAddress {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "address_id")
 	private Address address;
-	private boolean isLastVisited;
 
 	@Builder
-	private MemberAddress(Long id, Member member, Address address, boolean isLastVisited) {
+	private MemberAddress(Long id, Member member, Address address) {
 		this.id = id;
 		this.member = member;
 		this.address = address;
-		this.isLastVisited = isLastVisited;
 	}
 
 	public static List<MemberAddress> of(Member member, List<Address> addresses) {
-		List<MemberAddress> memberAddresses = addresses.stream()
+		return addresses.stream()
 			.map(address -> MemberAddress.builder()
 				.member(member)
 				.address(address)
 				.build())
-			.collect(Collectors.toList());
-
-		memberAddresses.get(memberAddresses.size() - 1).isLastVisited = true;
-
-		return memberAddresses;
+			.collect(Collectors.toUnmodifiableList());
 	}
 }

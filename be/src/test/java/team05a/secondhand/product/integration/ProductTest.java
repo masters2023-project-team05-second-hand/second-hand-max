@@ -32,6 +32,8 @@ import team05a.secondhand.jwt.JwtTokenProvider;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
+import team05a.secondhand.product.data.dto.ProductReadResponse;
+import team05a.secondhand.product.data.dto.ProductUpdateStatusRequest;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
 import team05a.secondhand.status.data.entity.Status;
@@ -70,9 +72,9 @@ public class ProductTest extends AcceptanceTest {
 		});
 	}
 
-	@DisplayName("상품 판매자가 등록된 상품을 가져온다.")
+	@DisplayName("로그인 한 멤버가 등록된 상품을 가져온다.")
 	@Test
-	void SellerReadsProduct() throws IOException {
+	void readProductWithToken() throws IOException {
 		// given
 		long memberId = singUp().getId();
 		long productId = create(memberId).jsonPath().getLong("productId");
@@ -83,35 +85,14 @@ public class ProductTest extends AcceptanceTest {
 		// then
 		SoftAssertions.assertSoftly(softAssertions -> {
 			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
-			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isTrue();
-
+			softAssertions.assertThat(response.jsonPath().getBoolean("images")).isNotNull();
+			softAssertions.assertThat(response.jsonPath().getBoolean("product")).isNotNull();
 		});
 	}
 
-	@DisplayName("상품 판매자가 아닌 멤버가 등록된 상품을 가져온다.")
+	@DisplayName("로그인을 하지않은 방문자가 등록된 상품을 가져온다.")
 	@Test
-	void NotSellerMemberReadProduct() throws IOException {
-		// given
-		long sellerId = singUp().getId();
-		long memberId = signupAnotherMember().getId();
-		long productId = create(sellerId).jsonPath().getLong("productId");
-
-		// when
-		ExtractableResponse<Response> response = readWithToken(productId, memberId);
-
-		// then
-		SoftAssertions.assertSoftly(softAssertions -> {
-			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
-			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isFalse();
-
-		});
-	}
-
-	@DisplayName("토큰이 없어도 등록된 상품을 가져온다.")
-	@Test
-	void readProductWithoutToken() throws IOException {
+	void readsProductWithoutToken() throws IOException {
 		// given
 		long memberId = singUp().getId();
 		long productId = create(memberId).jsonPath().getLong("productId");
@@ -122,9 +103,8 @@ public class ProductTest extends AcceptanceTest {
 		// then
 		SoftAssertions.assertSoftly(softAssertions -> {
 			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getList("statuses")).hasSize(3);
-			softAssertions.assertThat(response.jsonPath().getBoolean("isSeller")).isFalse();
-
+			softAssertions.assertThat(response.jsonPath().getBoolean("images")).isNotNull();
+			softAssertions.assertThat(response.jsonPath().getBoolean("product")).isNotNull();
 		});
 	}
 
@@ -241,32 +221,28 @@ public class ProductTest extends AcceptanceTest {
 		// given
 		Member member = singUp();
 		Product product = createProduct(member);
+		ProductUpdateStatusRequest productUpdateStatusRequest = ProductUpdateStatusRequest.builder()
+			.statusId(2L)
+			.build();
 
 		// when
-		var response = updateStatus(product, member);
+		var response = updateStatus(product, member, productUpdateStatusRequest);
 
 		// then
-		SoftAssertions.assertSoftly(softAssertions -> {
-			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-			softAssertions.assertThat(response.jsonPath().getLong("productId")).isNotNull();
-		});
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 	}
 
-	private ExtractableResponse<Response> updateStatus(Product product, Member member) throws IOException {
+	private ExtractableResponse<Response> updateStatus(Product product, Member member,
+		ProductUpdateStatusRequest productUpdateStatusRequest) {
 		return RestAssured
 			.given().log().all()
 			.pathParam("productId", product.getId())
-			.multiPart("newImages", File.createTempFile("update", "jpeg"), MediaType.IMAGE_JPEG_VALUE)
-			.multiPart("title", "title update")
-			.multiPart("content", "content update")
-			.multiPart("categoryId", 1)
-			.multiPart("addressId", 1)
-			.multiPart("price", "1000")
-			.multiPart("deletedImageIds", "")
+			.body(productUpdateStatusRequest)
+			.contentType(MediaType.APPLICATION_JSON_VALUE)
 			.header(HttpHeaders.AUTHORIZATION,
 				"Bearer " + jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId())))
 			.when()
-			.patch("/api/products/{productId}")
+			.patch("/api/products/{productId}/status")
 			.then().log().all()
 			.extract();
 	}
@@ -300,13 +276,78 @@ public class ProductTest extends AcceptanceTest {
 			.extract();
 	}
 
+	@DisplayName("상품을 등록 후 목록을 조회한다.")
+	@Test
+	void readList_success() throws IOException {
+		// given
+		Member member = singUp();
+		Product product = createProduct(member);
+
+		// when
+		var response = readList(product);
+
+		// then
+		SoftAssertions.assertSoftly(softAssertions -> {
+			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+			softAssertions.assertThat(response.jsonPath().getBoolean("hasNext")).isFalse();
+			softAssertions.assertThat(
+					response.jsonPath().getList("products", ProductReadResponse.class).get(0).getProductId())
+				.isEqualTo(product.getId());
+		});
+	}
+
+	private ExtractableResponse<Response> readList(Product product) {
+		return RestAssured
+			.given().log().all()
+			.queryParam("addressId", product.getAddress().getId())
+			.queryParam("categoryId", product.getCategory().getId())
+			.queryParam("cursor", 0)
+			.queryParam("size", 1)
+			.when()
+			.get("/api/products")
+			.then().log().all()
+			.extract();
+	}
+
+	@DisplayName("상품을 등록 후 목록을 조회한다.")
+	@Test
+	void readList_NoCategoryId() throws IOException {
+		// given
+		Member member = singUp();
+		Product product = createProduct(member);
+
+		// when
+		var response = readList_NoCategoryId(product);
+
+		// then
+		SoftAssertions.assertSoftly(softAssertions -> {
+			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+			softAssertions.assertThat(response.jsonPath().getBoolean("hasNext")).isFalse();
+			softAssertions.assertThat(
+					response.jsonPath().getList("products", ProductReadResponse.class).get(0).getProductId())
+				.isEqualTo(product.getId());
+		});
+	}
+
+	private ExtractableResponse<Response> readList_NoCategoryId(Product product) {
+		return RestAssured
+			.given().log().all()
+			.queryParam("addressId", product.getAddress().getId())
+			.queryParam("cursor", 0)
+			.queryParam("size", 1)
+			.when()
+			.get("/api/products")
+			.then().log().all()
+			.extract();
+	}
+
 	private Member singUp() {
 		return memberRepository.save(FixtureFactory.createMember());
 	}
 
 	private Product createProduct(Member member) throws IOException {
 		ProductCreateRequest productCreateRequest = FixtureFactory.productCreateRequestWithMultipartFile();
-		List<String> imageUrls = imageService.upload(productCreateRequest.getImages());
+		List<String> imageUrls = imageService.uploadProductImages(productCreateRequest.getImages());
 		Category category = categoryRepository.findById(productCreateRequest.getCategoryId())
 			.orElseThrow(CategoryNotFoundException::new);
 		Address address = addressRepository.findById(productCreateRequest.getAddressId())
