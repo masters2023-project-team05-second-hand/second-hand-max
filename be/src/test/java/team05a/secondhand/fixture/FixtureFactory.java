@@ -67,6 +67,17 @@ public class FixtureFactory {
 			.build();
 	}
 
+	public static Product createAnotherProductRequest(Member member) {
+		return Product.builder()
+			.title("제목")
+			.content("내용")
+			.thumbnailUrl("http://")
+			.member(member)
+			.address(createAddress())
+			.category(createAnotherCategory())
+			.build();
+	}
+
 	public static Product createProductResponse() {
 		return Product.builder()
 			.id(1L)
@@ -118,6 +129,14 @@ public class FixtureFactory {
 			.id(1L)
 			.name("기타 중고물품")
 			.imgUrl("https://i.ibb.co/tCyMPf5/etc.png")
+			.build();
+	}
+
+	public static Category createAnotherCategory() {
+		return Category.builder()
+			.id(3L)
+			.name("부동산")
+			.imgUrl("https://i.ibb.co/41ScRXr/real-estate.png")
 			.build();
 	}
 
