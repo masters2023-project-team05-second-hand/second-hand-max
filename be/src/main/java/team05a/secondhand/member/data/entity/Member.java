@@ -22,6 +22,7 @@ import team05a.secondhand.member.data.dto.MemberNicknameUpdateRequest;
 import team05a.secondhand.member_address.data.entity.MemberAddress;
 import team05a.secondhand.oauth.OauthAttributes;
 import team05a.secondhand.oauth.data.dto.MemberOauthRequest;
+import team05a.secondhand.wish.data.entity.Wish;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -47,6 +48,8 @@ public class Member {
 	private String profileImgUrl;
 	@OneToMany(mappedBy = "member")
 	private List<MemberAddress> memberAddresses = new ArrayList<>();
+	@OneToMany(mappedBy = "member")
+	private List<Wish> wishes = new ArrayList<>();
 
 	@Builder
 	private Member(OauthAttributes type, String email, String nickname, String profileImgUrl) {
@@ -56,10 +59,9 @@ public class Member {
 		this.profileImgUrl = profileImgUrl;
 	}
 
-
 	public void updateMemberNickname(MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
 		this.nickname = memberNicknameUpdateRequest.getNewNickname();
-  }
+	}
 
 	public String updateProfileImgUrl(String newProfileImgUrl) {
 		this.profileImgUrl = newProfileImgUrl;
