@@ -63,6 +63,7 @@ public class FixtureFactory {
 			.thumbnailUrl("http://")
 			.member(member)
 			.address(createAddress())
+			.status(createStatus())
 			.category(createCategory())
 			.build();
 	}
@@ -74,6 +75,7 @@ public class FixtureFactory {
 			.thumbnailUrl("http://")
 			.member(member)
 			.address(createAddress())
+			.status(createStatus())
 			.category(createAnotherCategory())
 			.build();
 	}
