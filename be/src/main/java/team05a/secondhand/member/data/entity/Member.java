@@ -56,10 +56,9 @@ public class Member {
 		this.profileImgUrl = profileImgUrl;
 	}
 
-
 	public void updateMemberNickname(MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
 		this.nickname = memberNicknameUpdateRequest.getNewNickname();
-  }
+	}
 
 	public String updateProfileImgUrl(String newProfileImgUrl) {
 		this.profileImgUrl = newProfileImgUrl;

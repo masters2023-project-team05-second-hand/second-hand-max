@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import team05a.secondhand.wish.data.entity.Wish;
 
-public interface WishRepository extends JpaRepository<Wish, Long> {
+public interface WishRepository extends JpaRepository<Wish, Long>, WishRepositoryCustom {
 
 	boolean existsByMemberIdAndProductId(Long memberId, Long productId);
 

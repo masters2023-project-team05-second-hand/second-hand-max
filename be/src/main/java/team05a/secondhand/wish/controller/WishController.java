@@ -1,5 +1,7 @@
 package team05a.secondhand.wish.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import team05a.secondhand.member.resolver.MemberId;
+import team05a.secondhand.wish.data.dto.WishCategoryResponse;
 import team05a.secondhand.wish.data.dto.WishRequest;
 import team05a.secondhand.wish.data.dto.WishResponse;
 import team05a.secondhand.wish.service.WishService;
@@ -32,5 +35,13 @@ public class WishController {
 
 		return ResponseEntity.ok()
 			.body(wishResponse);
+	}
+
+	@GetMapping("/categories")
+	public ResponseEntity<List<WishCategoryResponse>> readWishCategories(@MemberId Long memberId) {
+		List<WishCategoryResponse> wishCategoryResponses = wishService.getWishCategories(memberId);
+
+		return ResponseEntity.ok()
+			.body(wishCategoryResponses);
 	}
 }

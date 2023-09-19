@@ -1,5 +1,7 @@
 package team05a.secondhand.wish.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +12,7 @@ import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.entity.Product;
 import team05a.secondhand.product.repository.ProductRepository;
+import team05a.secondhand.wish.data.dto.WishCategoryResponse;
 import team05a.secondhand.wish.data.dto.WishRequest;
 import team05a.secondhand.wish.data.dto.WishResponse;
 import team05a.secondhand.wish.data.entity.Wish;
@@ -40,6 +43,11 @@ public class WishService {
 		if (doesNeedToDeleteWish(memberId, wishRequest)) {
 			wishRepository.deleteByMemberIdAndProductId(memberId, wishRequest.getProductId());
 		}
+	}
+
+	@Transactional(readOnly = true)
+	public List<WishCategoryResponse> getWishCategories(Long memberId) {
+		return WishCategoryResponse.from(wishRepository.findWishCategoriesByMemberId(memberId));
 	}
 
 	@Transactional(readOnly = true)
