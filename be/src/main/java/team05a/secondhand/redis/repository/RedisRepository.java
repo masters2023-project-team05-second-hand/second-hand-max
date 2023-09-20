@@ -16,12 +16,12 @@ public class RedisRepository {
 	private final RedisTemplate<String, Object> redisTemplate;
 
 	public void setTime(String key, Object o, Long time) {
-		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(o.getClass()));
+		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(o.getClass()));
 		redisTemplate.opsForValue().set(key, o, time, TimeUnit.MILLISECONDS);
 	}
 
 	public void set(String key, Object o) {
-		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(o.getClass()));
+		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(o.getClass()));
 		redisTemplate.opsForValue().set(key, o);
 	}
 
