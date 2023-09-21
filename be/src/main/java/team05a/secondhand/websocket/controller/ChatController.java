@@ -3,6 +3,7 @@ package team05a.secondhand.websocket.controller;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class ChatController {
 	private final ChatService chatService;
 
 	@MessageMapping("/chats/messages/{chatRoomId}")
+	@SendTo("")
 	public void message(@DestinationVariable Long chatRoomId, ChatMessageRequest chatMessageRequest) {
 		log.info("WebSocket Username : {}", chatMessageRequest.getSenderId());
 		// 채팅방에 메세지 전송
