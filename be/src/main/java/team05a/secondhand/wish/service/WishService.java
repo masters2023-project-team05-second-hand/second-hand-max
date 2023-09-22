@@ -54,7 +54,7 @@ public class WishService {
 
 	@Transactional(readOnly = true)
 	public ProductListResponse getWishProducts(Long memberId, Long categoryId, Pageable pageable) {
-		if (categoryId == null) {
+		if (categoryId == 0) {
 			return wishRepository.findWishProductsByMemberId(memberId, pageable);
 		}
 		return wishRepository.findWishProductsByMemberIdAndCategoryId(memberId, categoryId, pageable);
