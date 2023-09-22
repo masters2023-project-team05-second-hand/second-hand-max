@@ -1,6 +1,7 @@
 package team05a.secondhand.wish.integration;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -16,11 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import team05a.secondhand.AcceptanceTest;
 import team05a.secondhand.DatabaseCleanup;
 import team05a.secondhand.fixture.FixtureFactory;
 import team05a.secondhand.jwt.JwtTokenProvider;
@@ -167,5 +166,142 @@ public class WishTest {
 		resultActions
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.isWished").value("false"));
+	}
+
+	@Test
+	@DisplayName("위시 카테고리를 가져온다")
+	void getWishCategories() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		Product product = FixtureFactory.createProductRequest(member);
+		Product anotherProduct = FixtureFactory.createAnotherProductRequest(member);
+		productRepository.save(anotherProduct);
+		productRepository.save(product);
+		wishRepository.save(Wish.builder().member(member).product(product).build());
+		wishRepository.save(Wish.builder().member(member).product(product).build());
+		wishRepository.save(Wish.builder().member(member).product(anotherProduct).build());
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+				MockMvcRequestBuilders
+					.get("/api/members/wishlist/categories")
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andDo(print());
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.[0].id").value(1L))
+			.andExpect(jsonPath("$.[1].id").value(3L));
+	}
+
+	@Test
+	@DisplayName("빈 위시 카테고리를 가져온다")
+	void getEmptyWishCategories() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+				MockMvcRequestBuilders
+					.get("/api/members/wishlist/categories")
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andDo(print());
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$", hasSize(0)));
+	}
+
+	@Test
+	@DisplayName("카테고리 아이디를 입력하지 않으면 카테고리에 상관없이 관심 상품 리스트를 가지고 온다.")
+	void getWishProductsWithoutCategoryId() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		Product product = FixtureFactory.createProductRequest(member);
+		Product anotherProduct = FixtureFactory.createAnotherProductRequest(member);
+		productRepository.save(anotherProduct);
+		productRepository.save(product);
+		wishRepository.save(Wish.builder().member(member).product(product).build());
+		wishRepository.save(Wish.builder().member(member).product(anotherProduct).build());
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+				MockMvcRequestBuilders
+					.get("/api/members/wishlist/?page=0&size=10")
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andDo(print());
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.products", hasSize(2)));
+	}
+
+	@Test
+	@DisplayName("카테고리에 해당하는 관심 상품 리스트를 가지고 온다.")
+	void getWishProducts() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		Product product = FixtureFactory.createProductRequest(member);
+		Product anotherProduct = FixtureFactory.createAnotherProductRequest(member);
+		productRepository.save(anotherProduct);
+		productRepository.save(product);
+		wishRepository.save(Wish.builder().member(member).product(product).build());
+		wishRepository.save(Wish.builder().member(member).product(anotherProduct).build());
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+				MockMvcRequestBuilders
+					.get("/api/members/wishlist/?categoryId=1&page=0&size=10")
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andDo(print());
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.products", hasSize(1)));
+	}
+
+	@Test
+	@DisplayName("관심 상품에 해당하는 카테고리가 없으면 빈 응답을 한다.")
+	void getEmptyWishProducts() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		Product product = FixtureFactory.createProductRequest(member);
+		Product anotherProduct = FixtureFactory.createAnotherProductRequest(member);
+		productRepository.save(anotherProduct);
+		productRepository.save(product);
+		wishRepository.save(Wish.builder().member(member).product(product).build());
+		wishRepository.save(Wish.builder().member(member).product(anotherProduct).build());
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+				MockMvcRequestBuilders
+					.get("/api/members/wishlist/?categoryId=2&page=0&size=10")
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andDo(print());
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.products", hasSize(0)))
+			.andExpect(jsonPath("$.hasNext").value(false));
 	}
 }
