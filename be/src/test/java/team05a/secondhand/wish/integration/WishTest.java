@@ -221,7 +221,7 @@ public class WishTest {
 	}
 
 	@Test
-	@DisplayName("카테고리 아이디를 입력하지 않으면 카테고리에 상관없이 관심 상품 리스트를 가지고 온다.")
+	@DisplayName("카테고리 아이디가 0이면 카테고리에 상관없이 관심 상품 리스트를 가지고 온다.")
 	void getWishProductsWithoutCategoryId() throws Exception {
 		//given
 		Member member = FixtureFactory.createMember();
@@ -237,7 +237,7 @@ public class WishTest {
 		//when
 		ResultActions resultActions = mockMvc.perform(
 				MockMvcRequestBuilders
-					.get("/api/members/wishlist/?page=0&size=10")
+					.get("/api/members/wishlist/?categoryId=0&page=0&size=10")
 					.header("Authorization", "Bearer " + accessToken)
 			)
 			.andDo(print());
