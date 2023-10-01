@@ -24,6 +24,8 @@ import team05a.secondhand.wish.repository.WishRepository;
 @RequiredArgsConstructor
 public class WishService {
 
+	private static final Long ALL_CATEGORY_ID = 0L;
+
 	private final WishRepository wishRepository;
 	private final MemberRepository memberRepository;
 	private final ProductRepository productRepository;
@@ -54,7 +56,7 @@ public class WishService {
 
 	@Transactional(readOnly = true)
 	public ProductListResponse getWishProducts(Long memberId, Long categoryId, Pageable pageable) {
-		if (categoryId == 0) {
+		if (categoryId.equals(ALL_CATEGORY_ID)) {
 			return wishRepository.findWishProductsByMemberId(memberId, pageable);
 		}
 		return wishRepository.findWishProductsByMemberIdAndCategoryId(memberId, categoryId, pageable);
