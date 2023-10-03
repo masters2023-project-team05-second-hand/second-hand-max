@@ -23,17 +23,17 @@ public class ChatController {
 	private final ChatService chatService;
 
 	@PostMapping("/room")
-	public ResponseEntity<ChatRoomUuidResponse> createChatRoom(@MemberId Long memberId,
+	public ResponseEntity<ChatRoomUuidResponse> createChatRoom(@MemberId Long buyerId,
 		@Valid @RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
-		checkBuyerIdAndSenderIdSame(memberId, chatRoomCreateRequest);
-		ChatRoomUuidResponse chatRoomUuidResponse = chatService.createChatRoom(memberId, chatRoomCreateRequest);
+		checkBuyerIdAndSenderIdSame(buyerId, chatRoomCreateRequest);
+		ChatRoomUuidResponse chatRoomUuidResponse = chatService.createChatRoom(buyerId, chatRoomCreateRequest);
 
 		return ResponseEntity.ok()
 			.body(chatRoomUuidResponse);
 	}
 
-	private void checkBuyerIdAndSenderIdSame(Long memberId, ChatRoomCreateRequest chatRoomCreateRequest) {
-		if (!memberId.equals(chatRoomCreateRequest.getMessage().getSenderId())) {
+	private void checkBuyerIdAndSenderIdSame(Long buyerId, ChatRoomCreateRequest chatRoomCreateRequest) {
+		if (!buyerId.equals(chatRoomCreateRequest.getMessage().getSenderId())) {
 			throw new BuyerIdAndMessageSenderIdNotSameException();
 		}
 	}

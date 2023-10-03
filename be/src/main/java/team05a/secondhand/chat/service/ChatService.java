@@ -29,8 +29,8 @@ public class ChatService {
 	private final ProductRepository productRepository;
 
 	@Transactional
-	public ChatRoomUuidResponse createChatRoom(Long memberId, ChatRoomCreateRequest chatRoomCreateRequest) {
-		Member buyer = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+	public ChatRoomUuidResponse createChatRoom(Long buyerId, ChatRoomCreateRequest chatRoomCreateRequest) {
+		Member buyer = memberRepository.findById(buyerId).orElseThrow(MemberNotFoundException::new);
 		Product product = productRepository.findById(chatRoomCreateRequest.getProductId())
 			.orElseThrow(ProductNotFoundException::new);
 		checkChatRoomCreationAllowed(buyer, product);
