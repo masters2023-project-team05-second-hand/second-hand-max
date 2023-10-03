@@ -1,5 +1,6 @@
 package team05a.secondhand.chat.integration;
 
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -201,6 +202,33 @@ public class ChatTest {
 
 		//given
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.roomId", notNullValue()));
+	}
+
+	@Test
+	@DisplayName("채팅방이 존재하지 않으면 null을 반환한다.")
+	void readNullChatRoom() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		Product product = FixtureFactory.createProductRequest(member);
+		productRepository.save(product);
+		Member buyer = FixtureFactory.createAnotherMember();
+		memberRepository.save(buyer);
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", buyer.getId()));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+				MockMvcRequestBuilders
+					.get("/api/chat/room/" + product.getId())
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andDo(print());
+
+		//given
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.roomId", nullValue()));
 	}
 }
