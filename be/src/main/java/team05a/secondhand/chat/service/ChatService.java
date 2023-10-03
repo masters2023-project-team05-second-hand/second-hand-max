@@ -1,7 +1,5 @@
 package team05a.secondhand.chat.service;
 
-import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,15 +33,13 @@ public class ChatService {
 		Member buyer = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 		Product product = productRepository.findById(chatRoomCreateRequest.getProductId())
 			.orElseThrow(ProductNotFoundException::new);
-		checkBuyerIdAndSellerIdSame(buyer, product);
-		checkChatRoomExists(buyer, product);
-		String chatRoomUuid = UUID.randomUUID().toString();
+		checkChatRoomCreationAllowed(buyer, product);
 		ChatRoom chatRoom = ChatRoom.builder()
 			.buyer(buyer)
 			.product(product)
 			.build();
 		Message message = Message.builder()
-			.chatRoomUuid(chatRoomUuid)
+			.chatRoomUuid(chatRoom.getUuid())
 			.sender(buyer)
 			.content(chatRoomCreateRequest.getMessage().getContent())
 			.build();
@@ -53,6 +49,11 @@ public class ChatService {
 		return ChatRoomUuidResponse.builder()
 			.roomUuid(savedChatRoom.getUuid())
 			.build();
+	}
+
+	private void checkChatRoomCreationAllowed(Member buyer, Product product) {
+		checkBuyerIdAndSellerIdSame(buyer, product);
+		checkChatRoomExists(buyer, product);
 	}
 
 	private void checkBuyerIdAndSellerIdSame(Member buyer, Product product) {
