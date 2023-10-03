@@ -153,10 +153,7 @@ public class ChatTest {
 		productRepository.save(product);
 		Member buyer = FixtureFactory.createAnotherMember();
 		memberRepository.save(buyer);
-		ChatRoom chatRoom = ChatRoom.builder()
-			.buyer(buyer)
-			.product(product)
-			.build();
+		ChatRoom chatRoom = FixtureFactory.createChatRoom(buyer, product);
 		chatRoomRepository.save(chatRoom);
 		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", buyer.getId()));
 		String requestBody = "{\"productId\": " + product.getId() +
@@ -190,10 +187,7 @@ public class ChatTest {
 		productRepository.save(product);
 		Member buyer = FixtureFactory.createAnotherMember();
 		memberRepository.save(buyer);
-		ChatRoom chatRoom = ChatRoom.builder()
-			.buyer(buyer)
-			.product(product)
-			.build();
+		ChatRoom chatRoom = FixtureFactory.createChatRoom(buyer, product);
 		chatRoomRepository.save(chatRoom);
 		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", buyer.getId()));
 
