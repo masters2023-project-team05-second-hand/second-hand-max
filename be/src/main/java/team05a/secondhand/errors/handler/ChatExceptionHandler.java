@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import lombok.extern.slf4j.Slf4j;
 import team05a.secondhand.errors.ErrorResponse;
 import team05a.secondhand.errors.exception.BuyerIdAndMessageSenderIdNotSameException;
+import team05a.secondhand.errors.exception.ChatRoomExistsException;
 import team05a.secondhand.errors.exception.SellerIdAndBuyerIdSameException;
 
 @Slf4j
@@ -15,7 +16,8 @@ import team05a.secondhand.errors.exception.SellerIdAndBuyerIdSameException;
 public class ChatExceptionHandler {
 
 	@ExceptionHandler(BuyerIdAndMessageSenderIdNotSameException.class)
-	public ResponseEntity<ErrorResponse> handleAddressNotFoundException(BuyerIdAndMessageSenderIdNotSameException e) {
+	public ResponseEntity<ErrorResponse> handleBuyerIdAndMessageSenderIdNotSameException(
+		BuyerIdAndMessageSenderIdNotSameException e) {
 		log.warn("BuyerIdAndMessageSenderIdNotSameException handling : {}", e.toString());
 
 		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -24,8 +26,17 @@ public class ChatExceptionHandler {
 	}
 
 	@ExceptionHandler(SellerIdAndBuyerIdSameException.class)
-	public ResponseEntity<ErrorResponse> handleAddressNotFoundException(SellerIdAndBuyerIdSameException e) {
-		log.warn("BuyerIdAndMessageSenderIdNotSameException handling : {}", e.toString());
+	public ResponseEntity<ErrorResponse> handleSellerIdAndBuyerIdSameException(SellerIdAndBuyerIdSameException e) {
+		log.warn("SellerIdAndBuyerIdSameException handling : {}", e.toString());
+
+		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST, e.getMessage());
+		return ResponseEntity.status(response.getStatus())
+			.body(response);
+	}
+
+	@ExceptionHandler(ChatRoomExistsException.class)
+	public ResponseEntity<ErrorResponse> handleChatRoomExistsException(ChatRoomExistsException e) {
+		log.warn("ChatRoomExistsException handling : {}", e.toString());
 
 		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST, e.getMessage());
 		return ResponseEntity.status(response.getStatus())

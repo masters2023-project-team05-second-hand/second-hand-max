@@ -30,13 +30,13 @@ public class ChatRoom {
 	private Product product;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
-	private Member buyer;
+	private Member member;
 
 	@Builder
-	private ChatRoom(Long id, String uuid, Product product, Member buyer) {
+	private ChatRoom(Long id, String uuid, Product product, Member member) {
 		this.id = id;
 		this.uuid = uuid;
 		this.product = product;
-		this.buyer = buyer;
+		this.member = member;
 	}
 }
