@@ -14,6 +14,7 @@ import team05a.secondhand.chat.repository.ChatRoomRepository;
 import team05a.secondhand.chat.repository.MessageRepository;
 import team05a.secondhand.errors.exception.MemberNotFoundException;
 import team05a.secondhand.errors.exception.ProductNotFoundException;
+import team05a.secondhand.errors.exception.SellerIdAndBuyerIdSameException;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.entity.Product;
@@ -33,6 +34,7 @@ public class ChatService {
 		Member buyer = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 		Product product = productRepository.findById(chatRoomCreateRequest.getProductId())
 			.orElseThrow(ProductNotFoundException::new);
+		checkBuyerIdAndSellerIdSame(buyer, product);
 		String chatRoomUuid = UUID.randomUUID().toString();
 		ChatRoom chatRoom = ChatRoom.builder()
 			.uuid(chatRoomUuid)
@@ -52,4 +54,9 @@ public class ChatService {
 			.build();
 	}
 
+	private void checkBuyerIdAndSellerIdSame(Member buyer, Product product) {
+		if (buyer.getId().equals(product.getMember().getId())) {
+			throw new SellerIdAndBuyerIdSameException();
+		}
+	}
 }
