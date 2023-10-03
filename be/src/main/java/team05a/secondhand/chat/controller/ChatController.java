@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import team05a.secondhand.chat.data.dto.ChatRoomCreateRequest;
 import team05a.secondhand.chat.data.dto.ChatRoomUuidResponse;
 import team05a.secondhand.chat.service.ChatService;
+import team05a.secondhand.errors.exception.BuyerIdAndMessageSenderIdNotSameException;
 import team05a.secondhand.member.resolver.MemberId;
 
 @RestController
@@ -24,9 +25,16 @@ public class ChatController {
 	@PostMapping("/room")
 	public ResponseEntity<ChatRoomUuidResponse> createChatRoom(@MemberId Long memberId,
 		@Valid @RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
+		checkBuyerIdAndSenderIdSame(memberId, chatRoomCreateRequest);
 		ChatRoomUuidResponse chatRoomUuidResponse = chatService.createChatRoom(memberId, chatRoomCreateRequest);
 
 		return ResponseEntity.ok()
 			.body(chatRoomUuidResponse);
+	}
+
+	private void checkBuyerIdAndSenderIdSame(Long memberId, ChatRoomCreateRequest chatRoomCreateRequest) {
+		if (!memberId.equals(chatRoomCreateRequest.getMessage().getSenderId())) {
+			throw new BuyerIdAndMessageSenderIdNotSameException();
+		}
 	}
 }
