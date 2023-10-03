@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import team05a.secondhand.chat.data.dto.ChatRoomCreateRequest;
 import team05a.secondhand.chat.data.dto.ChatRoomUuidResponse;
 import team05a.secondhand.chat.data.entity.ChatRoom;
+import team05a.secondhand.chat.data.entity.Message;
 import team05a.secondhand.chat.repository.ChatRoomRepository;
+import team05a.secondhand.chat.repository.MessageRepository;
 import team05a.secondhand.errors.exception.MemberNotFoundException;
 import team05a.secondhand.errors.exception.ProductNotFoundException;
 import team05a.secondhand.member.data.entity.Member;
@@ -22,6 +24,7 @@ import team05a.secondhand.product.repository.ProductRepository;
 public class ChatService {
 
 	private final ChatRoomRepository chatRoomRepository;
+	private final MessageRepository messageRepository;
 	private final MemberRepository memberRepository;
 	private final ProductRepository productRepository;
 
@@ -30,14 +33,20 @@ public class ChatService {
 		Member buyer = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 		Product product = productRepository.findById(chatRoomCreateRequest.getProductId())
 			.orElseThrow(ProductNotFoundException::new);
-		String uuid = UUID.randomUUID().toString();
+		String chatRoomUuid = UUID.randomUUID().toString();
 		ChatRoom chatRoom = ChatRoom.builder()
-			.uuid(uuid)
+			.uuid(chatRoomUuid)
 			.buyer(buyer)
 			.product(product)
 			.build();
+		Message message = Message.builder()
+			.chatRoomUuid(chatRoomUuid)
+			.sender(buyer)
+			.content(chatRoomCreateRequest.getMessage().getContent())
+			.build();
 
 		ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+		messageRepository.save(message);
 		return ChatRoomUuidResponse.builder()
 			.roomUuid(savedChatRoom.getUuid())
 			.build();
