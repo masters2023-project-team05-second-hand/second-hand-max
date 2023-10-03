@@ -179,4 +179,34 @@ public class ChatTest {
 			.andExpect(jsonPath("$.message")
 				.value(exception.getMessage()));
 	}
+
+	@Test
+	@DisplayName("채팅방이 존재하는 경우 채팅방 아이디를 반환한다.")
+	void readChatRoom() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		Product product = FixtureFactory.createProductRequest(member);
+		productRepository.save(product);
+		Member buyer = FixtureFactory.createAnotherMember();
+		memberRepository.save(buyer);
+		ChatRoom chatRoom = ChatRoom.builder()
+			.buyer(buyer)
+			.product(product)
+			.build();
+		chatRoomRepository.save(chatRoom);
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", buyer.getId()));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+				MockMvcRequestBuilders
+					.get("/api/chat/room/" + product.getId())
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andDo(print());
+
+		//given
+		resultActions
+			.andExpect(status().isOk());
+	}
 }
