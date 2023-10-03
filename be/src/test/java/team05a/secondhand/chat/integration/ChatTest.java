@@ -110,8 +110,7 @@ public class ChatTest {
 		//given
 		resultActions
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message")
-				.value(exception.getMessage()));
+			.andExpect(jsonPath("$.message").value(exception.getMessage()));
 	}
 
 	@Test
@@ -174,8 +173,7 @@ public class ChatTest {
 		//given
 		resultActions
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message")
-				.value(exception.getMessage()));
+			.andExpect(jsonPath("$.message").value(exception.getMessage()));
 	}
 
 	@Test
