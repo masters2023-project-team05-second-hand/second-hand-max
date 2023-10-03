@@ -1,5 +1,7 @@
 package team05a.secondhand.chat.data.entity;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,14 +31,13 @@ public class ChatRoom {
 	@JoinColumn(name = "product_id")
 	private Product product;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id")
-	private Member member;
+	@JoinColumn(name = "buyer_id")
+	private Member buyer;
 
 	@Builder
-	private ChatRoom(Long id, String uuid, Product product, Member member) {
-		this.id = id;
-		this.uuid = uuid;
+	private ChatRoom(Product product, Member buyer) {
+		this.uuid = UUID.randomUUID().toString();
 		this.product = product;
-		this.member = member;
+		this.buyer = buyer;
 	}
 }

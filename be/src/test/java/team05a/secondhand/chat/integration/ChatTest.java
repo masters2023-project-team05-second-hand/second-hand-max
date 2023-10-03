@@ -154,8 +154,7 @@ public class ChatTest {
 		Member buyer = FixtureFactory.createAnotherMember();
 		memberRepository.save(buyer);
 		ChatRoom chatRoom = ChatRoom.builder()
-			.uuid("uuid")
-			.member(buyer)
+			.buyer(buyer)
 			.product(product)
 			.build();
 		chatRoomRepository.save(chatRoom);

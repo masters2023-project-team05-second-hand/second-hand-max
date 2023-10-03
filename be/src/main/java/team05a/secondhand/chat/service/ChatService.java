@@ -39,8 +39,7 @@ public class ChatService {
 		checkChatRoomExists(buyer, product);
 		String chatRoomUuid = UUID.randomUUID().toString();
 		ChatRoom chatRoom = ChatRoom.builder()
-			.uuid(chatRoomUuid)
-			.member(buyer)
+			.buyer(buyer)
 			.product(product)
 			.build();
 		Message message = Message.builder()
@@ -63,7 +62,7 @@ public class ChatService {
 	}
 
 	private void checkChatRoomExists(Member buyer, Product product) {
-		if (chatRoomRepository.existsByMemberIdAndProductId(buyer.getId(), product.getId())) {
+		if (chatRoomRepository.existsByBuyerIdAndProductId(buyer.getId(), product.getId())) {
 			throw new ChatRoomExistsException();
 		}
 	}
