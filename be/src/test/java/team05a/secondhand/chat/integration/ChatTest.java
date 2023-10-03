@@ -17,7 +17,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import team05a.secondhand.DatabaseCleanup;
+import team05a.secondhand.chat.data.entity.ChatRoom;
+import team05a.secondhand.chat.repository.ChatRoomRepository;
 import team05a.secondhand.errors.exception.BuyerIdAndMessageSenderIdNotSameException;
+import team05a.secondhand.errors.exception.ChatRoomExistsException;
 import team05a.secondhand.errors.exception.SellerIdAndBuyerIdSameException;
 import team05a.secondhand.fixture.FixtureFactory;
 import team05a.secondhand.jwt.JwtTokenProvider;
@@ -32,6 +35,8 @@ public class ChatTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+	@Autowired
+	private ChatRoomRepository chatRoomRepository;
 	@Autowired
 	private MemberRepository memberRepository;
 	@Autowired
@@ -120,6 +125,44 @@ public class ChatTest {
 		String requestBody = "{\"productId\": 1,\"message\": {\"senderId\": " + member.getId()
 			+ ",\"content\": \"얼마야?\"}}";
 		SellerIdAndBuyerIdSameException exception = new SellerIdAndBuyerIdSameException();
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+				MockMvcRequestBuilders
+					.post("/api/chat/room")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(requestBody)
+			)
+			.andDo(print());
+
+		//given
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message")
+				.value(exception.getMessage()));
+	}
+
+	@Test
+	@DisplayName("채팅방을 만들려할 때 해당 제품 아이디와 구매자 아이디로 채팅방이 이미 존재하면 예외를 던진다.")
+	void createChatRoomWithDuplicateProductIdAndSellerId() throws Exception {
+		//given
+		Member member = FixtureFactory.createMember();
+		memberRepository.save(member);
+		Product product = FixtureFactory.createProductRequest(member);
+		productRepository.save(product);
+		Member buyer = FixtureFactory.createAnotherMember();
+		memberRepository.save(buyer);
+		ChatRoom chatRoom = ChatRoom.builder()
+			.uuid("uuid")
+			.member(buyer)
+			.product(product)
+			.build();
+		chatRoomRepository.save(chatRoom);
+		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", buyer.getId()));
+		String requestBody = "{\"productId\": " + product.getId() +
+			",\"message\": {\"senderId\": " + buyer.getId() + ",\"content\": \"얼마야?\"}}";
+		ChatRoomExistsException exception = new ChatRoomExistsException();
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
