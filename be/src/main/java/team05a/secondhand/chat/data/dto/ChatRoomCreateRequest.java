@@ -12,11 +12,11 @@ public class ChatRoomCreateRequest {
 
 	@NotNull(message = "상품 아이디는 있어야 합니다.")
 	private Long productId;
-	@NotNull
-	private MessageCreateRequest message;
+	@NotNull(message = "첫 메세지는 있어야 합니다.")
+	private String message;
 
 	@Builder
-	private ChatRoomCreateRequest(Long productId, MessageCreateRequest message) {
+	private ChatRoomCreateRequest(Long productId, String message) {
 		this.productId = productId;
 		this.message = message;
 	}
