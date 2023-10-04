@@ -13,14 +13,13 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.websocket.chat_message.data.entity.ChatRoom;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class ChatMessage {
@@ -38,4 +37,13 @@ public class ChatMessage {
 	private String message;
 	@CreationTimestamp
 	private Timestamp createdTime;
+
+	@Builder
+	private ChatMessage(Long id, ChatRoom chatRoom, Member sender, String message, Timestamp createdTime) {
+		this.id = id;
+		this.chatRoom = chatRoom;
+		this.sender = sender;
+		this.message = message;
+		this.createdTime = createdTime;
+	}
 }
