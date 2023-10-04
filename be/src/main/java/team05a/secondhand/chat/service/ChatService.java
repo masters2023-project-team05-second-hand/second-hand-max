@@ -46,9 +46,15 @@ public class ChatService {
 
 		ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 		messageRepository.save(message);
-		return ChatRoomUuidResponse.builder()
-			.roomUuid(savedChatRoom.getUuid())
-			.build();
+		return ChatRoomUuidResponse.from(savedChatRoom);
+	}
+
+	@Transactional(readOnly = true)
+	public ChatRoomUuidResponse readChatRoom(Long buyerId, Long productId) {
+		ChatRoom chatRoom = chatRoomRepository.findByBuyerIdAndProductId(buyerId, productId)
+			.orElse(null);
+
+		return ChatRoomUuidResponse.from(chatRoom);
 	}
 
 	private void checkChatRoomCreationAllowed(Member buyer, Product product) {

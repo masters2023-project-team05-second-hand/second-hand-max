@@ -3,6 +3,8 @@ package team05a.secondhand.chat.controller;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,15 @@ public class ChatController {
 		@Valid @RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
 		checkBuyerIdAndSenderIdSame(buyerId, chatRoomCreateRequest);
 		ChatRoomUuidResponse chatRoomUuidResponse = chatService.createChatRoom(buyerId, chatRoomCreateRequest);
+
+		return ResponseEntity.ok()
+			.body(chatRoomUuidResponse);
+	}
+
+	@GetMapping("/room/{productId}")
+	public ResponseEntity<ChatRoomUuidResponse> readChatRoom(@MemberId Long buyerId,
+		@PathVariable Long productId) {
+		ChatRoomUuidResponse chatRoomUuidResponse = chatService.readChatRoom(buyerId, productId);
 
 		return ResponseEntity.ok()
 			.body(chatRoomUuidResponse);
