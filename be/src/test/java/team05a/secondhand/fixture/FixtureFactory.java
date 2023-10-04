@@ -24,6 +24,7 @@ import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.category.data.dto.CategoryResponse;
 import team05a.secondhand.category.data.entity.Category;
 import team05a.secondhand.chat.data.entity.ChatRoom;
+import team05a.secondhand.chat.data.entity.Message;
 import team05a.secondhand.image.data.entity.ProductImage;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.oauth.OauthAttributes;
@@ -268,6 +269,14 @@ public class FixtureFactory {
 		return ChatRoom.builder()
 			.buyer(buyer)
 			.product(product)
+			.build();
+	}
+
+	public static Message createMessage(String uuid, Member otherMember, String message) {
+		return Message.builder()
+			.chatRoomUuid(uuid)
+			.sender(otherMember)
+			.content(message)
 			.build();
 	}
 }
