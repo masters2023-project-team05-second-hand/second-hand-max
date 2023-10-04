@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import team05a.secondhand.chat.data.dto.ChatMessageCreateRequest;
+import team05a.secondhand.chat.data.dto.ChatMessageResponse;
 import team05a.secondhand.chat.data.dto.ChatRoomCreateRequest;
 import team05a.secondhand.chat.data.dto.ChatRoomUuidResponse;
 import team05a.secondhand.chat.data.entity.ChatRoom;
@@ -55,6 +57,20 @@ public class ChatService {
 			.orElse(null);
 
 		return ChatRoomUuidResponse.from(chatRoom);
+	}
+
+	@Transactional
+	public ChatMessageResponse createChatMessage(ChatMessageCreateRequest chatMessageCreateRequest) {
+		Member sender = memberRepository.findById(chatMessageCreateRequest.getSenderId())
+			.orElseThrow(MemberNotFoundException::new);
+		Message message = Message.builder()
+			.chatRoomUuid(chatMessageCreateRequest.getRoomId())
+			.sender(sender)
+			.content(chatMessageCreateRequest.getMessage())
+			.build();
+
+		Message savedMessage = messageRepository.save(message);
+		return ChatMessageResponse.from(savedMessage);
 	}
 
 	private void checkChatRoomCreationAllowed(Member buyer, Product product) {
