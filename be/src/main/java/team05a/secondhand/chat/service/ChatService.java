@@ -41,7 +41,7 @@ public class ChatService {
 		Message message = Message.builder()
 			.chatRoomUuid(chatRoom.getUuid())
 			.sender(buyer)
-			.content(chatRoomCreateRequest.getMessage().getContent())
+			.content(chatRoomCreateRequest.getMessage())
 			.build();
 
 		ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
