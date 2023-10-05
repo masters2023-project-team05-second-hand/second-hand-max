@@ -1,10 +1,14 @@
 package team05a.secondhand.chat.service;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import team05a.secondhand.chat.data.dto.ChatRoomCreateRequest;
+import team05a.secondhand.chat.data.dto.ChatRoomListResponse;
 import team05a.secondhand.chat.data.dto.ChatRoomUuidResponse;
 import team05a.secondhand.chat.data.entity.ChatRoom;
 import team05a.secondhand.chat.data.entity.Message;
@@ -72,5 +76,12 @@ public class ChatService {
 		if (chatRoomRepository.existsByBuyerIdAndProductId(buyer.getId(), product.getId())) {
 			throw new ChatRoomExistsException();
 		}
+	}
+
+	@Transactional(readOnly = true)
+	public List<ChatRoomListResponse> readChatRoomList(Long memberId, Long productId) {
+		List<ChatRoomListResponse> chatRoomList = chatRoomRepository.findChatRoomList(memberId, productId);
+		Collections.sort(chatRoomList);
+		return chatRoomList;
 	}
 }

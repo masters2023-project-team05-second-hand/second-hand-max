@@ -33,6 +33,8 @@ public class ChatRoom {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "buyer_id")
 	private Member buyer;
+	private Long sellerLastReadMessageId;
+	private Long buyerLastReadMessageId;
 
 	@Builder
 	private ChatRoom(Product product, Member buyer) {
