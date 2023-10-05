@@ -31,7 +31,7 @@ import team05a.secondhand.redis.repository.RedisRepository;
 public class JwtAuthorizationFilter implements Filter {
 
 	private final String[] whiteListGetUris = new String[] {"/api/addresses", "/api/categories", "/api/products*",
-		"/api/statuses"};
+		"/api/statuses", "/ws*"};
 	private final String[] whiteListPostUris = new String[] {"/api/members/sign-in/*", "/api/reissue-access-token"};
 	private final JwtTokenProvider jwtProvider;
 	private final RedisRepository redisRepository;
