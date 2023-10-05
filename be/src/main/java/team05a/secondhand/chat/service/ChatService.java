@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import team05a.secondhand.chat.data.dto.ChatRoomCreateRequest;
 import team05a.secondhand.chat.data.dto.ChatRoomListResponse;
 import team05a.secondhand.chat.data.dto.ChatRoomUuidResponse;
+import team05a.secondhand.chat.data.dto.MessageReadResponse;
 import team05a.secondhand.chat.data.entity.ChatRoom;
 import team05a.secondhand.chat.data.entity.Message;
 import team05a.secondhand.chat.repository.ChatRoomRepository;
@@ -83,5 +84,10 @@ public class ChatService {
 		List<ChatRoomListResponse> chatRoomList = chatRoomRepository.findChatRoomList(memberId, productId);
 		Collections.sort(chatRoomList);
 		return chatRoomList;
+	}
+
+	@Transactional
+	public List<MessageReadResponse> readChatMessages(Long memberId, String roomId) {
+		return messageRepository.findChatMessages(memberId, roomId);
 	}
 }

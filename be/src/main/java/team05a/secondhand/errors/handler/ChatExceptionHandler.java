@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import team05a.secondhand.errors.ErrorResponse;
 import team05a.secondhand.errors.exception.BuyerIdAndMessageSenderIdNotSameException;
 import team05a.secondhand.errors.exception.ChatRoomExistsException;
+import team05a.secondhand.errors.exception.IllegalChatRoomParticipantException;
 import team05a.secondhand.errors.exception.SellerIdAndBuyerIdSameException;
 
 @Slf4j
@@ -37,6 +38,16 @@ public class ChatExceptionHandler {
 	@ExceptionHandler(ChatRoomExistsException.class)
 	public ResponseEntity<ErrorResponse> handleChatRoomExistsException(ChatRoomExistsException e) {
 		log.warn("ChatRoomExistsException handling : {}", e.toString());
+
+		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST, e.getMessage());
+		return ResponseEntity.status(response.getStatus())
+			.body(response);
+	}
+
+	@ExceptionHandler(IllegalChatRoomParticipantException.class)
+	public ResponseEntity<ErrorResponse> handleIllegalChatRoomParticipantException(
+		IllegalChatRoomParticipantException e) {
+		log.warn("IllegalChatRoomParticipantException handling : {}", e.toString());
 
 		ErrorResponse response = ErrorResponse.from(HttpStatus.BAD_REQUEST, e.getMessage());
 		return ResponseEntity.status(response.getStatus())

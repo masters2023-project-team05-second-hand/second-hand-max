@@ -17,17 +17,18 @@ import lombok.RequiredArgsConstructor;
 import team05a.secondhand.chat.data.dto.ChatRoomCreateRequest;
 import team05a.secondhand.chat.data.dto.ChatRoomListResponse;
 import team05a.secondhand.chat.data.dto.ChatRoomUuidResponse;
+import team05a.secondhand.chat.data.dto.MessageReadResponse;
 import team05a.secondhand.chat.service.ChatService;
 import team05a.secondhand.member.resolver.MemberId;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/chat-room")
 public class ChatController {
 
 	private final ChatService chatService;
 
-	@PostMapping("/chat/room")
+	@PostMapping
 	public ResponseEntity<ChatRoomUuidResponse> createChatRoom(@MemberId Long buyerId,
 		@Valid @RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
 		ChatRoomUuidResponse chatRoomUuidResponse = chatService.createChatRoom(buyerId, chatRoomCreateRequest);
@@ -36,7 +37,7 @@ public class ChatController {
 			.body(chatRoomUuidResponse);
 	}
 
-	@GetMapping("/chat/room/{productId}")
+	@GetMapping("/{productId}")
 	public ResponseEntity<ChatRoomUuidResponse> readChatRoom(@MemberId Long buyerId,
 		@PathVariable Long productId) {
 		ChatRoomUuidResponse chatRoomUuidResponse = chatService.readChatRoom(buyerId, productId);
@@ -45,18 +46,21 @@ public class ChatController {
 			.body(chatRoomUuidResponse);
 	}
 
-	private void checkBuyerIdAndSenderIdSame(Long buyerId, ChatRoomCreateRequest chatRoomCreateRequest) {
-		if (!buyerId.equals(chatRoomCreateRequest.getMessage().getSenderId())) {
-			throw new BuyerIdAndMessageSenderIdNotSameException();
-		}
-	}
-
-	@GetMapping("/chat-room")
+	@GetMapping
 	public ResponseEntity<List<ChatRoomListResponse>> readChatRoomList(@MemberId Long memberId,
 		@RequestParam(defaultValue = "0") Long productId) {
 		List<ChatRoomListResponse> chatRoomListResponse = chatService.readChatRoomList(memberId, productId);
 
 		return ResponseEntity.ok()
 			.body(chatRoomListResponse);
+	}
+
+	@GetMapping("/messages")
+	public ResponseEntity<List<MessageReadResponse>> readChatMessages(@MemberId Long memberId,
+		@RequestParam(defaultValue = "null") String roomId) {
+		List<MessageReadResponse> messageReadResponseList = chatService.readChatMessages(memberId, roomId);
+
+		return ResponseEntity.ok()
+			.body(messageReadResponseList);
 	}
 }

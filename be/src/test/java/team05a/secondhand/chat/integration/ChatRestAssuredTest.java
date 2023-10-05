@@ -20,6 +20,7 @@ import team05a.secondhand.address.repository.AddressRepository;
 import team05a.secondhand.category.data.entity.Category;
 import team05a.secondhand.category.repository.CategoryRepository;
 import team05a.secondhand.chat.data.dto.ChatRoomListResponse;
+import team05a.secondhand.chat.data.dto.MessageReadResponse;
 import team05a.secondhand.chat.data.entity.ChatRoom;
 import team05a.secondhand.chat.data.entity.Message;
 import team05a.secondhand.chat.repository.ChatRoomRepository;
@@ -102,6 +103,45 @@ public class ChatRestAssuredTest extends AcceptanceTest {
 				"Bearer " + jwtTokenProvider.createAccessToken(Map.of("memberId", memberId)))
 			.when()
 			.get("/api/chat-room")
+			.then().log().all()
+			.extract();
+	}
+
+	@DisplayName("채팅 메세지를 조회한다.")
+	@Test
+	void readMessages_success() throws IOException, InterruptedException {
+		// given
+		Member member = singUp();
+		Member otherMember = signupAnotherMember();
+		Product product = createProduct(member);
+		ChatRoom chatRoom = FixtureFactory.createChatRoom(otherMember, product);
+		ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+		Message message = FixtureFactory.createMessage(savedChatRoom.getUuid(), otherMember, "얼마에요?");
+		messageRepository.save(message);
+		Message message1 = FixtureFactory.createMessage(savedChatRoom.getUuid(), member, "얼마 원하세요??");
+		messageRepository.save(message1);
+		Message message2 = FixtureFactory.createMessage(savedChatRoom.getUuid(), member, "나눔해주세용");
+		messageRepository.save(message2);
+
+		// when
+		var response = readMessages(otherMember.getId(), savedChatRoom.getUuid());
+
+		// then
+		SoftAssertions.assertSoftly(softAssertions -> {
+			softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+			softAssertions.assertThat(response.jsonPath().getList("", MessageReadResponse.class).get(0).getSenderId())
+				.isEqualTo(otherMember.getId());
+		});
+	}
+
+	private ExtractableResponse<Response> readMessages(Long memberId, String roomId) {
+		return RestAssured
+			.given().log().all()
+			.queryParam("roomId", roomId)
+			.header(HttpHeaders.AUTHORIZATION,
+				"Bearer " + jwtTokenProvider.createAccessToken(Map.of("memberId", memberId)))
+			.when()
+			.get("/api/chat-room/messages")
 			.then().log().all()
 			.extract();
 	}
