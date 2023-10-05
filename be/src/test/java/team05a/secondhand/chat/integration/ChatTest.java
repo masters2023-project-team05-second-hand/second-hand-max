@@ -67,7 +67,7 @@ public class ChatTest {
 		//when
 		ResultActions resultActions = mockMvc.perform(
 				MockMvcRequestBuilders
-					.post("/api/chat/room")
+					.post("/api/chat-room")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
@@ -95,7 +95,7 @@ public class ChatTest {
 		//when
 		ResultActions resultActions = mockMvc.perform(
 				MockMvcRequestBuilders
-					.post("/api/chat/room")
+					.post("/api/chat-room")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
@@ -129,7 +129,7 @@ public class ChatTest {
 		//when
 		ResultActions resultActions = mockMvc.perform(
 				MockMvcRequestBuilders
-					.post("/api/chat/room")
+					.post("/api/chat-room")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
@@ -159,7 +159,7 @@ public class ChatTest {
 		//when
 		ResultActions resultActions = mockMvc.perform(
 				MockMvcRequestBuilders
-					.get("/api/chat/room/" + product.getId())
+					.get("/api/chat-room/" + product.getId())
 					.header("Authorization", "Bearer " + accessToken)
 			)
 			.andDo(print());
@@ -185,7 +185,7 @@ public class ChatTest {
 		//when
 		ResultActions resultActions = mockMvc.perform(
 				MockMvcRequestBuilders
-					.get("/api/chat/room/" + product.getId())
+					.get("/api/chat-room/" + product.getId())
 					.header("Authorization", "Bearer " + accessToken)
 			)
 			.andDo(print());
