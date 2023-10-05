@@ -8,14 +8,13 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ChatMessageCreateRequest {
 
-	private String roomId;
 	private Long senderId;
 	private String message;
 
 	@Builder
-	private ChatMessageCreateRequest(String roomId, Long senderId, String message) {
-		this.roomId = roomId;
+	private ChatMessageCreateRequest(Long senderId, String message) {
 		this.senderId = senderId;
 		this.message = message;
 	}
+
 }

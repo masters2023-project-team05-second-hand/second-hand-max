@@ -60,11 +60,11 @@ public class ChatService {
 	}
 
 	@Transactional
-	public ChatMessageResponse createChatMessage(ChatMessageCreateRequest chatMessageCreateRequest) {
+	public ChatMessageResponse createChatMessage(ChatMessageCreateRequest chatMessageCreateRequest, String roomId) {
 		Member sender = memberRepository.findById(chatMessageCreateRequest.getSenderId())
 			.orElseThrow(MemberNotFoundException::new);
 		Message message = Message.builder()
-			.chatRoomUuid(chatMessageCreateRequest.getRoomId())
+			.chatRoomUuid(roomId)
 			.sender(sender)
 			.content(chatMessageCreateRequest.getMessage())
 			.build();
