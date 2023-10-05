@@ -11,4 +11,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long>, ChatR
 	boolean existsByBuyerIdAndProductId(Long buyerId, Long productId);
 
 	Optional<ChatRoom> findByBuyerIdAndProductId(Long buyerId, Long productId);
+
+	ChatRoom findByUuid(String uuid);
 }

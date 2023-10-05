@@ -33,13 +33,28 @@ public class ChatRoom {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "buyer_id")
 	private Member buyer;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "seller_id")
+	private Member seller;
 	private Long sellerLastReadMessageId;
 	private Long buyerLastReadMessageId;
 
 	@Builder
-	private ChatRoom(Product product, Member buyer) {
+	private ChatRoom(Product product, Member buyer, Member seller, Long sellerLastReadMessageId,
+		Long buyerLastReadMessageId) {
 		this.uuid = UUID.randomUUID().toString();
 		this.product = product;
 		this.buyer = buyer;
+		this.seller = seller;
+		this.sellerLastReadMessageId = sellerLastReadMessageId;
+		this.buyerLastReadMessageId = buyerLastReadMessageId;
+	}
+
+	public void deleteSeller() {
+		this.seller = null;
+	}
+
+	public void deleteBuyer() {
+		this.buyer = null;
 	}
 }

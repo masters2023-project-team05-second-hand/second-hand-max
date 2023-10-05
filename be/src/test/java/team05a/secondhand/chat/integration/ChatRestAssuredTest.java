@@ -1,5 +1,7 @@
 package team05a.secondhand.chat.integration;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ import team05a.secondhand.chat.data.entity.ChatRoom;
 import team05a.secondhand.chat.data.entity.Message;
 import team05a.secondhand.chat.repository.ChatRoomRepository;
 import team05a.secondhand.chat.repository.MessageRepository;
+import team05a.secondhand.chat.service.ChatService;
 import team05a.secondhand.errors.exception.AddressNotFoundException;
 import team05a.secondhand.errors.exception.CategoryNotFoundException;
 import team05a.secondhand.errors.exception.StatusNotFoundException;
@@ -59,6 +62,8 @@ public class ChatRestAssuredTest extends AcceptanceTest {
 	private ImageService imageService;
 	@Autowired
 	private MessageRepository messageRepository;
+	@Autowired
+	private ChatService chatService;
 
 	@DisplayName("채팅방 목록을 조회한다.")
 	@Test
@@ -109,7 +114,7 @@ public class ChatRestAssuredTest extends AcceptanceTest {
 
 	@DisplayName("채팅 메세지를 조회한다.")
 	@Test
-	void readMessages_success() throws IOException, InterruptedException {
+	void readMessages_success() throws IOException {
 		// given
 		Member member = singUp();
 		Member otherMember = signupAnotherMember();
@@ -142,6 +147,68 @@ public class ChatRestAssuredTest extends AcceptanceTest {
 				"Bearer " + jwtTokenProvider.createAccessToken(Map.of("memberId", memberId)))
 			.when()
 			.get("/api/chat-room/messages")
+			.then().log().all()
+			.extract();
+	}
+
+	@DisplayName("채팅방 나가기에 성공한다.")
+	@Test
+	void exitChatRoom_success() throws IOException {
+		// given
+		Member member = singUp();
+		Member otherMember = signupAnotherMember();
+		Product product = createProduct(member);
+		ChatRoom chatRoom = FixtureFactory.createChatRoom(otherMember, product);
+		ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+		Message message = FixtureFactory.createMessage(savedChatRoom.getUuid(), otherMember, "얼마에요?");
+		messageRepository.save(message);
+
+		// when
+		var response = exitChatRoom(otherMember.getId(), savedChatRoom.getUuid());
+
+		// then
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+	}
+
+	private ExtractableResponse<Response> exitChatRoom(Long memberId, String roomId) {
+		return RestAssured
+			.given().log().all()
+			.pathParam("roomId", roomId)
+			.header(HttpHeaders.AUTHORIZATION,
+				"Bearer " + jwtTokenProvider.createAccessToken(Map.of("memberId", memberId)))
+			.when()
+			.delete("/api/chat-room/{roomId}")
+			.then().log().all()
+			.extract();
+	}
+
+	@DisplayName("채팅방에 나간 후 목록 조회에 나간 채팅방이 안나오는걸 확인한다.")
+	@Test
+	void exitChatRoom_check() throws IOException {
+		// given
+		Member member = singUp();
+		Member otherMember = signupAnotherMember();
+		Product product = createProduct(member);
+		ChatRoom chatRoom = FixtureFactory.createChatRoom(otherMember, product);
+		ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+		Message message = FixtureFactory.createMessage(savedChatRoom.getUuid(), otherMember, "얼마에요?");
+		messageRepository.save(message);
+		chatService.exitChatRoom(otherMember.getId(), savedChatRoom.getUuid());
+
+		// when
+		var response = exitChatRoom_readList(otherMember.getId());
+
+		// then
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+	}
+
+	private ExtractableResponse<Response> exitChatRoom_readList(Long memberId) {
+		return RestAssured
+			.given().log().all()
+			.header(HttpHeaders.AUTHORIZATION,
+				"Bearer " + jwtTokenProvider.createAccessToken(Map.of("memberId", memberId)))
+			.when()
+			.get("/api/chat-room")
 			.then().log().all()
 			.extract();
 	}
