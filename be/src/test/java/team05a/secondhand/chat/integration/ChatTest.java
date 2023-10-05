@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import team05a.secondhand.DatabaseCleanup;
 import team05a.secondhand.chat.data.entity.ChatRoom;
 import team05a.secondhand.chat.repository.ChatRoomRepository;
-import team05a.secondhand.errors.exception.BuyerIdAndMessageSenderIdNotSameException;
 import team05a.secondhand.errors.exception.ChatRoomExistsException;
 import team05a.secondhand.errors.exception.SellerIdAndBuyerIdSameException;
 import team05a.secondhand.fixture.FixtureFactory;
@@ -63,8 +62,7 @@ public class ChatTest {
 		Member sender = FixtureFactory.createAnotherMember();
 		memberRepository.save(sender);
 		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", sender.getId()));
-		String requestBody = "{\"productId\": 1,\"message\": {\"senderId\": " + sender.getId()
-			+ ",\"content\": \"얼마야?\"}}";
+		String requestBody = "{\"productId\": " + product.getId() + ",\"message\": \"얼마야?\"}";
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -83,37 +81,6 @@ public class ChatTest {
 	}
 
 	@Test
-	@DisplayName("채팅방을 만들려할 때 구매자 아이디와 메세지 전송자 아이디가 같지 않으면 예외를 던진다.")
-	void createChatRoomWithNotSameBuyerIdAndSenderId() throws Exception {
-		//given
-		Member member = FixtureFactory.createMember();
-		memberRepository.save(member);
-		Product product = FixtureFactory.createProductRequest(member);
-		productRepository.save(product);
-		Member sender = FixtureFactory.createAnotherMember();
-		memberRepository.save(sender);
-		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", sender.getId()));
-		String requestBody = "{\"productId\": 1,\"message\": {\"senderId\": " + (sender.getId() + 1)
-			+ ",\"content\": \"얼마야?\"}}";
-		BuyerIdAndMessageSenderIdNotSameException exception = new BuyerIdAndMessageSenderIdNotSameException();
-
-		//when
-		ResultActions resultActions = mockMvc.perform(
-				MockMvcRequestBuilders
-					.post("/api/chat/room")
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(requestBody)
-			)
-			.andDo(print());
-
-		//given
-		resultActions
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value(exception.getMessage()));
-	}
-
-	@Test
 	@DisplayName("채팅방을 만들려할 때 구매자 아이디와 판매자 아이디가 같으면 예외를 던진다.")
 	void createChatRoomWithNotSameBuyerIdAndSellerId() throws Exception {
 		//given
@@ -122,8 +89,7 @@ public class ChatTest {
 		Product product = FixtureFactory.createProductRequest(member);
 		productRepository.save(product);
 		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", member.getId()));
-		String requestBody = "{\"productId\": 1,\"message\": {\"senderId\": " + member.getId()
-			+ ",\"content\": \"얼마야?\"}}";
+		String requestBody = "{\"productId\": " + product.getId() + ",\"message\": \"얼마야?\"}}";
 		SellerIdAndBuyerIdSameException exception = new SellerIdAndBuyerIdSameException();
 
 		//when
@@ -157,7 +123,7 @@ public class ChatTest {
 		chatRoomRepository.save(chatRoom);
 		String accessToken = jwtTokenProvider.createAccessToken(Map.of("memberId", buyer.getId()));
 		String requestBody = "{\"productId\": " + product.getId() +
-			",\"message\": {\"senderId\": " + buyer.getId() + ",\"content\": \"얼마야?\"}}";
+			",\"message\": \"얼마야?\"}}";
 		ChatRoomExistsException exception = new ChatRoomExistsException();
 
 		//when

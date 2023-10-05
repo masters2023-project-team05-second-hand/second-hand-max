@@ -18,7 +18,6 @@ import team05a.secondhand.chat.data.dto.ChatRoomCreateRequest;
 import team05a.secondhand.chat.data.dto.ChatRoomListResponse;
 import team05a.secondhand.chat.data.dto.ChatRoomUuidResponse;
 import team05a.secondhand.chat.service.ChatService;
-import team05a.secondhand.errors.exception.BuyerIdAndMessageSenderIdNotSameException;
 import team05a.secondhand.member.resolver.MemberId;
 
 @RestController
@@ -31,7 +30,6 @@ public class ChatController {
 	@PostMapping("/chat/room")
 	public ResponseEntity<ChatRoomUuidResponse> createChatRoom(@MemberId Long buyerId,
 		@Valid @RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
-		checkBuyerIdAndSenderIdSame(buyerId, chatRoomCreateRequest);
 		ChatRoomUuidResponse chatRoomUuidResponse = chatService.createChatRoom(buyerId, chatRoomCreateRequest);
 
 		return ResponseEntity.ok()
