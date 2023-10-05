@@ -42,6 +42,7 @@ public class ChatService {
 		ChatRoom chatRoom = ChatRoom.builder()
 			.buyer(buyer)
 			.product(product)
+			.seller(product.getMember())
 			.build();
 		Message message = Message.builder()
 			.chatRoomUuid(chatRoom.getUuid())
@@ -89,5 +90,16 @@ public class ChatService {
 	@Transactional
 	public List<MessageReadResponse> readChatMessages(Long memberId, String roomId) {
 		return messageRepository.findChatMessages(memberId, roomId);
+	}
+
+	@Transactional
+	public void exitChatRoom(Long memberId, String roomId) {
+		ChatRoom chatRoom = chatRoomRepository.findByUuid(roomId);
+		if (memberId.equals(chatRoom.getProduct().getMember().getId())) {
+			chatRoom.deleteSeller();
+		}
+		if (memberId.equals(chatRoom.getBuyer().getId())) {
+			chatRoom.deleteBuyer();
+		}
 	}
 }
