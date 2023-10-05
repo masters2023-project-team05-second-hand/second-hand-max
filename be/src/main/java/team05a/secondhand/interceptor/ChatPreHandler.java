@@ -2,6 +2,8 @@ package team05a.secondhand.interceptor;
 
 import static team05a.secondhand.oauth.service.OauthService.*;
 
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageDeliveryException;
@@ -47,7 +49,8 @@ public class ChatPreHandler implements ChannelInterceptor {
 		if (headerAccessor.getCommand().equals(StompCommand.SEND)) {
 			try {
 				Long senderId = jwtTokenProvider.extractMemberId(accessToken);
-				String payload = (String)message.getPayload();
+				byte[] payloadBytes = (byte[])message.getPayload();
+				String payload = new String(payloadBytes, StandardCharsets.UTF_8);
 				ObjectNode jsonNode = objectMapper.readValue(payload, ObjectNode.class);
 				jsonNode.put("senderId", senderId);
 				String newPayload = objectMapper.writeValueAsString(jsonNode);
