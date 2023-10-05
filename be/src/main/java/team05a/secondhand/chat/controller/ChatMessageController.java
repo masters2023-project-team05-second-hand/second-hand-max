@@ -16,8 +16,8 @@ public class ChatMessageController {
 
 	private final ChatService chatService;
 
-	@MessageMapping("/chat/room/{roomId}")
-	@SendTo("/sub/chat/room/{roomId}")
+	@MessageMapping("/chat/message/{roomId}")
+	@SendTo("/chat/room/{roomId}")
 	public ChatMessageResponse create(ChatMessageCreateRequest chatMessageCreateRequest,
 		@DestinationVariable String roomId) {
 		return chatService.createChatMessage(chatMessageCreateRequest, roomId);
