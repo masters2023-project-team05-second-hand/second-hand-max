@@ -7,23 +7,23 @@ import lombok.Getter;
 import team05a.secondhand.chat.data.entity.ChatRoom;
 
 @Getter
-public class ChatRoomUuidResponse {
+public class ChatRoomIdResponse {
 
 	@JsonProperty("roomId")
 	private final String roomUuid;
 
 	@Builder
-	private ChatRoomUuidResponse(String roomUuid) {
+	private ChatRoomIdResponse(String roomUuid) {
 		this.roomUuid = roomUuid;
 	}
 
-	public static ChatRoomUuidResponse from(ChatRoom chatRoom) {
+	public static ChatRoomIdResponse from(ChatRoom chatRoom) {
 		if (chatRoom == null) {
-			return ChatRoomUuidResponse.builder()
+			return ChatRoomIdResponse.builder()
 				.roomUuid(null)
 				.build();
 		}
-		return ChatRoomUuidResponse.builder()
+		return ChatRoomIdResponse.builder()
 			.roomUuid(chatRoom.getUuid())
 			.build();
 	}
