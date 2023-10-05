@@ -6,23 +6,22 @@ import lombok.Getter;
 @Getter
 public class ProductDetailStatsResponse {
 
-	private final Integer chatCount;
-	private final Integer wishCount;
-	private final Integer viewCount;
+	private final Long chatCount;
+	private final Long wishCount;
+	private final Long viewCount;
 
 	@Builder
-	public ProductDetailStatsResponse(Integer chatCount, Integer wishCount, Integer viewCount) {
+	public ProductDetailStatsResponse(Long chatCount, Long wishCount, Long viewCount) {
 		this.chatCount = chatCount;
 		this.wishCount = wishCount;
 		this.viewCount = viewCount;
 	}
 
-	public static ProductDetailStatsResponse makeZeroStats() {
+	public static ProductDetailStatsResponse from(Long chatCount, Long wishCount, Long viewCount) {
 		return ProductDetailStatsResponse.builder()
-			.chatCount(0)
-			.wishCount(0)
-			.viewCount(0)
+			.chatCount(chatCount)
+			.wishCount(wishCount)
+			.viewCount(viewCount)
 			.build();
 	}
-
 }
