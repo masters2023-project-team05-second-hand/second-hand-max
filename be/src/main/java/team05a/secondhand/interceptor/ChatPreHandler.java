@@ -43,9 +43,13 @@ public class ChatPreHandler implements ChannelInterceptor {
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
 		Message<?> returnMessage = message;
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
-		String accessToken = extractAccessToken(headerAccessor);
+		String accessToken = null;
 
-		validateAccessToken(accessToken);
+		if (headerAccessor.getCommand().equals(StompCommand.CONNECT) || headerAccessor.getCommand()
+			.equals(StompCommand.SEND)) {
+			accessToken = extractAccessToken(headerAccessor);
+			validateAccessToken(accessToken);
+		}
 		if (headerAccessor.getCommand().equals(StompCommand.SEND)) {
 			try {
 				Long senderId = jwtTokenProvider.extractMemberId(accessToken);
