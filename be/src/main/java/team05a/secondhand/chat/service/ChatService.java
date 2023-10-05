@@ -10,8 +10,9 @@ import lombok.RequiredArgsConstructor;
 import team05a.secondhand.chat.data.dto.ChatMessageCreateRequest;
 import team05a.secondhand.chat.data.dto.ChatMessageResponse;
 import team05a.secondhand.chat.data.dto.ChatRoomCreateRequest;
+import team05a.secondhand.chat.data.dto.ChatRoomCreateResponse;
+import team05a.secondhand.chat.data.dto.ChatRoomIdResponse;
 import team05a.secondhand.chat.data.dto.ChatRoomListResponse;
-import team05a.secondhand.chat.data.dto.ChatRoomUuidResponse;
 import team05a.secondhand.chat.data.dto.MessageReadResponse;
 import team05a.secondhand.chat.data.entity.ChatRoom;
 import team05a.secondhand.chat.data.entity.Message;
@@ -36,7 +37,7 @@ public class ChatService {
 	private final ProductRepository productRepository;
 
 	@Transactional
-	public ChatRoomUuidResponse createChatRoom(Long buyerId, ChatRoomCreateRequest chatRoomCreateRequest) {
+	public ChatRoomCreateResponse createChatRoom(Long buyerId, ChatRoomCreateRequest chatRoomCreateRequest) {
 		Member buyer = memberRepository.findById(buyerId).orElseThrow(MemberNotFoundException::new);
 		Product product = productRepository.findById(chatRoomCreateRequest.getProductId())
 			.orElseThrow(ProductNotFoundException::new);
@@ -52,16 +53,16 @@ public class ChatService {
 			.build();
 
 		ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
-		messageRepository.save(message);
-		return ChatRoomUuidResponse.from(savedChatRoom);
+		Message savedmessage = messageRepository.save(message);
+		return ChatRoomCreateResponse.from(savedChatRoom, savedmessage.getCreatedTime());
 	}
 
 	@Transactional(readOnly = true)
-	public ChatRoomUuidResponse readChatRoom(Long buyerId, Long productId) {
+	public ChatRoomIdResponse readChatRoom(Long buyerId, Long productId) {
 		ChatRoom chatRoom = chatRoomRepository.findByBuyerIdAndProductId(buyerId, productId)
 			.orElse(null);
 
-		return ChatRoomUuidResponse.from(chatRoom);
+		return ChatRoomIdResponse.from(chatRoom);
 	}
 
 	@Transactional

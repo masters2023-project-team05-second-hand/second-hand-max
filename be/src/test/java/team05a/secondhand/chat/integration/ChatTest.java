@@ -77,7 +77,8 @@ public class ChatTest {
 		//then
 		resultActions
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.roomId").isNotEmpty());
+			.andExpect(jsonPath("$.roomId").isNotEmpty())
+			.andExpect(jsonPath("$.sentTime").isNotEmpty());
 	}
 
 	@Test
@@ -105,8 +106,7 @@ public class ChatTest {
 		//given
 		resultActions
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message")
-				.value(exception.getMessage()));
+			.andExpect(jsonPath("$.message").value(exception.getMessage()));
 	}
 
 	@Test

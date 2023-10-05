@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import team05a.secondhand.chat.data.dto.ChatRoomCreateRequest;
+import team05a.secondhand.chat.data.dto.ChatRoomCreateResponse;
+import team05a.secondhand.chat.data.dto.ChatRoomIdResponse;
 import team05a.secondhand.chat.data.dto.ChatRoomListResponse;
-import team05a.secondhand.chat.data.dto.ChatRoomUuidResponse;
 import team05a.secondhand.chat.data.dto.MessageReadResponse;
 import team05a.secondhand.chat.service.ChatService;
 import team05a.secondhand.member.resolver.MemberId;
@@ -29,21 +30,21 @@ public class ChatController {
 	private final ChatService chatService;
 
 	@PostMapping
-	public ResponseEntity<ChatRoomUuidResponse> createChatRoom(@MemberId Long buyerId,
+	public ResponseEntity<ChatRoomCreateResponse> createChatRoom(@MemberId Long buyerId,
 		@Valid @RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
-		ChatRoomUuidResponse chatRoomUuidResponse = chatService.createChatRoom(buyerId, chatRoomCreateRequest);
+		ChatRoomCreateResponse chatRoomCreateResponse = chatService.createChatRoom(buyerId, chatRoomCreateRequest);
 
 		return ResponseEntity.ok()
-			.body(chatRoomUuidResponse);
+			.body(chatRoomCreateResponse);
 	}
 
 	@GetMapping("/{productId}")
-	public ResponseEntity<ChatRoomUuidResponse> readChatRoom(@MemberId Long buyerId,
+	public ResponseEntity<ChatRoomIdResponse> readChatRoom(@MemberId Long buyerId,
 		@PathVariable Long productId) {
-		ChatRoomUuidResponse chatRoomUuidResponse = chatService.readChatRoom(buyerId, productId);
+		ChatRoomIdResponse chatRoomIdResponse = chatService.readChatRoom(buyerId, productId);
 
 		return ResponseEntity.ok()
-			.body(chatRoomUuidResponse);
+			.body(chatRoomIdResponse);
 	}
 
 	@GetMapping
