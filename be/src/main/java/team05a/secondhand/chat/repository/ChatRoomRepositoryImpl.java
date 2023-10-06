@@ -27,7 +27,7 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom {
 		List<ChatRoom> chatRoomList = jpaQueryFactory
 			.selectFrom(chatRoom)
 			.where(
-				chatRoom.product.member.id.eq(memberId).or(
+				chatRoom.seller.id.eq(memberId).or(
 					chatRoom.buyer.id.eq(memberId)),
 				eqProductId(productId)
 			)

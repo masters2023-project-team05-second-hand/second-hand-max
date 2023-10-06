@@ -268,6 +268,7 @@ public class FixtureFactory {
 	public static ChatRoom createChatRoom(Member buyer, Product product) {
 		return ChatRoom.builder()
 			.buyer(buyer)
+			.seller(product.getMember())
 			.product(product)
 			.build();
 	}

@@ -19,6 +19,7 @@ import team05a.secondhand.chat.data.entity.Message;
 import team05a.secondhand.chat.repository.ChatRoomRepository;
 import team05a.secondhand.chat.repository.MessageRepository;
 import team05a.secondhand.errors.exception.ChatRoomExistsException;
+import team05a.secondhand.errors.exception.ChatRoomNotFoundException;
 import team05a.secondhand.errors.exception.MemberNotFoundException;
 import team05a.secondhand.errors.exception.ProductNotFoundException;
 import team05a.secondhand.errors.exception.SellerIdAndBuyerIdSameException;
@@ -54,8 +55,8 @@ public class ChatService {
 			.build();
 
 		ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
-		Message savedmessage = messageRepository.save(message);
-		return ChatRoomCreateResponse.from(savedChatRoom, savedmessage.getCreatedTime());
+		Message savedMessage = messageRepository.save(message);
+		return ChatRoomCreateResponse.from(savedChatRoom, savedMessage.getCreatedTime());
 	}
 
 	@Transactional(readOnly = true)
@@ -77,6 +78,9 @@ public class ChatService {
 			.build();
 
 		Message savedMessage = messageRepository.save(message);
+
+		updateReadMessageId(sender.getId(), roomId, savedMessage.getId());
+
 		return ChatMessageResponse.from(savedMessage);
 	}
 
@@ -97,6 +101,18 @@ public class ChatService {
 		}
 	}
 
+	private void updateReadMessageId(Long memberId, String roomId, Long messageId) {
+		ChatRoom chatRoom = chatRoomRepository.findByUuid(roomId)
+			.orElseThrow(ChatRoomNotFoundException::new);
+
+		if (memberId.equals(chatRoom.getBuyer().getId())) {
+			chatRoom.updateBuyerLastReadMessageId(messageId);
+		}
+		if (memberId.equals(chatRoom.getProduct().getMember().getId())) {
+			chatRoom.updateSellerLastReadMessageId(messageId);
+		}
+	}
+
 	@Transactional(readOnly = true)
 	public List<ChatRoomListResponse> readChatRoomList(Long memberId, Long productId) {
 		List<ChatRoomListResponse> chatRoomList = chatRoomRepository.findChatRoomList(memberId, productId);
@@ -111,8 +127,10 @@ public class ChatService {
 
 	@Transactional
 	public void exitChatRoom(Long memberId, String roomId) {
-		ChatRoom chatRoom = chatRoomRepository.findByUuid(roomId);
-		if (memberId.equals(chatRoom.getProduct().getMember().getId())) {
+		ChatRoom chatRoom = chatRoomRepository.findByUuid(roomId)
+			.orElseThrow(ChatRoomNotFoundException::new);
+
+		if (memberId.equals(chatRoom.getSeller().getId())) {
 			chatRoom.deleteSeller();
 		}
 		if (memberId.equals(chatRoom.getBuyer().getId())) {

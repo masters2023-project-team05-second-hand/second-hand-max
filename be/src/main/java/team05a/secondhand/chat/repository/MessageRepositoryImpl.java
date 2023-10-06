@@ -48,7 +48,7 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
 				.execute();
 			return room.getBuyerLastReadMessageId() == null ? 0L : room.getBuyerLastReadMessageId();
 		}
-		if (memberId.equals(room.getProduct().getMember().getId())) {
+		if (memberId.equals(room.getSeller().getId())) {
 			jpaQueryFactory.update(chatRoom)
 				.set(chatRoom.sellerLastReadMessageId, messageId)
 				.where(chatRoom.id.eq(room.getId()))
