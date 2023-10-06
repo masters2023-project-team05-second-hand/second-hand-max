@@ -9,8 +9,6 @@ import lombok.Getter;
 import team05a.secondhand.image.data.dto.ProductImageResponse;
 import team05a.secondhand.image.data.entity.ProductImage;
 import team05a.secondhand.product.data.entity.Product;
-import team05a.secondhand.status.data.dto.StatusResponse;
-import team05a.secondhand.status.data.entity.Status;
 
 @Getter
 public class ProductResponse {
@@ -28,11 +26,12 @@ public class ProductResponse {
 		this.stats = stats;
 	}
 
-	public static ProductResponse from(Product product, List<ProductImage> productImages) {
+	public static ProductResponse from(Product product, List<ProductImage> productImages,
+		ProductDetailStatsResponse productDetailStatsResponse) {
 		return ProductResponse.builder()
 			.productDetail(ProductDetailResponse.from(product))
 			.images(ProductImageResponse.from(productImages))
-			.stats(ProductDetailStatsResponse.makeZeroStats())
+			.stats(productDetailStatsResponse)
 			.build();
 	}
 }

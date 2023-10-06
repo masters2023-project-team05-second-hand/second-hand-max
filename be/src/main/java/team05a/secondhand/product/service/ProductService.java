@@ -11,6 +11,7 @@ import team05a.secondhand.address.data.entity.Address;
 import team05a.secondhand.address.repository.AddressRepository;
 import team05a.secondhand.category.data.entity.Category;
 import team05a.secondhand.category.repository.CategoryRepository;
+import team05a.secondhand.chat.repository.ChatRoomRepository;
 import team05a.secondhand.errors.exception.AddressNotFoundException;
 import team05a.secondhand.errors.exception.CategoryNotFoundException;
 import team05a.secondhand.errors.exception.MemberNotFoundException;
@@ -23,6 +24,7 @@ import team05a.secondhand.image.service.ImageService;
 import team05a.secondhand.member.data.entity.Member;
 import team05a.secondhand.member.repository.MemberRepository;
 import team05a.secondhand.product.data.dto.ProductCreateRequest;
+import team05a.secondhand.product.data.dto.ProductDetailStatsResponse;
 import team05a.secondhand.product.data.dto.ProductIdResponse;
 import team05a.secondhand.product.data.dto.ProductListResponse;
 import team05a.secondhand.product.data.dto.ProductResponse;
@@ -34,6 +36,7 @@ import team05a.secondhand.product.repository.ProductRepository;
 import team05a.secondhand.redis.repository.RedisRepository;
 import team05a.secondhand.status.data.entity.Status;
 import team05a.secondhand.status.repository.StatusRepository;
+import team05a.secondhand.wish.repository.WishRepository;
 
 @RequiredArgsConstructor
 @Service
@@ -48,6 +51,8 @@ public class ProductService {
 	private final StatusRepository statusRepository;
 	private final ImageService imageService;
 	private final RedisRepository redisRepository;
+	private final ChatRoomRepository chatRoomRepository;
+	private final WishRepository wishRepository;
 
 	@Transactional
 	public ProductIdResponse create(ProductCreateRequest productCreateRequest, Long memberId) {
@@ -76,8 +81,12 @@ public class ProductService {
 		String key = VIEW_PREFIX + productId;
 		Long view = (Long)redisRepository.get(key).orElseThrow(ProductViewNotFoundException::new) + 1;
 		redisRepository.set(key, view);
+		Long chatCount = chatRoomRepository.countByProductId(productId);
+		Long wishCount = wishRepository.countByProductId(productId);
+		ProductDetailStatsResponse productDetailStatsResponse = ProductDetailStatsResponse.from(chatCount, wishCount,
+			view);
 
-		return ProductResponse.from(product, productImages);
+		return ProductResponse.from(product, productImages, productDetailStatsResponse);
 	}
 
 	@Transactional
