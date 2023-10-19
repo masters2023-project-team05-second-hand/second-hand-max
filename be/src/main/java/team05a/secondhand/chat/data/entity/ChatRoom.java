@@ -57,4 +57,12 @@ public class ChatRoom {
 	public void deleteBuyer() {
 		this.buyer = null;
 	}
+
+	public void updateBuyerLastReadMessageId(Long messageId) {
+		this.buyerLastReadMessageId = messageId;
+	}
+
+	public void updateSellerLastReadMessageId(Long messageId) {
+		this.sellerLastReadMessageId = messageId;
+	}
 }
